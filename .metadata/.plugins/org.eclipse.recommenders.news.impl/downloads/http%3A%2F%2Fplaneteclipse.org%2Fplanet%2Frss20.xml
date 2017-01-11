@@ -1,0 +1,720 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+
+<channel>
+	<title>Planet Eclipse</title>
+	<link>http://planeteclipse.org/planet/</link>
+	<language>en</language>
+	<description>Planet Eclipse - http://planeteclipse.org/planet/</description>
+
+<item>
+	<title>Maximilian and Jonas: JSON Forms – Day 3 – Extending the UI Schema</title>
+	<guid isPermaLink="false">http://eclipsesource.com/blogs/?p=27490</guid>
+	<link>http://eclipsesource.com/blogs/2017/01/11/json-forms-day-3-extending-the-ui-schema/</link>
+	<description>&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;a href=&quot;http://jsonforms.org&quot;&gt;JSON Forms&lt;/a&gt; is a framework to efficiently build form-based web UIs. These UIs are targeted at entering, modifying and viewing data and are usually embedded within an application. JSONForms eliminates the need to write HTML templates and Javascript for manual databinding to create customizable forms by leveraging the capabilities of JSON and &lt;/span&gt;&lt;a href=&quot;http://json-schema.org/&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;JSON schema&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; as well as by providing a simple and declarative way of describing forms. Forms are then rendered within a UI framework – currently based on AngularJS. &lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;If you would like to know more about JSON Forms the &lt;/span&gt;&lt;a href=&quot;http://jsonforms.org/&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;JSON Forms homepage&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; is a good starting point&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;In this blog series, we would like to introduce the framework based on a real-world example application, a task tracker called “Make It happen”. On &lt;a href=&quot;http://eclipsesource.com/blogs/2016/12/21/json-forms-make-it-happen-blog-series-pilot/&quot;&gt;day 0 and 1&lt;/a&gt; we defined our first form and on &lt;a href=&quot;http://eclipsesource.com/blogs/2016/12/27/json-forms-day-2-introducing-the-ui-schema/&quot;&gt;day 2 we introduced the UI schema&lt;/a&gt; and adapted it for our sample application.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Day 2 resulted in a functional form looking like this:&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2016/12/jsonforms_blogseries_day2_form.png&quot;&gt;&lt;img alt=&quot;jsonforms_blogseries_day2_form&quot; class=&quot;alignnone size-full wp-image-27488&quot; height=&quot;299&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2016/12/jsonforms_blogseries_day2_form.png&quot; width=&quot;511&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;If you would like to follow this blog series please &lt;a href=&quot;https://twitter.com/jsonforms&quot;&gt;follow us on twitter&lt;/a&gt;. We will announce every new blog post on JSON Forms there.&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;The goal of our third iteration on the “Make It Happen” example is to enhance the data schema with additional attributes and update the UI schema accordingly. &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;So far, the JSON Schema for our data entity defined three attributes:&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;“Name” (String) – mandatory&lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;“Description” (multi-line String)&lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;“Done” (Boolean).&lt;/span&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;In our third iteration, we add two additional attributes to the Task entity. These additional attributes are:&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;“Due Date” (Date)&lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;“Rating” (Integer)&lt;/span&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;As JSON Forms facilitates JSON Schema as a basis for all forms, we start with enhancing the data schema with the new attributes. The following listing shows the complete data schema, only due_date and rating have to be added, though:&lt;/span&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    &quot;type&quot;: &quot;object&quot;,
+    &quot;properties&quot;: {
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;string&quot;
+      },
+      &quot;description&quot;: {
+        &quot;type&quot;: &quot;string&quot;
+      },
+      &quot;done&quot;: {
+        &quot;type&quot;: &quot;boolean&quot;
+      },
+      &quot;due_date&quot;: {
+        &quot;type&quot;: &quot;string&quot;,
+        &quot;format&quot;: &quot;date&quot;
+      },
+      &quot;rating&quot;: {
+        &quot;type&quot;: &quot;integer&quot;,
+        &quot;maximum&quot;: 5
+      }
+    },
+    &quot;required&quot;: [&quot;name&quot;]
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Based on the extended data schema, we also need to extend the UI schema to add the new properties to our rendered form:&lt;/span&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+  &quot;type&quot;: &quot;VerticalLayout&quot;,
+  &quot;elements&quot;: [
+    {
+      &quot;type&quot;: &quot;Control&quot;,
+      &quot;scope&quot;: {
+        &quot;$ref&quot;: &quot;#/properties/name&quot;
+      }
+    },
+    {
+      &quot;type&quot;: &quot;Control&quot;,
+      &quot;label&quot;: false,
+      &quot;scope&quot;: {
+        &quot;$ref&quot;: &quot;#/properties/done&quot;
+      }
+    },
+    {
+      &quot;type&quot;: &quot;Control&quot;,
+      &quot;scope&quot;: {
+        &quot;$ref&quot;: &quot;#/properties/description&quot;
+      },
+      &quot;options&quot;: {
+        &quot;multi&quot;:true
+      }
+    },
+    {
+      &quot;type&quot;: &quot;Control&quot;,
+      &quot;scope&quot;: {
+        &quot;$ref&quot;: &quot;#/properties/due_date&quot;
+      }
+    },
+    {
+      &quot;type&quot;: &quot;Control&quot;,
+      &quot;scope&quot;: {
+        &quot;$ref&quot;: &quot;#/properties/rating&quot;
+      }
+    }
+  ]
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Based on those two schemas, the JSON Form renderer will now automatically produce this form:&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2016/12/jsonforms_blogseries_day3_form.png&quot;&gt;&lt;img alt=&quot;jsonforms_blogseries_day3_form&quot; class=&quot;alignnone size-full wp-image-27491&quot; height=&quot;463&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2016/12/jsonforms_blogseries_day3_form.png&quot; width=&quot;566&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Note that JSON Forms automatically creates the correct widgets for the new attributes: a date picker for “due date” and a input field for “rating”. For rating it would be nice to have a more special control, though. This is possible with JSON Forms and will be described later in this series. Please also note that those controls are automatically bound to the underlying data and provide the default features such as validation.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Another interesting feature often required in forms is to control the visibility of certain controls based on the current input data. This is supported in JSON Forms, we will describe this rule-based visibility next week.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;If you are interested in trying out JSON Forms, please refer to the &lt;/span&gt;&lt;a href=&quot;http://github.eclipsesource.com/jsonforms/#/docs/firstform&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Getting-Started tutorial&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;. It explains how to set up JSON Forms in your project and how you can try the first steps out yourself. If you would like to follow this blog series, please &lt;a href=&quot;https://twitter.com/jsonforms&quot;&gt;follow us on twitter&lt;/a&gt;. We will announce every new blog post on JSON Forms there.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;We hope to see you soon for the next day!&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;&lt;div style=&quot;display: inline-block;&quot;&gt;&lt;a href=&quot;https://twitter.com/intent/tweet?source=webclient&amp;amp;text=JSON+Forms+%26%238211%3B+Day+3+%26%238211%3B+Extending+the+UI+Schema&amp;amp;via=eclipsesource&amp;amp;url=http://eclipsesource.com/blogs/2017/01/11/json-forms-day-3-extending-the-ui-schema/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot;&gt;&lt;img alt=&quot;Twitter&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/twitter.png&quot; title=&quot;Twitter&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;https://plus.google.com/share?url=http://eclipsesource.com/blogs/2017/01/11/json-forms-day-3-extending-the-ui-schema/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;+1&quot;&gt;&lt;img alt=&quot;Google+&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/google_plus.png&quot; title=&quot;Google+&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;http://www.linkedin.com/cws/share?url=http://eclipsesource.com/blogs/2017/01/11/json-forms-day-3-extending-the-ui-schema/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Share on LinkedIn&quot;&gt;&lt;img alt=&quot;LinkedIn&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/linkedin.png&quot; title=&quot;LinkedIn&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;https://www.facebook.com/sharer/sharer.php?u=http://eclipsesource.com/blogs/2017/01/11/json-forms-day-3-extending-the-ui-schema/&amp;amp;t=JSON+Forms+%26%238211%3B+Day+3+%26%238211%3B+Extending+the+UI+Schema&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Facebook&quot;&gt;&lt;img alt=&quot;Facebook&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/facebook.png&quot; title=&quot;Facebook&quot; /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/2017/01/11/json-forms-day-3-extending-the-ui-schema/#respond&quot;&gt;Leave a Comment&lt;/a&gt;. Tagged with &lt;a href=&quot;http://eclipsesource.com/blogs/tag/angularjs/&quot; title=&quot;AngularJS Tag&quot;&gt;AngularJS&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emf/&quot; title=&quot;emf Tag&quot;&gt;emf&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emfcp/&quot; title=&quot;emfcp Tag&quot;&gt;emfcp&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emfforms/&quot; title=&quot;emfforms Tag&quot;&gt;emfforms&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/forms/&quot; title=&quot;Forms Tag&quot;&gt;Forms&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/json/&quot; title=&quot;JSON Tag&quot;&gt;JSON&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/json-schema/&quot; title=&quot;JSON Schema Tag&quot;&gt;JSON Schema&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/angularjs/&quot; title=&quot;AngularJS Tag&quot;&gt;AngularJS&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emf/&quot; title=&quot;emf Tag&quot;&gt;emf&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emfcp/&quot; title=&quot;emfcp Tag&quot;&gt;emfcp&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emfforms/&quot; title=&quot;emfforms Tag&quot;&gt;emfforms&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/forms/&quot; title=&quot;Forms Tag&quot;&gt;Forms&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/json/&quot; title=&quot;JSON Tag&quot;&gt;JSON&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/json-schema/&quot; title=&quot;JSON Schema Tag&quot;&gt;JSON Schema&lt;/a&gt;&lt;p&gt;&lt;/p&gt;</description>
+	<pubDate>Wed, 11 Jan 2017 09:15:40 +0000</pubDate>
+</item>
+<item>
+	<title>PapyrusUML: First Papyrus IC Research/Academia webinar of 2017</title>
+	<guid isPermaLink="false">http://papyrusuml.wordpress.com/?p=406</guid>
+	<link>https://papyrusuml.wordpress.com/2017/01/10/first-papyrus-ic-researchacademia-webinar-of-2017/</link>
+	<description>&lt;p&gt;If you’ve been following this blog, you already know that I have an &lt;a href=&quot;https://papyrusuml.wordpress.com/2016/02/26/the-papyrus-ic-is-flying/&quot; target=&quot;_blank&quot;&gt;Industry Consortium.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;And if you looked at the Papyrus Industry Consortium’s (PIC) website, you also know that it has a Research and Academia Committee!&lt;/p&gt;
+&lt;p&gt;And that committee is known to hold very interesting webinars about various aspects of modeling, open source, and, of course, ME!&lt;/p&gt;
+&lt;p&gt;Well, the first webinar of the year will happen this Friday, January 13th, at 16:00 – 17:00 CET, 15:00 – 16:00 GMT, 10:00 – 11:00 EST.&lt;/p&gt;
+&lt;p&gt;Our first speaker of 2017 is none other than Jordi Cabot, ICREA Research Professor at IN3 (Open University of Catalonia), a well-known member of our community with many years of experience as a researcher in Model Driven Engineering and in open-source software and the driving force behind the &lt;span style=&quot;color: #ff9633;&quot;&gt;MO&lt;/span&gt;deling &lt;span style=&quot;color: #ff9633;&quot;&gt;LA&lt;/span&gt;nguages blog.&lt;/p&gt;
+&lt;p&gt;Jordi will be talking about some of the key factors in the success of open-source software projects. His talk is titled:&lt;/p&gt;
+&lt;p style=&quot;padding-left: 60px;&quot;&gt;&lt;strong&gt;Wanna see your OSS project succeed? Nurture the community&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I hope you will join us for this very interesting talk.&lt;/p&gt;
+&lt;p&gt;You can find the &lt;a href=&quot;https://wiki.polarsys.org/Papyrus_IC/Research_Academia/Webinars&quot; target=&quot;_blank&quot;&gt;connection information in the Papyrus IC wiki&lt;/a&gt;.&lt;/p&gt;&lt;br /&gt;Filed under: &lt;a href=&quot;https://papyrusuml.wordpress.com/category/papyrus-ic/research-and-academia/&quot;&gt;Research and Academia&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/category/uncategorized/&quot;&gt;Uncategorized&lt;/a&gt; Tagged: &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/academia/&quot;&gt;academia&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/community/&quot;&gt;community&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/open-source/&quot;&gt;open-source&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/project/&quot;&gt;project&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/research/&quot;&gt;research&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/webinar/&quot;&gt;webinar&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/gocomments/papyrusuml.wordpress.com/406/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/comments/papyrusuml.wordpress.com/406/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/godelicious/papyrusuml.wordpress.com/406/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/delicious/papyrusuml.wordpress.com/406/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/gofacebook/papyrusuml.wordpress.com/406/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/facebook/papyrusuml.wordpress.com/406/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/gotwitter/papyrusuml.wordpress.com/406/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/twitter/papyrusuml.wordpress.com/406/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/gostumble/papyrusuml.wordpress.com/406/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/stumble/papyrusuml.wordpress.com/406/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/godigg/papyrusuml.wordpress.com/406/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/digg/papyrusuml.wordpress.com/406/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/goreddit/papyrusuml.wordpress.com/406/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/reddit/papyrusuml.wordpress.com/406/&quot; /&gt;&lt;/a&gt; &lt;img alt=&quot;&quot; border=&quot;0&quot; height=&quot;1&quot; src=&quot;https://pixel.wp.com/b.gif?host=papyrusuml.wordpress.com&amp;amp;blog=72365150&amp;amp;post=406&amp;amp;subd=papyrusuml&amp;amp;ref=&amp;amp;feed=1&quot; width=&quot;1&quot; /&gt;</description>
+	<pubDate>Tue, 10 Jan 2017 17:29:33 +0000</pubDate>
+</item>
+<item>
+	<title>Jeremie Bresson: Use the Eclipse Java Development Tools in a Java SE application</title>
+	<guid isPermaLink="true">http://jmini.github.io/blog/2017/2017-01-10_use-eclipse-jdt-in-java-app.html</guid>
+	<link>http://jmini.github.io/blog/2017/2017-01-10_use-eclipse-jdt-in-java-app.html</link>
+	<description>&lt;div class=&quot;paragraph&quot;&gt; 
+ &lt;p&gt;Stephan Herrmann has &lt;a href=&quot;https://objectteams.wordpress.com/2017/01/09/eclipse-neon-2-is-on-maven-central/&quot;&gt;announced&lt;/a&gt; that some libraries of the Eclipse Neon.2 release are now available on &lt;a href=&quot;https://search.maven.org/&quot;&gt;maven central&lt;/a&gt;.&lt;/p&gt; 
+&lt;/div&gt; 
+&lt;div class=&quot;imageblock&quot;&gt; 
+ &lt;div class=&quot;content&quot;&gt; 
+  &lt;img alt=&quot;Some eclipse jars are now available the central repository&quot; src=&quot;http://jmini.github.io/blog/2017/2017-01-10_eclipse-jars-on-maven-central.png&quot; /&gt; 
+ &lt;/div&gt; 
+&lt;/div&gt; 
+&lt;div class=&quot;paragraph&quot;&gt; 
+ &lt;p&gt;It is now easy to reuse the piece of Eclipse outside any Eclipse based application. Let me share with you this simple example: &lt;em&gt;use the java code formatter of Eclipse JDT in a simple java main class&lt;/em&gt;.&lt;/p&gt; 
+&lt;/div&gt; 
+&lt;div class=&quot;paragraph&quot;&gt; 
+ &lt;p&gt;&lt;strong&gt;Step 1&lt;/strong&gt;: create a very simple maven project. You will need &lt;a href=&quot;https://search.maven.org/#artifactdetails%7Corg.eclipse.jdt%7Corg.eclipse.jdt.core%7C3.12.2%7Cjar&quot;&gt;org.eclipse.jdt.core&lt;/a&gt; as dependency.&lt;/p&gt; 
+&lt;/div&gt; 
+&lt;div class=&quot;listingblock&quot;&gt; 
+ &lt;div class=&quot;title&quot;&gt;
+  Listing 1. Example pom.xml
+ &lt;/div&gt; 
+ &lt;div class=&quot;content&quot;&gt; 
+  &lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-xml&quot;&gt;&amp;lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+      xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+      xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&amp;gt;
+  &amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
+  &amp;lt;groupId&amp;gt;example&amp;lt;/groupId&amp;gt;
+  &amp;lt;artifactId&amp;gt;java-formatter&amp;lt;/artifactId&amp;gt;
+  &amp;lt;version&amp;gt;1.0.0-SNAPSHOT&amp;lt;/version&amp;gt;
+
+  &amp;lt;dependencies&amp;gt;
+    &amp;lt;dependency&amp;gt;
+      &amp;lt;groupId&amp;gt;org.eclipse.jdt&amp;lt;/groupId&amp;gt;
+      &amp;lt;artifactId&amp;gt;org.eclipse.jdt.core&amp;lt;/artifactId&amp;gt;
+      &amp;lt;version&amp;gt;3.12.2&amp;lt;/version&amp;gt;
+    &amp;lt;/dependency&amp;gt;
+  &amp;lt;/dependencies&amp;gt;
+&amp;lt;/project&amp;gt;&lt;/code&gt;&lt;/pre&gt; 
+ &lt;/div&gt; 
+&lt;/div&gt; 
+&lt;div class=&quot;paragraph&quot;&gt; 
+ &lt;p&gt;&lt;strong&gt;Step 2&lt;/strong&gt;: write a java class with a main method.&lt;/p&gt; 
+&lt;/div&gt; 
+&lt;div class=&quot;listingblock&quot;&gt; 
+ &lt;div class=&quot;title&quot;&gt;
+  Listing 2. Example main class
+ &lt;/div&gt; 
+ &lt;div class=&quot;content&quot;&gt; 
+  &lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-java&quot;&gt;import java.util.Properties;
+
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.ToolFactory;
+import org.eclipse.jdt.core.formatter.CodeFormatter;
+import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.text.edits.TextEdit;
+
+public class MainFormatter {
+
+  public static void main(String[] args) {
+    String result;
+
+    String javaCode = &quot;public class MyClass{ &quot;
+                        + &quot;public static void main(String[] args) { &quot;
+                        + &quot;System.out.println(\&quot;Hello World\&quot;);&quot;
+                        + &quot; }&quot;
+                        + &quot; }&quot;;
+
+    Properties prefs = new Properties();
+    prefs.setProperty(JavaCore.COMPILER_SOURCE, CompilerOptions.VERSION_1_8);
+    prefs.setProperty(JavaCore.COMPILER_COMPLIANCE, CompilerOptions.VERSION_1_8);
+    prefs.setProperty(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, CompilerOptions.VERSION_1_8);
+
+    CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(prefs);
+    IDocument doc = new Document(javaCode);
+    try {
+      TextEdit edit = codeFormatter.format(CodeFormatter.K_COMPILATION_UNIT | CodeFormatter.F_INCLUDE_COMMENTS,
+                                             javaCode, 0, javaCode.length(), 0, null);
+      if (edit != null) {
+        edit.apply(doc);
+        result = doc.get();
+      }
+      else {
+        result = javaCode;
+      }
+    }
+    catch (BadLocationException e) {
+      throw new RuntimeException(e);
+    }
+
+    System.out.println(result);
+  }
+}&lt;/code&gt;&lt;/pre&gt; 
+ &lt;/div&gt; 
+&lt;/div&gt; 
+&lt;div class=&quot;paragraph&quot;&gt; 
+ &lt;p&gt;&lt;strong&gt;Step 3&lt;/strong&gt;: there is no step 3! You can just run your code in your IDE or from the command line using maven to compute your classpath.&lt;/p&gt; 
+&lt;/div&gt; 
+&lt;div class=&quot;imageblock&quot;&gt; 
+ &lt;div class=&quot;content&quot;&gt; 
+  &lt;img alt=&quot;Console output&quot; src=&quot;http://jmini.github.io/blog/2017/2017-01-10_console.png&quot; /&gt; 
+ &lt;/div&gt; 
+&lt;/div&gt; 
+&lt;div class=&quot;paragraph&quot;&gt; 
+ &lt;p&gt;The code used in this example is a simplification of what you can find in another great open-source project: &lt;a href=&quot;https://github.com/forge/roaster&quot;&gt;JBoss Forge Roaster&lt;/a&gt;.&lt;/p&gt; 
+&lt;/div&gt;</description>
+	<pubDate>Mon, 09 Jan 2017 23:00:00 +0000</pubDate>
+</item>
+<item>
+	<title>Stephan Herrmann: Eclipse Neon.2 is on Maven Central</title>
+	<guid isPermaLink="false">http://objectteams.wordpress.com/?p=324</guid>
+	<link>https://objectteams.wordpress.com/2017/01/09/eclipse-neon-2-is-on-maven-central/</link>
+	<description>&lt;p&gt;It’s done, finally!&lt;/p&gt;
+&lt;h3&gt;Bidding farewell to my pet peeve&lt;/h3&gt;
+&lt;p&gt;In my job at &lt;a href=&quot;https://www.gk-software.com/en/&quot; target=&quot;_blank&quot;&gt;GK Software&lt;/a&gt; I have the pleasure of developing technology based on Eclipse. But those colleagues consuming my technology work on software that has no direct connection to Eclipse nor OSGi. Their build technology of choice is Maven (without tycho that is). So whenever their build touches my technology we are facing a “challenge”. It doesn’t make a big difference if they are just invoking a code generator built using &lt;a href=&quot;https://www.eclipse.org/Xtext/&quot;&gt;Xtext&lt;/a&gt; etc or whether some Eclipse technology should actually be included in their application runtime.&lt;/p&gt;
+&lt;p&gt;Among many troubles, I recall one situation that really opened my eyes: one particular build had been running successfully for some time, until one day it was fubar. One Eclipse artifact could no longer be resolved. Followed long nights of searching why that artifact may have disappeared, but we reassured ourselves, nothing had disappeared. Quite to the contrary somewhere on the wide internet (Maven Central to be precise) a &lt;strong&gt;new&lt;/strong&gt; artifact had appeared. So what? Well, that artifact was the same that we also had on our internal servers. Well, if it’s the same, what’s the buzz? It turned out it had a &lt;em&gt;one-char difference&lt;/em&gt; in its version: instead of 1.2.3.v20140815 its version was 1.2.3-v20140815. Yes take a close look, there is a difference. Bottom line, with both almost-identical versions available, Maven couldn’t figure out what to do, maybe each was considered as worse than the other, to the effect that Maven simply failed to use &lt;em&gt;either&lt;/em&gt;. Go figure.&lt;/p&gt;
+&lt;p&gt;More stories like this and I realized that relying on Eclipse artifacts in Maven builds was always at the mercy of some volunteers, who typically don’t have a long-term relationship to Eclipse, who filled in a major gap by uploading individual Eclipse artifacts to Maven Central (thanks to you volunteers, please don’t take it personally: I’m happy that your work is no longer needed). Anybody who has ever studied the differences between Maven and OSGi (wrt dependencies and building that is) will immediately see that there are many possible ways to represent Eclipse artifacts (OSGi bundles) in a Maven pom. The resulting “diversity” was one of my pet peeves in my job.&lt;/p&gt;
+&lt;p&gt;At this point I decided to be the next volunteer &lt;del&gt;who would screw up other people’s builds&lt;/del&gt; who would collaborate with the powers that be at Eclipse.org to produce the official uploads to Maven Central.&lt;/p&gt;
+&lt;p&gt;As of today, I can report that this dream has become reality, all relevant artifacts of Neon.2 that are produced by the &lt;a href=&quot;https://www.eclipse.org/eclipse/&quot;&gt;Eclipse Project&lt;/a&gt;, are now “officially” available from Maven Central.&lt;/p&gt;
+&lt;h3&gt;Bridging between universes&lt;/h3&gt;
+&lt;p&gt;I should like to report some details of how our artifacts are &lt;strong&gt;mapped into the Maven world&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;The main tool in this endeavour is the &lt;a href=&quot;https://wiki.eclipse.org/CBI/aggregator&quot;&gt;CBI aggregator&lt;/a&gt;, a model based tool for transforming p2 repositories in various ways. One of its capabilities is to create a Maven repository (a dual use repo actually, but the p2 side of this is immaterial to this story). That tool does a great job of extracting meta data from the p2 repo in order to create “meaningful” pom files, the key feature being: it copies all dependency information, which is originally authored in MANIFEST.MF, into corresponding declarations in the pom file.&lt;/p&gt;
+&lt;p&gt;Still a few things had to be settled, either by improving the tool, by fine tuning the input to the tool, or by some steps of post-processing the resulting Maven repo.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Group IDs&lt;/strong&gt;&lt;br /&gt;
+While OSGi artifacts only have a single qualified Bundle-SymbolicName, Maven requires a two-part name: groupId x artifactId. It was easy to agree on using the full symbolic name for the artifactId, but what should the groups be? We settled on these three groups for the Eclipse Project:&lt;p&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span style=&quot;color: #008000;&quot;&gt;&lt;strong&gt;org.eclipse.platform&lt;/strong&gt;&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span style=&quot;color: #008000;&quot;&gt;&lt;strong&gt;org.eclipse.jdt&lt;/strong&gt;&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span style=&quot;color: #008000;&quot;&gt;&lt;strong&gt;org.eclipse.pde&lt;/strong&gt;&lt;/span&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Version numbers&lt;/strong&gt;&lt;br /&gt;
+In Maven land, release versions have three segments, in OSGi we maintain a forth segment (qualifier) also for releases. To play by Maven rules, we decided to use &lt;span style=&quot;color: #008000;&quot;&gt;&lt;strong&gt;three-part versions&lt;/strong&gt;&lt;/span&gt; for our uploads to Maven Central. This emphasizes the strategy to only publish releases, for which the first three parts of the version are required to be unique.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;3rd party dependencies&lt;/strong&gt;&lt;br /&gt;
+All non-Eclipse artifacts that we depend on should be referenced by their proper coordinates in Maven land. By default, the CBI aggregator assigns all artifacts to the synthetic group p2.osgi.bundle, but if s.o. depends on p2.osgi.bundle:org.junit this doesn’t make much sense. In particular, it must be avoided that projects consuming Eclipse artifacts will get the same 3rd party library under two different names (perhaps in different versions?). We identified 16 such libraries, and their &lt;span style=&quot;color: #008000;&quot;&gt;&lt;a href=&quot;https://wiki.eclipse.org/Platform-releng/Publish_To_Maven_Central#Run_the_aggregator&quot; style=&quot;color: #008000;&quot;&gt;proper coordinates&lt;/a&gt;.&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Source artifacts&lt;/strong&gt;&lt;br /&gt;
+Eclipse plug-ins have their source code in corresponding .source plug-ins. Maven has a similar convention, just using a “classifier” instead of appending to the artifact name. In Maven we &lt;span style=&quot;color: #008000;&quot;&gt;conform to their convention&lt;/span&gt;, so that tools like &lt;a href=&quot;https://www.eclipse.org/m2e/&quot;&gt;m2e&lt;/a&gt; can correctly pick up the source code from any dependencies.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Other meta data&lt;/strong&gt;&lt;br /&gt;
+Followed a hunt for project url, scm coordinates, artifact descriptions and related data. Much of this could be retrieved from our MANIFEST.MF files, some information is currently mapped using a static, manually maintained mapping. Other information like licences and organization are fully static during this process. In the end all was approved by the &lt;span style=&quot;color: #008000;&quot;&gt;&lt;a href=&quot;http://central.sonatype.org/pages/requirements.html&quot; style=&quot;color: #008000;&quot;&gt;validation on OSSRH servers&lt;/a&gt;&lt;/span&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If you want to browse the resulting wealth, you may start at&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://repo1.maven.org/maven2/org/eclipse/platform/&quot;&gt;https://repo1.maven.org/maven2/org/eclipse/platform/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://repo1.maven.org/maven2/org/eclipse/jdt/&quot;&gt;https://repo1.maven.org/maven2/org/eclipse/jdt/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://repo1.maven.org/maven2/org/eclipse/pde/&quot;&gt;https://repo1.maven.org/maven2/org/eclipse/pde/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Everything with fully qualified artifact names in these groups (and date of 2017-01-07 or newer) should be from the new, “official” upload.&lt;/p&gt;
+&lt;h3&gt;This is just the beginning&lt;/h3&gt;
+&lt;p&gt;The bug on which all this has been booked is &lt;a href=&quot;https://bugs.eclipse.org/484004&quot;&gt;&lt;del&gt;Bug 484004&lt;/del&gt;: Start publishing Eclipse platform artifacts to Maven central&lt;/a&gt;. See the word “Start”?&lt;/p&gt;
+&lt;p&gt;To follow-up tasks are already on the board:&lt;/p&gt;
+&lt;p&gt;(1) Migrate all the various scripts, tools, and models to the proper git repo of our releng project. At the end of the day, this process of transformation and upload should become a routine operation to be invoked by our favourite build meisters.&lt;/p&gt;
+&lt;p&gt;(2) Fix any quirks in the generated pom files. E.g., we already know that the process did not handle fragments in an optimal way. As a result, consuming SWT from the new upload is not straight forward.&lt;/p&gt;
+&lt;p&gt;Both issues should be handled in or off &lt;a class=&quot;bz_bug_link            bz_status_NEW &quot; href=&quot;https://bugs.eclipse.org/bugs/show_bug.cgi?id=510072&quot; title=&quot;NEW - Scripts &amp;amp; tool for publishing to Maven Central should migrate to releng git&quot;&gt;bug 510072&lt;/a&gt;, in the hope, that when we publish Neon.3 the new, “official” Maven coordinates of Eclipse artifacts will be even fit all all real world use. So: please test and report in the bug any problems you might find.&lt;/p&gt;
+&lt;p&gt;(3) I was careful to say “Eclipse Project”. We don’t yet have the magic wand to apply this to literally all artifacts produced in the Eclipse community. Perhaps s.o. will volunteer to apply the approach to everything from the &lt;a href=&quot;https://wiki.eclipse.org/Simultaneous_Release&quot;&gt;Simultaneous Release&lt;/a&gt;? If we can publish 300+ artifacts, we can also publish 7000+, can’t we? &lt;img alt=&quot;🙂&quot; class=&quot;wp-smiley&quot; src=&quot;https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/72x72/1f642.png&quot; style=&quot;height: 1em;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;happy building!&lt;/p&gt;&lt;br /&gt;  &lt;a href=&quot;http://feeds.wordpress.com/1.0/gocomments/objectteams.wordpress.com/324/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/comments/objectteams.wordpress.com/324/&quot; /&gt;&lt;/a&gt; &lt;img alt=&quot;&quot; border=&quot;0&quot; height=&quot;1&quot; src=&quot;https://pixel.wp.com/b.gif?host=objectteams.wordpress.com&amp;amp;blog=52525906&amp;amp;post=324&amp;amp;subd=objectteams&amp;amp;ref=&amp;amp;feed=1&quot; width=&quot;1&quot; /&gt;</description>
+	<pubDate>Mon, 09 Jan 2017 22:21:52 +0000</pubDate>
+</item>
+<item>
+	<title>Maximilian and Jonas: EMF Forms 1.11.0 Feature: Grid Table and more</title>
+	<guid isPermaLink="false">http://eclipsesource.com/blogs/?p=27535</guid>
+	<link>http://eclipsesource.com/blogs/2017/01/02/emf-forms-1-11-0-feature-grid-table-and-more/</link>
+	<description>&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;With Neon.1, we released EMF Forms 1.11.0. &lt;/span&gt;&lt;a href=&quot;https://www.eclipse.org/ecp/emfforms/&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;EMF Forms&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; makes it really simple to create forms which edit your data based on an EMF model. To get started with EMF Forms please refer to &lt;/span&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/tutorials/getting-started-with-EMF-Forms/&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;our tutorial&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;. In this post, we wish to outline the improvements in the release 1.10.0: An alternative table renderer based on Nebula Grid Table.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;EMF Forms allows you to describe a form-based UI in a simple and technology independent model, which in turn is translated by a rendering component to create the actual UI. Besides controls for simple values and layouts, EMF Forms as always supports tables. So, instead of manually implementing columns, databinding, validation, as well as all other typical table features, you only need to specify which attributes of which elements shall be displayed in the table. Like all other controls, this is specified in the view model. The following Screenshot shows a simple view with one table containing elements of type “Task”.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2016/12/image13.png&quot;&gt;&lt;img alt=&quot;image13&quot; class=&quot;alignnone wp-image-27525&quot; height=&quot;255&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2016/12/image13-300x171.png&quot; width=&quot;447&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Please note that the property “Detail Editing” is there as well with the “WithPanel”. This is already a more advanced option of the table renderer. It will display a detail panel below the table, when you click on an entry (see the following screenshot). The default is, of course, there to directly edit the values in the table cells.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2016/12/image16.png&quot;&gt;&lt;img alt=&quot;image16&quot; class=&quot;alignnone size-medium wp-image-27527&quot; height=&quot;255&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2016/12/image16-300x255.png&quot; width=&quot;300&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Now imagine how long it would have taken you to implement the table above. In EMF Forms, you can literally do this within a minute. However, there is another scenario, in which the approach is even more powerful. &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Imagine, you have manually developed a few tables for your UI using the default SWT table. Now, you have the option to enable “single cell selection”, meaning you can only select a single cell instead of complete rows. This is not possible with SWT Table. Therefore, you must switch to another table implementation, e.g. Nebula Grid or NatTable. In the case in which you manually implemented your tables, you must change all of your code to a new API. However, with EMF Forms, you simply need to provide a new renderer. This component is responsible for interpreting the view model information specifying the table into the running UI. The renderer is then used for all tables in your application, so you only need to do this work once. For the example of the table, EMF Forms already provides an alternative table renderer out of the box. As you can see in the following screenshot, it uses Nebula Grid to render the same table, but enables single cell selection. To use this, just include the new renderer feature (org.eclipse.emf.ecp.view.table.ui.nebula.grid.feature) into your application, and it is again done in less than a minute.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2016/12/image15.png&quot;&gt;&lt;img alt=&quot;image15&quot; class=&quot;alignnone wp-image-27526&quot; height=&quot;74&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2016/12/image15-300x49.png&quot; width=&quot;453&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;As shown along the example of tables, enhancing the existing renderers provides all types of customizations. Please note that the framework already includes a variety of renderers, but it is also simple &lt;/span&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/tutorials/how-to-customize-emf-forms/#customizecontrols&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;to write your own&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;. If you miss any feature or ways to adapt it, please provide feedback by &lt;/span&gt;&lt;a href=&quot;https://bugs.eclipse.org/bugs/enter_bug.cgi?product=ecp&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;submitting bugs or feature requests&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; or &lt;/span&gt;&lt;a href=&quot;mailto:munich@eclipsesource.com&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;contact us&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; if you are interested in enhancements or support.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;&lt;div style=&quot;display: inline-block;&quot;&gt;&lt;a href=&quot;https://twitter.com/intent/tweet?source=webclient&amp;amp;text=EMF+Forms+1.11.0+Feature%3A+Grid+Table+and+more&amp;amp;via=eclipsesource&amp;amp;url=http://eclipsesource.com/blogs/2017/01/02/emf-forms-1-11-0-feature-grid-table-and-more/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot;&gt;&lt;img alt=&quot;Twitter&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/twitter.png&quot; title=&quot;Twitter&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;https://plus.google.com/share?url=http://eclipsesource.com/blogs/2017/01/02/emf-forms-1-11-0-feature-grid-table-and-more/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;+1&quot;&gt;&lt;img alt=&quot;Google+&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/google_plus.png&quot; title=&quot;Google+&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;http://www.linkedin.com/cws/share?url=http://eclipsesource.com/blogs/2017/01/02/emf-forms-1-11-0-feature-grid-table-and-more/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Share on LinkedIn&quot;&gt;&lt;img alt=&quot;LinkedIn&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/linkedin.png&quot; title=&quot;LinkedIn&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;https://www.facebook.com/sharer/sharer.php?u=http://eclipsesource.com/blogs/2017/01/02/emf-forms-1-11-0-feature-grid-table-and-more/&amp;amp;t=EMF+Forms+1.11.0+Feature%3A+Grid+Table+and+more&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Facebook&quot;&gt;&lt;img alt=&quot;Facebook&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/facebook.png&quot; title=&quot;Facebook&quot; /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/2017/01/02/emf-forms-1-11-0-feature-grid-table-and-more/#respond&quot;&gt;Leave a Comment&lt;/a&gt;. Tagged with &lt;a href=&quot;http://eclipsesource.com/blogs/tag/eclipse/&quot; title=&quot;eclipse Tag&quot;&gt;eclipse&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emf/&quot; title=&quot;emf Tag&quot;&gt;emf&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emfcp/&quot; title=&quot;emfcp Tag&quot;&gt;emfcp&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emfforms/&quot; title=&quot;emfforms Tag&quot;&gt;emfforms&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/eclipse/&quot; title=&quot;eclipse Tag&quot;&gt;eclipse&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emf/&quot; title=&quot;emf Tag&quot;&gt;emf&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emfcp/&quot; title=&quot;emfcp Tag&quot;&gt;emfcp&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emfforms/&quot; title=&quot;emfforms Tag&quot;&gt;emfforms&lt;/a&gt;&lt;p&gt;&lt;/p&gt;</description>
+	<pubDate>Mon, 02 Jan 2017 13:28:50 +0000</pubDate>
+</item>
+<item>
+	<title>Lars Vogel: New year resolution for using Eclipse – Hiding the toolbar</title>
+	<guid isPermaLink="false">http://blog.vogella.com/?p=7510</guid>
+	<link>http://blog.vogella.com/2017/01/01/new-year-resolution-for-using-eclipse-hiding-the-toolbar/</link>
+	<description>&lt;p&gt;Happy 2017. &lt;/p&gt;
+&lt;p&gt;For this year I plan to use Eclipse without toolbar. I think this will enforce me to use more shortcuts, e.g. for perspective switching, for starting the last run porgram and the like. Also it gives me more “real estate” in the IDE for the code.&lt;/p&gt;
+&lt;p&gt;If you want to do the same, select Windows -&amp;gt; Appearance -&amp;gt; Hide Toolbar from the menu.&lt;/p&gt;</description>
+	<pubDate>Sun, 01 Jan 2017 13:12:34 +0000</pubDate>
+</item>
+<item>
+	<title>Doug Schaefer: Looking Forward to 2017</title>
+	<guid isPermaLink="false">http://cdtdoug.ca/?p=795</guid>
+	<link>https://cdtdoug.ca/2016/12/31/looking-forward-to-2017/</link>
+	<description>&lt;p&gt;I know a lot of people didn’t like how 2016 turned out, especially Americans, but for me it was a year of reflection and renewal.&lt;/p&gt;
+&lt;p&gt;As the state of the art for user interface frameworks gel around hardware accelerated graphics, I have been worrying for the future of Eclipse. It’s age is really starting to show and it’s getting harder to find tools developers that want to work with it. And with the murky future of JavaFX and Java as a desktop application technology, It’s time to start looking for the next thing in desktop IDE frameworks.&lt;/p&gt;
+&lt;p&gt;I also spent a lot of the year learning more about what embedded software engineers do. I’ve been building tools for them for many years but haven’t had a chance to use them myself. As Arduino and Raspberry Pi become cheap yet powerful and accessible devices, I bought a few of them and am starting to see how fun it is to program these devices to interact with the real world.&lt;/p&gt;
+&lt;p&gt;There are a few areas where I will be focusing my time in 2017. Here are some quick highlights. One New Years resolution I definitely have is to write more so I’ll be adding details as the year progresses.&lt;/p&gt;
+&lt;h2&gt;Eclipse Two&lt;/h2&gt;
+&lt;p&gt;Those who follow me on Twitter will notice me working on a new project that has grown from my fascination with &lt;a href=&quot;http://electron.atom.io/&quot;&gt;Electron&lt;/a&gt;. Electron is the combination of Chromium and node.js in a desktop application framework. It’s what Visual Studio Code is written with along with many new and upcoming desktop applications, like Slack. It’s given me a fun opportunity to really learn HTML, CSS, and JavaScript and think of how I’d build an IDE with it. I have a couple of things running and &lt;a href=&quot;https://github.com/dschaefer/eclipse-two&quot;&gt;you can follow along here on my github account.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&quot;&quot; class=&quot;alignnone size-full wp-image-798&quot; src=&quot;https://i0.wp.com/cdtdoug.ca/wp-content/uploads/Screen-Shot-2016-12-26-at-7.01.26-PM.png?resize=625%2C429&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Of course people have asked why not just extend one of the many text editor frameworks, like VIsual Studio Code, for what I need. There is a big difference between text editors and IDEs. Text editors seem to focus maniacally on being just text editors. IDEs add different types of visualizations and graphical editors that abstract away some of the more complex aspects of systems development. Web developers may not appreciate it much (yet), but embedded software developers really need the help that these abstractions provide.&lt;/p&gt;
+&lt;p&gt;My hope is that this work with an Electron-based IDE bears fruit and attracts IDE developers who are excited about the same idea. I’ve called it Eclipse Two (and it’s not e2, BTW, it’s Two), since it’s my full intention that if the Eclipse community is interested, we’ll bring it there. As it was in the days Eclipse One was introduced in 2001 and CDT in 2002, we can’t build this by ourselves. It only succeeds with a strong community and with strong architectural leadership that Eclipse is famous for.&lt;/p&gt;
+&lt;h2&gt;CDT and the Language Services Protocol&lt;/h2&gt;
+&lt;p&gt;The Language Services Protocol (LSP) is quickly becoming the accepted architecture that enables IDE’s to acquire language knowledge users expect as well as allows us to experiment with new IDE front ends, like Eclipse Two. Since it’ll be a few years before a new desktop IDE enters prime time, we’ll need to keep Eclipse and the CDT alive and thriving.&lt;/p&gt;
+&lt;p&gt;One thing we’re starting to see, thanks to Dr. Peter Sommerlad and friends on the C++ Language committee, is the C++ language continuing to evolve and modernize with new language constructs introduced every three years. It’s going to be very difficult for the small CDT team to keep up.&lt;/p&gt;
+&lt;p&gt;We need to look for alternative language providers and work with other IDEs, possibly leveraging the LLVM project’s libclang or some other parser that we could hook up to the LSP. That will likely be a lot of work since we rely on the CDT’s parsers for many features that the LSP doesn’t currently support but I think it’s a long term direction we need to investigate and a number of us CDT committers feel the same way.&lt;/p&gt;
+&lt;h2&gt;Arduino and the Electronic Hobbyist&lt;/h2&gt;
+&lt;p&gt;I am still fully committed to the Arduino plug-ins I’ve built for CDT and will continue to enhance them as the Arduino community and the mainstream Arduino IDE evolves. I am still hoping that members of the community will help with code along with their fantastic bug reports. The feedback has been nice to see and I’m glad the plug-ins have been useful.&lt;/p&gt;
+&lt;p&gt;The more I look at the work that embedded software engineers do and the incredible complexity of the systems they are working with, the more I am reassured that these developers do indeed need the help a good IDE can give them. Of course, it has to be a &lt;strong&gt;good&lt;/strong&gt; IDE and I continue to work to understand what that means and help make it happen.&lt;/p&gt;
+&lt;p&gt;BTW, I had started on some plug-ins I was using to program the ESP8266 I used in my demos in 2016. Since then I’ve been in conversation with the ESP32 community and it’s been great to see that they are already adopting Eclipse and the CDT. &lt;a href=&quot;http://esp-idf.readthedocs.io/en/latest/eclipse-setup.html&quot;&gt;Instructions are here if you’re interested.&lt;/a&gt; The good news for me is that it’ll give me a chance to stop working on my own plug-ins and to give me more time to focus on the other things in this list :).&lt;/p&gt;
+&lt;h2&gt;Use an RTOS for your Real Time system&lt;/h2&gt;
+&lt;p&gt;Programming the ESP8266 gave me some experience with FreeRTOS. In the demo, I have an ultrasonic sensor that I use to trigger different colors in the NeoPixels I also have attached to the chip. All of this is very real time sensitive. I need to measure the time between two interrupts to calculate distance from the sensor, and the NeoPixel communications depend on sending a serial stream of data at a very sensitive clock rate. Real time matters.&lt;/p&gt;
+&lt;p&gt;As part of the demo, I was showing CMake and the Launch Bar and how easy it was to switch from building and launching for one system to another. I took the real-time code for the ESP8266 and pretty much ran it as is on my BeagleBone running the QNX Neutrino RTOS, including the interrupt handlers and the NeoPixel code. I can’t imagine doing that on Linux. I know I work for the company, but it really helped me appreciate the Neutrino microkernel architecture and how easy it is to build an embedded system with the tools and APIs we provide.&lt;/p&gt;
+&lt;p&gt;The problem is, not enough people know about Neutrino and what a good RTOS can offer. Too many people are using Linux in real-time systems because it’s easier to get started, because it’s what they know, not because it’s the right architecture. One thing I hope to do is to help with the cause and spread the word and make it easier for the community to try it out. What that means, we’ll have to see in the upcoming months.&lt;/p&gt;
+&lt;h2&gt;Beyond the IDE&lt;/h2&gt;
+&lt;p&gt;I’ve made my career as a tools developer to do what I can to help other software developers build systems. But tools alone isn’t enough. Tools need to be combined with education through demos and tutorials and other types of instruction. Now imagine combining the two, a tutorial you access on the web that drives your desktop IDE as you learn.&lt;/p&gt;
+&lt;p&gt;And with that we come full circle as that’s one of the use cases I hope we can achieve with Eclipse Two! An IDE that not only helps you write and test code and build systems, but teaches you how best to do that as well.&lt;/p&gt;
+&lt;h2&gt;Happy New Year and all the best in 2017!&lt;/h2&gt;
+&lt;p&gt;It’s going to be a great year for the Eclipse community and technology and I look forward to helping where I can.&lt;/p&gt;</description>
+	<pubDate>Sat, 31 Dec 2016 23:10:38 +0000</pubDate>
+</item>
+<item>
+	<title>vert.x project: Internet of Things - Reactive and Asynchronous with Vert.x</title>
+	<guid isPermaLink="true">http://vertx.io/blog/internet-of-things-reactive-and-asynchronous-with-vert-x</guid>
+	<link>http://vertx.io/blog/internet-of-things-reactive-and-asynchronous-with-vert-x</link>
+	<description>&lt;article&gt;&lt;p&gt;&lt;img alt=&quot;Vert.x IoT&quot; src=&quot;http://vertx.io/assets/blog/vertx-iot/vertx-iot.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;&lt;div class=&quot;admonition-block note&quot;&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;admonition-icon&quot;&gt;&lt;i class=&quot;admonition-icon fa fa-comment&quot;&gt;&lt;/i&gt;&lt;/td&gt;&lt;td class=&quot;content&quot;&gt;&lt;span class=&quot;content&quot;&gt;this is a re-publication of the following &lt;a href=&quot;https://paolopatierno.wordpress.com/2016/12/27/internet-of-things-reactive-and-asynchronous-with-vert-x/&quot;&gt;blog post&lt;/a&gt;.&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;I have to admit … before joining Red Hat I didn’t know about the &lt;a href=&quot;http://vertx.io/&quot;&gt;&lt;em&gt;Eclipse Vert.x&lt;/em&gt;&lt;/a&gt; project but it took me few days to fall in love with it !&lt;/p&gt;
+&lt;p&gt;For the other developers who don’t know what Vert.x is, the best definition is …&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;… a toolkit to build distributed and reactive systems on top of the JVM using an asynchronous non blocking development model&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;The first big thing is related to develop a &lt;em&gt;reactive&lt;/em&gt; system using Vert.x which means :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Responsive&lt;/em&gt; : the system responds in an acceptable time;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Elastic&lt;/em&gt; : the system can scale up and scale down;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Resilient&lt;/em&gt; : the system is designed to handle failures gracefully;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Asynchronous&lt;/em&gt; : the interaction with the system is achieved using asynchronous messages;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The other big thing is related to use an &lt;em&gt;asynchronous non blocking&lt;/em&gt; development model which doesn’t mean to be multi-threading but thanks to the non blocking I/O (i.e. for handling network, file system, …) and callbacks system, it’s possible to handle a huge numbers of events per second using a single thread (aka “event loop”).&lt;/p&gt;
+&lt;p&gt;You can find a lot of &lt;a href=&quot;http://vertx.io/materials/&quot;&gt;material&lt;/a&gt; on the official web site in order to better understand what Vert.x is and all its main features; it’s not my objective to explain it in this very short article that is mostly … you guess … messaging and IoT oriented  :-)&lt;/p&gt;
+&lt;p&gt;In my opinion, all the above features make Vert.x a great toolkit for building Internet of Things applications where being reactive and asynchronous is a “must” in order to handle millions of connections from devices and all the messages ingested from them.&lt;/p&gt;
+&lt;h2 id=&quot;vert-x-and-the-internet-of-things&quot;&gt;Vert.x and the Internet of Things&lt;/h2&gt;
+&lt;p&gt;As a toolkit, so made of different components, what are the ones provided by Vert.x and useful to IoT ?&lt;/p&gt;
+&lt;p&gt;Starting from the Vert.x &lt;a href=&quot;https://github.com/eclipse/vert.x&quot;&gt;Core&lt;/a&gt; component, there is support for both versions of HTTP protocol so 1.1 and 2.0 in order to develop an &lt;a href=&quot;http://vertx.io/docs/vertx-core/java/#_writing_http_servers_and_clients&quot;&gt;HTTP server&lt;/a&gt; which can expose a RESTful API to the devices. Today , a lot of web and mobile developers prefer to use this protocol for building their IoT solution leveraging on the deep knowledge they have about the HTTP protocol.&lt;/p&gt;
+&lt;p&gt;Regarding more IoT oriented protocols, there is the Vert.x &lt;a href=&quot;https://github.com/vert-x3/vertx-mqtt-server&quot;&gt;MQTT server&lt;/a&gt; component which doesn’t provide a full broker but exposes an API that a developer can use in order to handle incoming connections and messages from remote MQTT clients and then building the business logic on top of it, so for example developing a real broker or executing protocol translation (i.e. to/from plain TCP,to/from the Vert.x Event Bus,to/from HTTP,to/from AMQP and so on). The API raises all events related to the connection request from a remote MQTT client and all subsequent incoming messages; at same time, the API provides the way to reply to the remote endpoint. The developer doesn’t need to know how MQTT works on the wire in terms of encoding/decoding messages.&lt;/p&gt;
+&lt;p&gt;Related to the AMQP 1.0 protocol there are the Vert.x &lt;a href=&quot;https://github.com/vert-x3/vertx-proton&quot;&gt;Proton&lt;/a&gt; and the &lt;a href=&quot;https://github.com/vert-x3/vertx-amqp-bridge&quot;&gt;AMQP bridge&lt;/a&gt; components. The first one provides a thin wrapper around the &lt;a href=&quot;http://qpid.apache.org/&quot;&gt;Apache Qpid&lt;/a&gt; Proton engine and can be used for interacting with AMQP based messaging systems as clients (sender and receiver) but even developing a server. The last one provides a bridge between the protocol and the Vert.x Event Bus mostly used for communication between deployed Vert.x verticles. Thanks to this bridge, verticles can interact with AMQP components in a simple way.&lt;/p&gt;
+&lt;p&gt;Last but not least, the Vert.x &lt;a href=&quot;https://github.com/vert-x3/vertx-kafka-client&quot;&gt;Kafka client&lt;/a&gt; component which provides access to Apache Kafka for sending and consuming messages from topics and related partitions. A lot of IoT scenarios leverage on Apache Kafka in order to have an ingestion system capable of handling million messages per second.&lt;/p&gt;
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;The current Vert.x code base provides quite interesting components for developing IoT solutions which are already available in the current 3.3.3 version (see Vert.x Proton and AMQP bridge) and that will be available soon in the future 3.4.0 version (see MQTT server and Kafka client). Of course, you don’t need to wait for their official release because, even if under development, you can already adopt these components and provide your feedback to the community.&lt;/p&gt;
+&lt;p&gt;This ecosystem will grow in the future and Vert.x will be a leading actor in the IoT applications world based on a microservices architecture !&lt;/p&gt;
+&lt;/article&gt;</description>
+	<pubDate>Thu, 29 Dec 2016 00:00:00 +0000</pubDate>
+</item>
+<item>
+	<title>Maximilian and Jonas: JSON Forms – Day 2 – Introducing the UI Schema</title>
+	<guid isPermaLink="false">http://eclipsesource.com/blogs/?p=27486</guid>
+	<link>http://eclipsesource.com/blogs/2016/12/27/json-forms-day-2-introducing-the-ui-schema/</link>
+	<description>&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;a href=&quot;http://jsonforms.org&quot;&gt;JSON Forms&lt;/a&gt; is a framework to efficiently build form-based web UIs. These UIs are targeted at entering, modifying and viewing data and are usually embedded within an application. JSONForms eliminates the need to write HTML templates and Javascript for manual databinding to create customizable forms by leveraging the capabilities of JSON and &lt;/span&gt;&lt;a href=&quot;http://json-schema.org/&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;JSON schema&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; as well as by providing a simple and declarative way of describing forms. Forms are then rendered within a UI framework – currently based on AngularJS. &lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;If you would like to know more about JSON Forms the &lt;/span&gt;&lt;a href=&quot;http://jsonforms.org/&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;JSON Forms homepage&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; is a good starting point&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;In this blog series, we would like to introduce the framework based on a real-world example application, a task tracker called “Make It happen”. In the &lt;a href=&quot;http://eclipsesource.com/blogs/2016/12/21/json-forms-make-it-happen-blog-series-pilot/&quot;&gt;blog series pilot&lt;/a&gt; we started with day 0 and 1. On day 0, we described the overall requirements and on day 1 we completed the first iteration, which created a simple form for the entity “Task”. The result of day one was a fully functional form which looked like this:&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2016/12/day1_form.png&quot;&gt;&lt;img alt=&quot;day1_form&quot; class=&quot;alignnone size-full wp-image-27480&quot; height=&quot;313&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2016/12/day1_form.png&quot; width=&quot;589&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;If you would like to follow this blog series please &lt;a href=&quot;https://twitter.com/jsonforms&quot;&gt;follow us on twitter&lt;/a&gt;. We will announce every new blog post on JSON Forms on twitter.&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;On this second day, we will show you how the rendered form can be customized, that is, how the controls and the layout of the created forms can be adapted.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;So far, we haven’t specified anything for our forms, but rather, we just used the data schema and JSON Forms was able to produce a form out of it. However, you probably want to customize those forms sooner or later. As a very simple example, we might want to specify the order in which attributes are displayed or change the label of controls. Additionally, we would like the “description” property to be displayed as a multiline field. As this type of UI specifications are conceptually not in the underlying data schema, JSON Forms defines a second type of schema, the “UI schema”. The UI schema focusses on UI concerns only, it describes which properties of the data schema are displayed as controls, how they look and their layout. If you define a UI schema, it will be processed by JSON Forms to create an adapted version of the initial form. The UI schema references the underlying data schema to specify, which properties should be displayed in the UI. The following diagram shows a very simple UI schema, which specifies that the property “name” shall be displayed as a control in the UI:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2016/12/jsonforms_blogseries_uischema.png&quot;&gt;&lt;img alt=&quot;jsonforms_blogseries_uischema&quot; class=&quot;alignnone size-full wp-image-27487&quot; height=&quot;282&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2016/12/jsonforms_blogseries_uischema.png&quot; width=&quot;414&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;The following UI schema specifies the form described above based on the data schema:&lt;/span&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+  &quot;type&quot;: &quot;Control&quot;,
+  &quot;scope&quot;: {
+    &quot;$ref&quot;: &quot;#/properties/name&quot;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;As we have seen on &lt;a href=&quot;http://eclipsesource.com/blogs/2016/12/21/json-forms-make-it-happen-blog-series-pilot/&quot;&gt;day 1&lt;/a&gt;, such simple UI schemas can be automatically be derived from the data schema without specifying a specific UI schema. However, now we would like to change the default generated form. First, we want to change the order of attributes to:&lt;/span&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;“name”&lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;“done”&lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;“description”&lt;/span&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Second we don’t want to show the label of the “done” property, as the checkbox is self-explanatory. Finally, we want to show the description property as a multi-line control. All of these things can very easily be done in the UI schema. Below, you can see the UI schema and the resulting form containing all the above mentioned UI customizations.&lt;/span&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+  &quot;type&quot;: &quot;VerticalLayout&quot;,
+  &quot;elements&quot;: [
+    {
+      &quot;type&quot;: &quot;Control&quot;,
+      &quot;scope&quot;: {
+        &quot;$ref&quot;: &quot;#/properties/name&quot;
+      }
+    },
+    {
+      &quot;type&quot;: &quot;Control&quot;,
+      &quot;label&quot;: false,
+      &quot;scope&quot;: {
+        &quot;$ref&quot;: &quot;#/properties/done&quot;
+      }
+    },
+    {
+      &quot;type&quot;: &quot;Control&quot;,
+      &quot;scope&quot;: {
+        &quot;$ref&quot;: &quot;#/properties/description&quot;
+      },
+      &quot;options&quot;: {
+        &quot;multi&quot;:true
+      }
+    }
+  ]
+}
+
+&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2016/12/jsonforms_blogseries_day2_form.png&quot;&gt;&lt;img alt=&quot;jsonforms_blogseries_day2_form&quot; class=&quot;alignnone size-full wp-image-27488&quot; height=&quot;299&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2016/12/jsonforms_blogseries_day2_form.png&quot; width=&quot;511&quot; /&gt;
+
+&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;If you are interested in trying out JSON Forms, please refer to the &lt;/span&gt;&lt;a href=&quot;http://github.eclipsesource.com/jsonforms/#/docs/firstform&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Getting-Started tutorial&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;. It explains how to set up JSON Forms in your project and how you can try the first steps out yourself. If you would like to follow this blog series, please &lt;a href=&quot;https://twitter.com/jsonforms&quot;&gt;follow us on twitter&lt;/a&gt;. We will announce every new blog post on JSON Forms there.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;We hope to see you soon for the next day!&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;&lt;div style=&quot;display: inline-block;&quot;&gt;&lt;a href=&quot;https://twitter.com/intent/tweet?source=webclient&amp;amp;text=JSON+Forms+%26%238211%3B+Day+2+%26%238211%3B+Introducing+the+UI+Schema&amp;amp;via=eclipsesource&amp;amp;url=http://eclipsesource.com/blogs/2016/12/27/json-forms-day-2-introducing-the-ui-schema/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot;&gt;&lt;img alt=&quot;Twitter&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/twitter.png&quot; title=&quot;Twitter&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;https://plus.google.com/share?url=http://eclipsesource.com/blogs/2016/12/27/json-forms-day-2-introducing-the-ui-schema/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;+1&quot;&gt;&lt;img alt=&quot;Google+&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/google_plus.png&quot; title=&quot;Google+&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;http://www.linkedin.com/cws/share?url=http://eclipsesource.com/blogs/2016/12/27/json-forms-day-2-introducing-the-ui-schema/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Share on LinkedIn&quot;&gt;&lt;img alt=&quot;LinkedIn&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/linkedin.png&quot; title=&quot;LinkedIn&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;https://www.facebook.com/sharer/sharer.php?u=http://eclipsesource.com/blogs/2016/12/27/json-forms-day-2-introducing-the-ui-schema/&amp;amp;t=JSON+Forms+%26%238211%3B+Day+2+%26%238211%3B+Introducing+the+UI+Schema&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Facebook&quot;&gt;&lt;img alt=&quot;Facebook&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/facebook.png&quot; title=&quot;Facebook&quot; /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/2016/12/27/json-forms-day-2-introducing-the-ui-schema/#respond&quot;&gt;Leave a Comment&lt;/a&gt;. Tagged with &lt;a href=&quot;http://eclipsesource.com/blogs/tag/angularjs/&quot; title=&quot;AngularJS Tag&quot;&gt;AngularJS&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emf/&quot; title=&quot;emf Tag&quot;&gt;emf&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emfforms/&quot; title=&quot;emfforms Tag&quot;&gt;emfforms&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/forms/&quot; title=&quot;Forms Tag&quot;&gt;Forms&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/json/&quot; title=&quot;JSON Tag&quot;&gt;JSON&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/json-schema/&quot; title=&quot;JSON Schema Tag&quot;&gt;JSON Schema&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/angularjs/&quot; title=&quot;AngularJS Tag&quot;&gt;AngularJS&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emf/&quot; title=&quot;emf Tag&quot;&gt;emf&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emfforms/&quot; title=&quot;emfforms Tag&quot;&gt;emfforms&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/forms/&quot; title=&quot;Forms Tag&quot;&gt;Forms&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/json/&quot; title=&quot;JSON Tag&quot;&gt;JSON&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/json-schema/&quot; title=&quot;JSON Schema Tag&quot;&gt;JSON Schema&lt;/a&gt;&lt;p&gt;&lt;/p&gt;</description>
+	<pubDate>Tue, 27 Dec 2016 11:35:08 +0000</pubDate>
+</item>
+<item>
+	<title>Antoine Thomas: Projects are now listed on user profile</title>
+	<guid isPermaLink="false">http://blog.ttoine.net/?p=1190</guid>
+	<link>http://blog.ttoine.net/en/2016/12/23/projects-are-now-listed-on-user-profile/</link>
+	<description>&lt;p&gt;As an example, I will share a screenshot of &lt;a href=&quot;https://accounts.eclipse.org/users/dmegert#tab-projects&quot;&gt;Dani Megert’s profile&lt;/a&gt;: he was the recipient of the lifetime achievement award at Eclipse Con Europe 2016. He is one of the top contributors to Eclipse.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://accounts.eclipse.org/users/dmegert#tab-projects&quot;&gt;&lt;img class=&quot;alignnone wp-image-1191 size-large colorbox-1190&quot; height=&quot;942&quot; src=&quot;http://blog.ttoine.net/files/2016/12/dmegert---my-eclipse-account-1024x942.png&quot; width=&quot;1024&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;When you browse a user profile, you can see the list of projects. And roles are listed on the right column. You will also notice that in the statistic block, there is a new counter for Projects. As usual, feedback is welcome.&lt;/p&gt;
+&lt;p&gt;I wish you a Merry Christmas and a Happy New Year &lt;img alt=&quot;🎄&quot; class=&quot;wp-smiley&quot; src=&quot;https://s.w.org/images/core/emoji/2.2.1/72x72/1f384.png&quot; style=&quot;height: 1em;&quot; /&gt; &lt;img alt=&quot;🎉&quot; class=&quot;wp-smiley&quot; src=&quot;https://s.w.org/images/core/emoji/2.2.1/72x72/1f389.png&quot; style=&quot;height: 1em;&quot; /&gt;&lt;/p&gt;</description>
+	<pubDate>Fri, 23 Dec 2016 11:07:19 +0000</pubDate>
+</item>
+<item>
+	<title>Orion: New and Noteworthy in Orion 13.0</title>
+	<guid isPermaLink="false">http://planetorion.org/news/?p=867</guid>
+	<link>http://planetorion.org/news/2016/12/new-and-noteworthy-in-orion-13-0/</link>
+	<description>&lt;p&gt;With &lt;a href=&quot;http://planetorion.org/news/2016/12/announcing-orion-13/&quot;&gt;Orion 13.0 released&lt;/a&gt; (just in time for the holidays), it is time again to share with you the new &amp;amp; noteworthy items developed during this release. There are lots of changes across all of Orion, so lets dive in to each area and see whats new.&lt;/p&gt;
+&lt;h2&gt;Accessibility&lt;/h2&gt;
+&lt;p&gt;We have been striving to make Orion as accessible as possible to all developers. In Orion 13.0 we have improved accessibility across the board – from standard labels to the code edit widget and everything in-between. We still have a ways to go, but plan to be fully accessible in Orion 14.0.&lt;/p&gt;
+&lt;h2&gt;Code Edit Widget&lt;/h2&gt;
+&lt;p&gt;The code edit widget just keeps getting better and better. In Orion 13.0 two great things happened: (1) You can finally see the keybinding dialog, and, (2) you can now add your own custom code folding!&lt;/p&gt;
+&lt;p&gt;To jump right in and start enhancing your use of the widget with some cool folding, &lt;a href=&quot;https://wiki.eclipse.org/Orion/How_Tos/Code_Edit#editorViewer.editor.addFoldingAnnotation&quot;&gt;check out the docs&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Electron&lt;/h2&gt;
+&lt;p&gt;We have created an experimental version of Orion that runs as an Electron app!&lt;/p&gt;
+&lt;div class=&quot;wp-caption alignnone&quot; id=&quot;attachment_868&quot; style=&quot;width: 779px;&quot;&gt;&lt;a href=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/orion-electron.png&quot;&gt;&lt;img alt=&quot;The Experimental Orion Electron app&quot; class=&quot;size-full wp-image-868&quot; height=&quot;696&quot; src=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/orion-electron.png&quot; width=&quot;769&quot; /&gt;&lt;/a&gt;&lt;p class=&quot;wp-caption-text&quot;&gt;The experimental Orion Electron app&lt;/p&gt;&lt;/div&gt;
+&lt;p&gt;Currently, to use the app, you have to build and run it locally (we are working on providing regular builds of the app).&lt;/p&gt;
+&lt;h2&gt;Language Server Protocol&lt;/h2&gt;
+&lt;p&gt;A lot of work has gone into investigating and supporting &lt;a href=&quot;https://github.com/Microsoft/language-server-protocol&quot;&gt;the language server protocol&lt;/a&gt; since its announcement last summer.&lt;/p&gt;
+&lt;p&gt;In Orion 13.0 we have experimental support for the LSP and for Java that can be used on your local machine. For full details on how to get up and running, see &lt;a href=&quot;http://git.eclipse.org/c/orion/org.eclipse.orion.client.git/tree/CONTRIBUTING_lsp.md?h=java-lsp&quot;&gt;this great readme&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Language Tools&lt;/h2&gt;
+&lt;p&gt;Lots of cool new stuff is available in the language tools in 13.0.&lt;/p&gt;
+&lt;h3&gt;Linting&lt;/h3&gt;
+&lt;p&gt;We have provided 13 new linting rules (a coincidence, I promise), such as, no-extra-bind and no-implicit-coercion. The complete list of rules added in 13.0 can be found on &lt;a href=&quot;http://wiki.eclipse.org/Orion/ESLint#Rules&quot;&gt;our rules wiki&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&quot;wp-caption alignnone&quot; id=&quot;attachment_869&quot; style=&quot;width: 366px;&quot;&gt;&lt;a href=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/no-implicit-coercion.png&quot;&gt;&lt;img alt=&quot;The no-implicit-coercion linting rule&quot; class=&quot;size-full wp-image-869&quot; height=&quot;170&quot; src=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/no-implicit-coercion.png&quot; width=&quot;356&quot; /&gt;&lt;/a&gt;&lt;p class=&quot;wp-caption-text&quot;&gt;no-implicit-coercion (with fix)&lt;/p&gt;&lt;/div&gt;
+&lt;p&gt;To accompany the new linting rules, many new quickfixes have been added as well, allowing problems to be quickly and easily resolved.&lt;/p&gt;
+&lt;div class=&quot;wp-caption alignnone&quot; id=&quot;attachment_870&quot; style=&quot;width: 353px;&quot;&gt;&lt;a href=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/quotes-quickfix.png&quot;&gt;&lt;img alt=&quot;The quotes linting rule quickfix&quot; class=&quot;size-full wp-image-870&quot; height=&quot;124&quot; src=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/quotes-quickfix.png&quot; width=&quot;343&quot; /&gt;&lt;/a&gt;&lt;p class=&quot;wp-caption-text&quot;&gt;quotes rule quickfix&lt;/p&gt;&lt;/div&gt;
+&lt;p&gt;To keep all of the rules running smoothly, we also updated to ESLint 3.0.1&lt;/p&gt;
+&lt;h3&gt;ECMA 2016&lt;/h3&gt;
+&lt;p&gt;Orion 13.0 ships with complete support for &lt;a href=&quot;https://www.ecma-international.org/ecma-262/7.0/&quot;&gt;ECMA 2016&lt;/a&gt;. To start developing using the new language features, you have to make sure to set the ecmaVersion entry in your .tern-project file to 7.&lt;/p&gt;
+&lt;div class=&quot;wp-caption alignnone&quot; id=&quot;attachment_871&quot; style=&quot;width: 798px;&quot;&gt;&lt;a href=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/ecma7-example.png&quot;&gt;&lt;img alt=&quot;ECMA 2016 example snippet showing content assist&quot; class=&quot;size-full wp-image-871&quot; height=&quot;240&quot; src=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/ecma7-example.png&quot; width=&quot;788&quot; /&gt;&lt;/a&gt;&lt;p class=&quot;wp-caption-text&quot;&gt;ECMA 2016 example&lt;/p&gt;&lt;/div&gt;
+&lt;h3&gt;AST Outline&lt;/h3&gt;
+&lt;p&gt;A lot of times, while working on language tooling features, developer have wondered what the backing AST looks like (to help diagnose whats wrong). In Orion 13.0 we have provided an AST outline for JavaScript, to make this task easier.&lt;/p&gt;
+&lt;p&gt;You can see the new outline using the &lt;strong&gt;View&lt;/strong&gt; &amp;gt; &lt;strong&gt;Slideout&lt;/strong&gt; &amp;gt; &lt;strong&gt;AST Outline&lt;/strong&gt; menu item when working in JavaScript files.&lt;/p&gt;
+&lt;div class=&quot;wp-caption alignnone&quot; id=&quot;attachment_872&quot; style=&quot;width: 511px;&quot;&gt;&lt;a href=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/ast-outline.png&quot;&gt;&lt;img alt=&quot;The AST outline showing a simple snippet&quot; class=&quot;size-full wp-image-872&quot; height=&quot;386&quot; src=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/ast-outline.png&quot; width=&quot;501&quot; /&gt;&lt;/a&gt;&lt;p class=&quot;wp-caption-text&quot;&gt;AST outline&lt;/p&gt;&lt;/div&gt;
+&lt;h3&gt;Code Formatting&lt;/h3&gt;
+&lt;p&gt;One of the most sought-after features of an IDE is the ability to quickly fix the shape of code. One of the easiest ways to do that is code formatting. In Orion 13.0 we provided a platform API (orion.edit.format) to add formatting to any language, editor hooks to format-on-save, support to format selections of code and support for .jsbeautifyrc files (for project-level formatting options).&lt;/p&gt;
+&lt;p&gt;Orion ships with four language formatting implementations: (1) JavaScript, (2) HTML, (3) CSS, and (4) JSON.&lt;/p&gt;
+&lt;p&gt;Formatting can be used in one of three ways:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Format-on-save: head into the editor options to enable this feature, then, as you save your work, it will also be formatted&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;Edit&lt;/strong&gt; menu item: look for &lt;strong&gt;Format Code&lt;/strong&gt; under the &lt;strong&gt;Edit&lt;/strong&gt; main menu&lt;/li&gt;
+&lt;li&gt;The pop-up menu: look for &lt;strong&gt;Format Code&lt;/strong&gt; in the pop-up menu in the editor&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&quot;wp-caption alignnone&quot; id=&quot;attachment_874&quot; style=&quot;width: 450px;&quot;&gt;&lt;a href=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/formatting-popup.png&quot;&gt;&lt;img alt=&quot;Format code popup menu from the editor&quot; class=&quot;size-full wp-image-874&quot; height=&quot;275&quot; src=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/formatting-popup.png&quot; width=&quot;440&quot; /&gt;&lt;/a&gt;&lt;p class=&quot;wp-caption-text&quot;&gt;Format code in editor&lt;/p&gt;&lt;/div&gt;
+&lt;p&gt;Not happy with the way the formatted code looks for JS/HTML/CSS/JSON? Simply head over to the formatting preference pages for each language and change the settings as desired.&lt;/p&gt;
+&lt;div class=&quot;wp-caption alignnone&quot; id=&quot;attachment_873&quot; style=&quot;width: 836px;&quot;&gt;&lt;a href=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/css-formatting-prefs.png&quot;&gt;&lt;img alt=&quot;The page with CSS formatting options on it&quot; class=&quot;size-full wp-image-873&quot; height=&quot;288&quot; src=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/css-formatting-prefs.png&quot; width=&quot;826&quot; /&gt;&lt;/a&gt;&lt;p class=&quot;wp-caption-text&quot;&gt;CSS formatting options&lt;/p&gt;&lt;/div&gt;
+&lt;h3&gt;HTML Validator&lt;/h3&gt;
+&lt;p&gt;In addition to updating our HTML parser in Orion 13.0, we also provided a pluggable HTML validator to help you keep your page source in tip top shape.&lt;/p&gt;
+&lt;div class=&quot;wp-caption alignnone&quot; id=&quot;attachment_875&quot; style=&quot;width: 509px;&quot;&gt;&lt;a href=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/html-validator.png&quot;&gt;&lt;img alt=&quot;Example HTML validation&quot; class=&quot;size-full wp-image-875&quot; height=&quot;190&quot; src=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/html-validator.png&quot; width=&quot;499&quot; /&gt;&lt;/a&gt;&lt;p class=&quot;wp-caption-text&quot;&gt;HTML validation&lt;/p&gt;&lt;/div&gt;
+&lt;p&gt;Like all our other validation, you can configure the HTML rules severities. The settings are found on the &lt;strong&gt;HTML Validation&lt;/strong&gt; settings page.&lt;/p&gt;
+&lt;h3&gt;Improved Internationalisation&lt;/h3&gt;
+&lt;p&gt;All of the linting messages coming from the CSS tooling can now appear in other languages than English.&lt;/p&gt;
+&lt;h3&gt;Updated Libraries&lt;/h3&gt;
+&lt;p&gt;As we do each release, we have updated many of the libraries we use in our language tools. This time around we updated the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ESLint to 3.0.1&lt;/li&gt;
+&lt;li&gt;Doctrine to 1.2.2&lt;/li&gt;
+&lt;li&gt;ESTraverse to 4.2.0&lt;/li&gt;
+&lt;li&gt;Acorn to 3.3.0&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Platform Improvements&lt;/h2&gt;
+&lt;h3&gt;Syntax Styling&lt;/h3&gt;
+&lt;p&gt;Orion 13.0 has improved syntax styling support for many of our existing languages (like PHP and SQL) and also adds support for .sh files&lt;/p&gt;
+&lt;h3&gt;Excluded Files&lt;/h3&gt;
+&lt;p&gt;Any callers of the search API (via the file client) can now specify an array of names to be ignored by the search engine. This allows callers to ignore all kinds of things they don’t care about while speeding up the search for things they do.&lt;/p&gt;
+&lt;p&gt;The new property is named ‘exclude’ and is an array of strings. See the &lt;a href=&quot;https://orionhub.org/jsdoc/symbols/orion.fileClient.FileClient.html#search&quot;&gt;API doc&lt;/a&gt; for more information.&lt;/p&gt;
+&lt;h3&gt;Filtered Resources&lt;/h3&gt;
+&lt;p&gt;Sometimes there are things you just don’t want to see in your workspace (or that you shouldn’t see). In Orion 13.0 we provided the ability to filter / hide resources from appearing in the UI.&lt;/p&gt;
+&lt;p&gt;The preference for this is on the &lt;strong&gt;General&lt;/strong&gt; settings preference page and is a simple comma-separated list of names of things to not show.&lt;/p&gt;
+&lt;div class=&quot;wp-caption alignnone&quot; id=&quot;attachment_876&quot; style=&quot;width: 702px;&quot;&gt;&lt;a href=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/hidden-resources.png&quot;&gt;&lt;img alt=&quot;Shows general settings page and hidden resources preference&quot; class=&quot;size-full wp-image-876&quot; height=&quot;160&quot; src=&quot;http://planetorion.org/news/wp-content/uploads/2016/12/hidden-resources.png&quot; width=&quot;692&quot; /&gt;&lt;/a&gt;&lt;p class=&quot;wp-caption-text&quot;&gt;Resource names to hide&lt;/p&gt;&lt;/div&gt;
+&lt;h3&gt;Light Theme&lt;/h3&gt;
+&lt;p&gt;Orion now sports a shiny new light theme!&lt;/p&gt;
+&lt;p&gt;But don’t worry if you really really liked the old theme, in Orion 14 we are &lt;a href=&quot;https://bugs.eclipse.org/bugs/show_bug.cgi?id=507788&quot;&gt;bringing back the theme preferences&lt;/a&gt; to allow this to be customized.&lt;/p&gt;</description>
+	<pubDate>Thu, 22 Dec 2016 20:57:10 +0000</pubDate>
+</item>
+<item>
+	<title>Benjamin Cabe: Eclipse IoT in 2016: A Year in Review</title>
+	<guid isPermaLink="false">https://blog.benjamin-cabe.com/?p=2745</guid>
+	<link>http://feedproxy.google.com/~r/benjamin-cabe-planet-eclipse/~3/Ikvv4tHx_Is/eclipse-iot-in-2016</link>
+	<description>&lt;p&gt;As we are wrapping up the year, it is a good time to reflect on all the great things that have happened to the &lt;strong&gt;&lt;a href=&quot;https://iot.eclipse.org&quot; target=&quot;_blank&quot;&gt;Eclipse IoT&lt;/a&gt; &lt;/strong&gt;community this year.&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&quot;IoT logo&quot; class=&quot;aligncenter wp-image-1491&quot; height=&quot;178&quot; src=&quot;http://feeds.feedburner.com/wp-content/uploads/2014/02/iot_logo_large_transparent-e1393451966323-300x266.png&quot; width=&quot;201&quot; /&gt;&lt;/p&gt;
+
+&lt;h2&gt;Eclipse IoT in 4 figures&lt;/h2&gt;
+&lt;p&gt;&lt;img class=&quot;aligncenter wp-image-2793&quot; height=&quot;149&quot; src=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2016/12/iot-numbers.png&quot; width=&quot;401&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;26 different open-source projects&lt;/strong&gt; that are hosted at Eclipse IoT total &lt;strong&gt;2.3M+ lines of code&lt;/strong&gt;. More than &lt;strong&gt;250 developers&lt;/strong&gt; have contributed code to the projects during the past 12 months, and during the same period, our websites have seen &lt;strong&gt;1.3 million of visitors&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;Contributions by company&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2016/12/they-contribute.png&quot;&gt;&lt;img class=&quot;aligncenter wp-image-2794&quot; height=&quot;244&quot; src=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2016/12/they-contribute.png&quot; width=&quot;400&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;It is always interesting to look at &lt;strong&gt;who is contributing to the Eclipse IoT projects&lt;/strong&gt;. The commitment of companies such as Bosch Software Innovation, Eurotech, Red Hat, IBM, Intel, and many others to open source IoT really shows when you look at how much (working!) code they bring to Eclipse IoT.&lt;/p&gt;
+&lt;p&gt;Also interesting is the fact that 4 contributors out of 10 are not affiliated with any company – a great example of how pervasive open source is in IoT, with lots of people using the technology and helping improving it by providing patches, bug fixes, …&lt;/p&gt;
+&lt;h2&gt;8 new projects joined the Eclipse IoT family&lt;/h2&gt;
+&lt;p&gt;I am really excited to see how many new projects we onboarded this year, with a particular &lt;strong&gt;focus on IoT server technology&lt;/strong&gt;, an area where very little had been available in open source until recently.&lt;/p&gt;
+&lt;h3&gt;   ⇢ Eclipse Hono&lt;/h3&gt;
+&lt;p&gt;&lt;img class=&quot;alignright wp-image-2770&quot; height=&quot;91&quot; src=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2016/12/Hono.png&quot; width=&quot;101&quot; /&gt;&lt;strong&gt;&lt;a href=&quot;https://eclipse.org/hono&quot; target=&quot;_blank&quot;&gt;Eclipse Hono&lt;/a&gt;&lt;/strong&gt; provides a uniform API for interacting with devices using arbitrary protocols, as well as an extensible framework to add other protocols.&lt;/p&gt;
+&lt;h3&gt;   ⇢ Eclipse Edje&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href=&quot;https://eclipse.org/edje&quot; target=&quot;_blank&quot;&gt;Eclipse Edje&lt;/a&gt;&lt;a href=&quot;https://eclipse.org/edje&quot; target=&quot;_blank&quot;&gt;&lt;img class=&quot;alignright wp-image-2776&quot; height=&quot;100&quot; src=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2016/12/edje.png&quot; width=&quot;100&quot; /&gt;&lt;/a&gt;&lt;/strong&gt; provides an high-level API for accessing hardware features provided by microcontrollers (e.g GPIO, ADC, MEMS, etc.). It can directly connect to native libraries, drivers, and board support packages provided by silicon vendors.&lt;/p&gt;
+&lt;h3&gt;   ⇢ Eclipse Milo&lt;/h3&gt;
+&lt;p&gt;OPC Unified Architecture (UA) is an interoperability standard that enables the secure and reliable exchange of industrial automation data while remaining cross-platform and vendor neutral. Thanks to &lt;a href=&quot;https://eclipse.org/milo&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;Eclipse Milo&lt;/strong&gt;&lt;/a&gt;, people have access to all the open source tools necessary to implement OPC UA client and/or server functionality in any Java-based project.&lt;/p&gt;
+&lt;h3&gt;   ⇢ Eclipse Whiskers&lt;/h3&gt;
+&lt;p&gt;SensorThings API is an Open Geospatial Consortium (OGC) standard providing an open and unified framework to interconnect IoT sensing devices, data, and applications over the Web. It is an open standard addressing the syntactic interoperability and semantic interoperability of the Internet of Things. The &lt;strong&gt;&lt;a href=&quot;http://www.eclipse.org/whiskers/&quot; target=&quot;_blank&quot;&gt;Eclipse Whiskers project&lt;/a&gt;&lt;/strong&gt; provides a JavaScript client and a light-weight server for IoT gateways.&lt;/p&gt;
+&lt;h3&gt;   ⇢ Eclipse Kapua&lt;/h3&gt;
+&lt;p&gt;&lt;img class=&quot;alignright wp-image-2771&quot; height=&quot;69&quot; src=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2016/12/kapua-150x150.png&quot; width=&quot;101&quot; /&gt;&lt;strong&gt;&lt;a href=&quot;https://eclipse.org/kapua&quot; target=&quot;_blank&quot;&gt;Eclipse Kapua&lt;/a&gt;&lt;/strong&gt; is a modular platform providing the services required to manage IoT gateways and smart edge devices. Kapua provides a core integration framework and an initial set of core IoT services including a device registry, device management services, messaging services, data management, and application enablement.&lt;/p&gt;
+&lt;h3&gt;   ⇢ Eclipse Unide&lt;/h3&gt;
+&lt;p&gt;&lt;img class=&quot;alignright wp-image-2777&quot; height=&quot;33&quot; src=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2016/12/unide.png&quot; width=&quot;141&quot; /&gt;The &lt;strong&gt;&lt;a href=&quot;http://www.eclipse.org/unide/&quot; target=&quot;_blank&quot;&gt;Eclipse Unide&lt;/a&gt; &lt;/strong&gt;project publishes the current version of PPMP, a format that allows to capture data that is required to do performance analysis of production facilities. It allows monitoring backends to collect and evaluate key metrics of machines in the context of a production process. It is doing that by allowing to relate the machine status with currently produced parts.&lt;/p&gt;
+&lt;h3&gt;   ⇢ Eclipse ioFog&lt;/h3&gt;
+&lt;p&gt;The goal of &lt;a href=&quot;https://eclipse.org/iofog&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;Eclipse ioFog&lt;/strong&gt;&lt;/a&gt; is to make developing IoT edge software feel like developing for the cloud, but with even more power.&lt;/p&gt;
+&lt;h3&gt;   ⇢ Eclipse Agail&lt;/h3&gt;
+&lt;p&gt;The &lt;strong&gt;&lt;a href=&quot;https://eclipse.org/agail&quot; target=&quot;_blank&quot;&gt;Eclipse Agail&lt;/a&gt;&lt;/strong&gt; project is a language-agnostic, modular software gateway framework for the Internet of Things with support for protocol interoperability, device and data management, IoT apps execution, and external Cloud communication.&lt;/p&gt;
+&lt;h2&gt;Eclipse Paho &amp;amp; Eclipse Mosquitto are included in many vendors’ SDKs &amp;amp; starter kits&lt;/h2&gt;
+&lt;p&gt;&lt;img alt=&quot;&quot; class=&quot;aligncenter size-full wp-image-2769&quot; height=&quot;183&quot; src=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2016/12/they-use-paho.png&quot; width=&quot;683&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Can you spot a common denominator between these IoT platforms? Not only do they all support MQTT as a protocol to send data from the edge, but they also all provide SDKs that are built on top of &lt;a href=&quot;https://eclipse.org/paho&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;Eclipse Paho&lt;/strong&gt;&lt;/a&gt; and &lt;a href=&quot;https://eclipse.org/mosquitto&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;Eclipse Mosquitto&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;A white-paper on IoT Architectures&lt;/h2&gt;
+&lt;p&gt;This year, the &lt;a href=&quot;https://iot.eclipse.org&quot; target=&quot;_blank&quot;&gt;Eclipse IoT Working Group&lt;/a&gt; members collaborated on a &lt;a href=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2016/10/Eclipse-IoT-White-Paper-The-Three-Software-Stacks-Required-for-IoT-Architectures.pdf&quot;&gt;white paper&lt;/a&gt; that has been very well received, with tens of thousands of views and downloads. It is reflecting on the requirements for implementing IoT architectures, and how to implement the key functionality of constrained and smart devices and IoT backends with open-source software.&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&quot;&quot; class=&quot;aligncenter size-medium wp-image-2695&quot; height=&quot;169&quot; src=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2016/10/IoT-white-paper-card-300x169.png&quot; width=&quot;300&quot; /&gt;&lt;/p&gt;
+&lt;h2&gt;Ramping up in the Industrial IoT Space&lt;/h2&gt;
+&lt;p&gt;&lt;img alt=&quot;&quot; class=&quot;alignright size-medium wp-image-2787&quot; height=&quot;300&quot; src=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2016/12/iiot-279x300.png&quot; width=&quot;279&quot; /&gt;As the different initiatives around “Industry 4.0” are becoming more mature, the ecosystem of open source projects available at Eclipse IoT (&lt;a href=&quot;https://eclipse.org/neoscada&quot;&gt;Eclipse neoSCADA&lt;/a&gt;, &lt;a href=&quot;https://eclipse.org/milo&quot;&gt;Eclipse Milo&lt;/a&gt;, &lt;a href=&quot;https://eclipse.org/4diac&quot;&gt;Eclipse 4dic&lt;/a&gt;, etc…) is getting more and more traction. As an example, the 4diac team has demonstrated how to program a Bosch Rexroth PLC using 100% open source software at the SPS IPC Drives tradeshow this year.&lt;/p&gt;
+&lt;figure class=&quot;wp-caption aligncenter&quot; id=&quot;attachment_2788&quot; style=&quot;width: 680px;&quot;&gt;&lt;img alt=&quot;&quot; class=&quot;size-full wp-image-2788&quot; height=&quot;408&quot; src=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2016/12/SPSIPCDrives.png&quot; width=&quot;680&quot; /&gt;Eclipse 4diac on IndraControl XM22 PLC from Bosch Rexroth and visualized using Eclipse Paho’s mqtt-spy&lt;/figure&gt;
+&lt;h2&gt;Virtual IoT now has 1,500+ members&lt;/h2&gt;
+&lt;p&gt;The &lt;a href=&quot;http://www.meetup.com/Virtual-IoT&quot; target=&quot;_blank&quot;&gt;Virtual IoT meetup group&lt;/a&gt; has hosted dozens of webinars this year again. I highly encourage anyone to check out the &lt;a href=&quot;https://www.youtube.com/playlist?list=PLy7t4z5SYNaQS1XZ8uiqqn0nNLi4qU-VW&quot; target=&quot;_blank&quot;&gt;recordings of our previous sessions&lt;/a&gt; – there is a lot of educational material there, delivered by world class IoT experts.&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;h2&gt;Trends for 2017&lt;/h2&gt;
+&lt;p&gt;&lt;img alt=&quot;&quot; class=&quot;size-full wp-image-2783 aligncenter&quot; height=&quot;138&quot; src=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2016/12/next-year.png&quot; width=&quot;600&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Next year I’m hoping to see a lot more happening in the aforementioned areas. More projects, of course, but also more integration of the current ones towards integrated stacks targeting specific verticals and industries. My colleague Ian also &lt;a href=&quot;https://ianskerrett.wordpress.com/2016/12/19/iot-trends-to-watch-in-2017/&quot; target=&quot;_blank&quot;&gt;recently blogged on this topic&lt;/a&gt;.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;One short last word: don’t forget to follow us on &lt;a href=&quot;https://twitter.com/EclipseIoT&quot; target=&quot;_blank&quot;&gt;Twitter&lt;/a&gt; and &lt;a href=&quot;https://www.facebook.com/eclipseiot/&quot; target=&quot;_blank&quot;&gt;Facebook&lt;/a&gt; to learn more about what is happening within our community.&lt;/p&gt;
+&lt;p&gt;&lt;a class=&quot;twitter-timeline&quot; href=&quot;https://twitter.com/EclipseIoT&quot;&gt;Tweets by EclipseIoT&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Happy holiday season everyone!&lt;/p&gt;
+ &lt;img alt=&quot;&quot; height=&quot;1&quot; src=&quot;http://feeds.feedburner.com/~r/benjamin-cabe-planet-eclipse/~4/Ikvv4tHx_Is&quot; width=&quot;1&quot; /&gt;</description>
+	<pubDate>Thu, 22 Dec 2016 13:44:19 +0000</pubDate>
+</item>
+<item>
+	<title>VIATRA: VIATRA 1.5 released</title>
+	<guid isPermaLink="false">5614faafe4b03f677dc3822b:56153118e4b022593e35e24b:585babffb8a79bc51010beb2</guid>
+	<link>https://viatra.net/news/2016/12/viatra-15-released</link>
+	<description>&lt;p&gt;The &lt;a href=&quot;http://eclipse.org/viatra&quot; target=&quot;_blank&quot;&gt;VIATRA project&lt;/a&gt; is happy to report that release 1.5.0 is now available with multiple new features and fixed bugs.&lt;/p&gt;&lt;p&gt;The most notable highlights of this VIATRA release include:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href=&quot;https://wiki.eclipse.org/VIATRA/Releases/NewAndNoteworthy1.5#Remote_debugging_support_added_to_the_VIATRA_model_transformation_debugger&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;Model transformation debugger&lt;/strong&gt;&lt;/a&gt;: This version greatly improved the model transformation debugger of VIATRA: now it is possible to debug transformations from other JVM instances.&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;https://wiki.eclipse.org/VIATRA/Releases/NewAndNoteworthy1.5#Performance_improvements&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;Performance enhancements&lt;/strong&gt;&lt;/a&gt;: Version 1.5 focused on query evaluation performance: various fixes aimed at reducing the memory requirements for Rete networks and improve the planning and execution time for the local search-based pattern matcher. In a complex proprietrary code base we measured a memory reduction of about 15-30%.&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;https://wiki.eclipse.org/VIATRA/Releases/NewAndNoteworthy1.5#Support_for_more_number_literals_in_query_language&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;Query Language Updates&lt;/strong&gt;&lt;/a&gt;: In version 1.5 the query language was extended with support for various number literals, e.g. long or float values.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;For a more complete list of changes, see the dedicated &lt;a href=&quot;https://wiki.eclipse.org/VIATRA/Releases/NewAndNoteworthy1.5&quot; target=&quot;_blank&quot;&gt;New and noteworthy&lt;/a&gt; page, or have a look at the list of &lt;a href=&quot;https://projects.eclipse.org/projects/modeling.viatra/releases/1.5.0/bugs&quot; target=&quot;_blank&quot;&gt;fixed issues&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;All downloads are available now from the &lt;a href=&quot;https://www.eclipse.org/viatra/downloads.php&quot; target=&quot;_blank&quot;&gt;downloads area&lt;/a&gt; or the &lt;a href=&quot;http://marketplace.eclipse.org/content/viatra&quot; target=&quot;_blank&quot;&gt;marketplace&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Feel free to reach out on the Eclipse Forums of VIATRA or the developer mailing list if you have questions, we will not leave any unanswered. You can also request &lt;a href=&quot;http://incquerylabs.com/&quot; target=&quot;_blank&quot;&gt;industrial support&lt;/a&gt; for more advanced issues.&lt;/p&gt;</description>
+	<pubDate>Thu, 22 Dec 2016 10:49:41 +0000</pubDate>
+</item>
+<item>
+	<title>itemis: How to work with pointers in YAKINDU Statechart Tools</title>
+	<guid isPermaLink="true">https://blogs.itemis.com/en/how-to-work-with-pointers-in-yakindu-statechart-tools</guid>
+	<link>https://blogs.itemis.com/en/how-to-work-with-pointers-in-yakindu-statechart-tools</link>
+	<description>&lt;p&gt;&lt;span&gt;In my last article I covered &lt;a href=&quot;https://hosting.itemis.de/en/working-with-arrays-in-yakindu-statechart-tools-professional-edition&quot;&gt;how you can use arrays with our new version of Yakindu Statechart Tools Professional Edition&lt;/a&gt;. In this article the project will be expanded and some pointer magic will be included to add a control system that manages a robot's motors depending on the state of the sensor.&lt;/span&gt; &lt;/p&gt;  
+&lt;h2&gt;What the setup looks like&lt;/h2&gt; 
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Usually DC motors are controlled with an H-bridge circuit. In this setup, the motor has two variables – the running state and the current speed. The motor can be in brake, idle, forward- or reverse-running mode and the speed is normally controlled via PWM with an 8-bit number ranging from 0 to 255.&lt;/span&gt;&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;To describe this, two types are defined – an enum and a struct:&lt;/span&gt;typedef enum motormode {&lt;br /&gt; STOP,&lt;br /&gt; IDLE,&lt;br /&gt; FWD,&lt;br /&gt; RWD&lt;br /&gt;} motormode_t;&lt;br /&gt;&lt;br /&gt;typedef struct motor {&lt;br /&gt; motormode_t mode;&lt;br /&gt; uint8_t speed;&lt;br /&gt;} motor_t;&lt;/pre&gt; 
+&lt;h2&gt;&lt;br /&gt;The project's statechart&lt;/h2&gt; 
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;span&gt;&lt;img alt=&quot;YAKINDU Statechart Tools-Pointers.png&quot; height=&quot;221&quot; src=&quot;https://blogs.itemis.com/hs-fs/hubfs/Blog/YAKINDU%20Statechart%20Tools/YAKINDU%20Statechart%20Tools-Pointers.png?t=1482408549659&amp;amp;width=220&amp;amp;height=221&amp;amp;name=YAKINDU%20Statechart%20Tools-Pointers.png&quot; style=&quot;margin: 0px 0px 10px 10px; float: right;&quot; width=&quot;220&quot; /&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt; 
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;span&gt;&lt;span&gt;Consider the following statechart declaration:&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt; 
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;span&gt;You can see that the variables motL and motR are defined as pointers to motor_t variables and that dist_p is a pointer to an unsigned int of 8 bit width. In this way they can be passed in simply after we allocated the statechart with the setter-functions and accessed from the statechart.&lt;/span&gt;&lt;/span&gt;&lt;/p&gt; 
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; &lt;/span&gt;&lt;/p&gt; 
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;img alt=&quot;YAKINDU Statechart Tool-Pointers-state machine.png&quot; height=&quot;488&quot; src=&quot;https://blogs.itemis.com/hs-fs/hubfs/Blog/YAKINDU%20Statechart%20Tools/YAKINDU%20Statechart%20Tool-Pointers-state%20machine.png?t=1482408549659&amp;amp;width=724&amp;amp;height=488&amp;amp;name=YAKINDU%20Statechart%20Tool-Pointers-state%20machine.png&quot; width=&quot;724&quot; /&gt;&lt;/span&gt;&lt;/p&gt; 
+&lt;p&gt; &lt;/p&gt; 
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Take a look at the statechart. On entry the statechart goes into the state &lt;strong&gt;p_test&lt;/strong&gt;, short for pointer test. On the next cycle, the correct setting of the used pointers is checked. The user is intended to initialize them properly before entering the statechart from within his code. If the pointers are not set, this is considered a programming error, and thus the final state &lt;strong&gt;pointer_error&lt;/strong&gt; is reached.&lt;/span&gt;&lt;/p&gt; 
+&lt;p&gt;If that test is successful, the normal operation is entered: this means the state &lt;strong&gt;stop&lt;/strong&gt; is activated. Instead of directly starting the motors, the robot waits for the &lt;em&gt;go&lt;/em&gt; event – what absolutly makes sense: More than one robot has accidentally found the edge of the desk after a reset, which is probably not what you want it to do. This way, you can put the robot on a safe driving surface, before e.g. you push a button to activate the &lt;strong&gt;drive&lt;/strong&gt; state.&lt;/p&gt; 
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;In this state &lt;strong&gt;drive&lt;/strong&gt; there are two possibilities – either there is no obstacle in front and the robot will drive straight or an obstacle is encountered and the robot will start to turn left until the measured distance value is high enough again. That’s a very simple design. More complex approaches could randomize the direction of turning or the duration, depending on the intended mode of operation.&lt;/span&gt;&lt;/p&gt; 
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Note how the three pointer-variables are accessed. The sensor measurement is read out with &lt;em&gt;sensor.dist_p.value - value&lt;/em&gt; is a &lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;feature call&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; on the pointer variable, returning its underlying real value (which could very well be another pointer). The same syntax allows to write through the motL and motR pointers to the real structs in the four states that alter the motor speed and mode. If there’s a variable and you need a suitable pointer you can use the feature call &lt;/span&gt;&lt;i&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;pointer&lt;/span&gt;&lt;/i&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; similarly. &lt;/span&gt;&lt;/p&gt; 
+&lt;p&gt;The state &lt;strong&gt;sensor_error&lt;/strong&gt; is entered when the in event &lt;em&gt;sensorfault&lt;/em&gt; is raised. This is meant to be done by another component, which manages the sensors and monitors their behavior. Remember the last article: the sensor raised an error whenever its measured values’ standard deviation was too high, indicating a weird measurement. The managing unit could react on that event and raise the sensorfault event when the sensor raises its error event three times in a row, which would stop the robot before it crashes in a wall because it has suddenly become blind.&lt;/p&gt; 
+&lt;h2&gt;Why should you use pointers?&lt;/h2&gt; 
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Now you know the projekt let's give you a little background knowledge why you should use pointers: the aim is to have a normal C function that regularly writes the desired motor settings to the hardware. When the motor_t variables are defined in the main-function, it can pass them in that hardware function and pass pointers to them to the statechart. That way, the statechart manages what it wants to do with the motors. The underlying function handles how it’s done and doesn’t need to know where the values come from.&lt;/span&gt;&lt;/p&gt; 
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;A much simpler approach would be to access the statechart’s variables in the hardware function via its handle from the motor function, but this would come with the cost of a much tighter coupling between the system’s components. With the design used here, the motL and motR variables in the statechart can be renamed without the need to adapt the outer system, except for the two setter functions. You could even define your own operation that sets these pointers because operations in a statechart can return pointers and use them just like any other type.&lt;/span&gt;&lt;/p&gt; 
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Also, the measured distance value from the last article is meant to be passed in as a pointer, so the statechart doesn’t need to call any function to get access to it and doesn’t need to know its source either. The outer system manages the sensor and its operation, possibly raising the &lt;em&gt;sensorfault&lt;/em&gt;-event mentioned earlier.&lt;/span&gt;&lt;/p&gt; 
+&lt;h2&gt;Summary&lt;/h2&gt; 
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Let’s summarize what you learned in this article about pointers:&lt;/span&gt;&lt;/p&gt; 
+&lt;ul&gt; 
+ &lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;You can use and define pointers to any other usable type directly within the statechart, including arrays and other pointers. Arrays of pointers are possible as well.&lt;/span&gt;&lt;/li&gt; 
+ &lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;You can test pointers for null like you’re used to.&lt;/span&gt;&lt;/li&gt; 
+ &lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;You can pass pointers as function arguments and get them as a return value.&lt;/span&gt;&lt;/li&gt; 
+ &lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Pointers are dereferenced with value, and new pointers are created with pointer.&lt;/span&gt;&lt;/li&gt; 
+ &lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Pointers allow you to decouple your systems and save some function calls.&lt;/span&gt;&lt;/li&gt; 
+&lt;/ul&gt; 
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Want to try YAKINDU Statechart Tools? Start now! You can find this example in our &lt;a href=&quot;https://www.itemis.com/en/yakindu/statechart-tools/documentation/examples/&quot;&gt;example wizard&lt;/a&gt;!&lt;br /&gt;&lt;/span&gt;&lt;/p&gt; 
+&lt;p&gt;&lt;a class=&quot;cta_button&quot; href=&quot;https://info.itemis.com/cs/ci/?pg=740ac066-d122-40cc-8df5-292f11e34073&amp;amp;pid=761475&amp;amp;ecid=&quot;&gt; &lt;img align=&quot;middle&quot; alt=&quot;Try the YAKINDU Statechart Tools  Professional Edition&quot; class=&quot;hs-cta-img &quot; src=&quot;https://no-cache.hubspot.com/cta/default/761475/740ac066-d122-40cc-8df5-292f11e34073.png&quot; /&gt; &lt;/a&gt;&lt;/p&gt;  
+&lt;img alt=&quot;&quot; height=&quot;1&quot; src=&quot;http://track.hubspot.com/__ptq.gif?a=761475&amp;amp;k=14&amp;amp;r=https%3A%2F%2Fblogs.itemis.com%2Fen%2Fhow-to-work-with-pointers-in-yakindu-statechart-tools&amp;amp;bu=https%253A%252F%252Fblogs.itemis.com&amp;amp;bvt=rss&quot; style=&quot;width: 1px!important;&quot; width=&quot;1&quot; /&gt;</description>
+	<pubDate>Thu, 22 Dec 2016 07:56:00 +0000</pubDate>
+	<author>rene.beckmann@itemis.de (René Beckmann)</author>
+</item>
+<item>
+	<title>Orion: Announcing Orion 13</title>
+	<guid isPermaLink="false">http://planetorion.org/news/?p=864</guid>
+	<link>http://planetorion.org/news/2016/12/announcing-orion-13/</link>
+	<description>&lt;p&gt;We are pleased to announce the thirteenth release of Orion, “Your IDE in the Cloud”. You can run it now on &lt;a href=&quot;https://orionhub.org&quot;&gt;OrionHub&lt;/a&gt; or &lt;a href=&quot;http://download.eclipse.org/orion/drops/R-13.0-201612211429/index.html&quot;&gt;download the server&lt;/a&gt; to run your own instance. Once again, thank you to all committers and contributors for your hard work this release.  There were over 180 &lt;a href=&quot;https://bugs.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&amp;amp;bug_status=VERIFIED&amp;amp;bug_status=CLOSED&amp;amp;classification=ECD&amp;amp;list_id=15559096&amp;amp;product=Orion&amp;amp;query_format=advanced&amp;amp;resolution=FIXED&amp;amp;target_milestone=13.0&quot;&gt;bugs and enhancements&lt;/a&gt; fixed, across more than 350 commits from 13 authors!&lt;/p&gt;
+&lt;p&gt;What’s new in Orion 13?  The Orion 13 release continues to emphasize our language tooling.  In particular, we now have code formatting, support for .jsbeautifyrc files and full &lt;a href=&quot;http://www.ecma-international.org/ecma-262/7.0/&quot;&gt;ECMA 2016&lt;/a&gt; support.  We have also been investigating &lt;a href=&quot;https://github.com/Microsoft/language-server-protocol&quot;&gt;LSP&lt;/a&gt; and have some experimental work in place to support Java, but this is not yet generally available.&lt;/p&gt;
+&lt;p&gt;The other focus of this release is consumability and accessibility. To make Orion easier to use for end users, admins and everyone in between, we substantially improved the node.js server (which is used on &lt;a href=&quot;http://orion.eclipse.org&quot;&gt;orion.eclipse.org&lt;/a&gt; or &lt;a href=&quot;https://wiki.eclipse.org/Orion/Node/Getting_started&quot;&gt;locally&lt;/a&gt;), created an experimental Electron app version of Orion, improved accessibility, enabled custom code folding in the code edit widget and a whole lot more!&lt;/p&gt;
+&lt;p&gt;Enjoy!&lt;/p&gt;</description>
+	<pubDate>Wed, 21 Dec 2016 22:14:38 +0000</pubDate>
+</item>
+<item>
+	<title>Jeremie Bresson: Oxygen M4: convert to AsciiDoc with Mylyn WikiText</title>
+	<guid isPermaLink="true">http://jmini.github.io/blog/2016/2016-12-21_convert_to_asciidoc.html</guid>
+	<link>http://jmini.github.io/blog/2016/2016-12-21_convert_to_asciidoc.html</link>
+	<description>&lt;div class=&quot;paragraph&quot;&gt; 
+ &lt;p&gt;If you need to convert your documentation to the AsciiDoc format, you might be interested in this new feature delivered with Eclipse Oxygen M4 (see also my previous blog post: &lt;a href=&quot;http://jmini.github.io/2016-10-28_from_mediawiki_to_asciidoc.html&quot;&gt;Asciidoctor instead of MediaWiki?&lt;/a&gt;). Any file format supported by Mylyn WikiText (textile, mediawiki, markdown and more) can now be converted to the AsciiDoc format. Just select &lt;span class=&quot;menuseq&quot;&gt;&lt;span class=&quot;menu&quot;&gt;WikiText&lt;/span&gt; ▸ &lt;span class=&quot;menuitem&quot;&gt;Generate AsciiDoc&lt;/span&gt;&lt;/span&gt; from the context menu in the package explorer.&lt;/p&gt; 
+&lt;/div&gt; 
+&lt;div class=&quot;imageblock&quot;&gt; 
+ &lt;div class=&quot;content&quot;&gt; 
+  &lt;img alt=&quot;Convert to AsciiDoc in Eclipse IDE&quot; src=&quot;http://jmini.github.io/blog/2016/2016-12-21_textile_example.png&quot; /&gt; 
+ &lt;/div&gt; 
+&lt;/div&gt; 
+&lt;div class=&quot;paragraph&quot;&gt; 
+ &lt;p&gt;A new file is generated near to the original file (&lt;code&gt;example.asciidoc&lt;/code&gt; in this example). Of course you can preview it with your favorite asciidoctor viewer (Chrome with the &lt;a href=&quot;https://chrome.google.com/webstore/detail/asciidoctorjs-live-previe/iaalpfgpbocpdfblpnhhgllgbdbchmia?hl=en&quot;&gt;Asciidoctor.js Live Preview&lt;/a&gt; extension in my case).&lt;/p&gt; 
+&lt;/div&gt; 
+&lt;div class=&quot;imageblock&quot;&gt; 
+ &lt;div class=&quot;content&quot;&gt; 
+  &lt;img alt=&quot;AsciiDoc file preview in Chrome&quot; src=&quot;http://jmini.github.io/blog/2016/2016-12-21_preview.png&quot; /&gt; 
+ &lt;/div&gt; 
+&lt;/div&gt; 
+&lt;div class=&quot;paragraph&quot;&gt; 
+ &lt;p&gt;While I was trying to convert some pages of &lt;a href=&quot;http://wiki.eclipse.org/&quot;&gt;Eclipsepedia&lt;/a&gt; to Asciidoctor, I have noticed that some additional concepts need to be supported by the converter. I have opened &lt;a href=&quot;https://bugs.eclipse.org/bugs/show_bug.cgi?id=508262&quot;&gt;Bug 508262&lt;/a&gt; to track them. Feel free to leave feedback there if something is not working for you.&lt;/p&gt; 
+&lt;/div&gt; 
+&lt;div class=&quot;paragraph&quot;&gt; 
+ &lt;p&gt;You can get the Oxygen M4 version of Eclipse IDE from the &lt;a href=&quot;http://www.eclipse.org/downloads/index-developer.php&quot;&gt;Developer Builds download page&lt;/a&gt;.&lt;/p&gt; 
+&lt;/div&gt;</description>
+	<pubDate>Tue, 20 Dec 2016 23:00:00 +0000</pubDate>
+</item>
+<item>
+	<title>PapyrusUML: SE Trends looks at Papyrus-IM!</title>
+	<guid isPermaLink="false">http://papyrusuml.wordpress.com/?p=353</guid>
+	<link>https://papyrusuml.wordpress.com/2016/12/20/se-trends-looks-at-papyrus-im/</link>
+	<description>&lt;p&gt;Earlier this month, &lt;a href=&quot;http://se-trends.de/eclipse-papyrus-im/&quot; target=&quot;_blank&quot;&gt;The Systems Engineering Trends&lt;/a&gt; blog featured an article from my friend Michael Jastram about one of my variants: Papyrus for Information Modeling (or Papyrus-IM for short). You might remember Michael from earlier this year (see &lt;a href=&quot;https://papyrusuml.wordpress.com/2016/05/11/constructive-criticism/&quot;&gt;here&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;For those who do not know, Papyrus-IM is:&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;A Papyrus-based modeling product that is customized and streamlined for users interested in modeling the static structure of information with UML class diagrams.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;In short, a customised version of Me for a specific purpose, with associated simplification.&lt;/p&gt;
+&lt;p&gt;From my reading of the article (and my German is not that great…) it seems I am making progress! But don’t take my word for it: go read the &lt;a href=&quot;http://se-trends.de/eclipse-papyrus-im/&quot; target=&quot;_blank&quot;&gt;article&lt;/a&gt; (in German, and Google Translate’s &lt;a href=&quot;https://translate.google.com/translate?hl=en&amp;amp;sl=de&amp;amp;tl=en&amp;amp;u=http%3A%2F%2Fse-trends.de%2Feclipse-papyrus-im%2F&quot; target=&quot;_blank&quot;&gt;English version&lt;/a&gt;), I’ll wait for you back here…&lt;/p&gt;
+&lt;p&gt;Good! You’re back! Did you enjoy the video? I though it was clear and simple, just like Papyrus-IM!&lt;/p&gt;
+&lt;p&gt;So what do you think? Am I getting better? I know I feel better!&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://eclipse.org/papyrus-rt/&quot;&gt;Papyrus for Real Time&lt;/a&gt; is another example of a &lt;span title=&quot;Domain-Specific Modeling Language&quot;&gt;DSML&lt;/span&gt; being implemented using Me. The same approach used for the creation of Papyrus-IM is used for Papyrus-RT for menu reduction and viewpoints, but to a much larger extent as the UML-RT modeling language is much richer than just class diagrams. As stated in a &lt;a href=&quot;https://papyrusuml.wordpress.com/2016/11/16/papyrus-rt-v-0-8-0/&quot; target=&quot;_blank&quot;&gt;previous blog entry&lt;/a&gt;, Papyrus-RT is also available for download, but if you do not know UML-RT, better ask for help from my minions!&lt;/p&gt;
+&lt;p&gt;Thank you, Michael! I look forward to further articles about Me!&lt;/p&gt;
+&lt;p&gt;&lt;span id=&quot;more-353&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Want to know more about Papyrus for Information Modeling? Check our the following links:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://wiki.eclipse.org/Papyrus_for_Information_Modeling&quot; target=&quot;_blank&quot;&gt;Information&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://wiki.eclipse.org/Papyrus_for_Information_Modeling/Customization_Guide&quot; target=&quot;_blank&quot;&gt;Customization Guide&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://wiki.eclipse.org/Papyrus_for_Information_Modeling#Releases&quot; target=&quot;_blank&quot;&gt;Download&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt; &lt;/p&gt;&lt;br /&gt;Filed under: &lt;a href=&quot;https://papyrusuml.wordpress.com/category/uml/&quot;&gt;UML&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/category/uncategorized/&quot;&gt;Uncategorized&lt;/a&gt; Tagged: &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/article/&quot;&gt;article&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/papyrus-im/&quot;&gt;Papyrus-IM&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/papyrus-rt-2/&quot;&gt;papyrus-rt&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/review/&quot;&gt;review&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/se-trends/&quot;&gt;SE-Trends&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/gocomments/papyrusuml.wordpress.com/353/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/comments/papyrusuml.wordpress.com/353/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/godelicious/papyrusuml.wordpress.com/353/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/delicious/papyrusuml.wordpress.com/353/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/gofacebook/papyrusuml.wordpress.com/353/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/facebook/papyrusuml.wordpress.com/353/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/gotwitter/papyrusuml.wordpress.com/353/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/twitter/papyrusuml.wordpress.com/353/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/gostumble/papyrusuml.wordpress.com/353/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/stumble/papyrusuml.wordpress.com/353/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/godigg/papyrusuml.wordpress.com/353/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/digg/papyrusuml.wordpress.com/353/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/goreddit/papyrusuml.wordpress.com/353/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/reddit/papyrusuml.wordpress.com/353/&quot; /&gt;&lt;/a&gt; &lt;img alt=&quot;&quot; border=&quot;0&quot; height=&quot;1&quot; src=&quot;https://pixel.wp.com/b.gif?host=papyrusuml.wordpress.com&amp;amp;blog=72365150&amp;amp;post=353&amp;amp;subd=papyrusuml&amp;amp;ref=&amp;amp;feed=1&quot; width=&quot;1&quot; /&gt;</description>
+	<pubDate>Tue, 20 Dec 2016 13:50:44 +0000</pubDate>
+</item>
+<item>
+	<title>Eclipse Announcements: Eclipse Newsletter | Ready, Set… 2017!</title>
+	<guid isPermaLink="true">http://feedproxy.google.com/~r/eclipse/fnews/~3/X3cTPvpmEvc/</guid>
+	<link>http://feedproxy.google.com/~r/eclipse/fnews/~3/X3cTPvpmEvc/</link>
+	<description>2017. It's already here. Here are six great articles about some of the things you can expect to see in the new year!&lt;img alt=&quot;&quot; height=&quot;1&quot; src=&quot;http://feeds.feedburner.com/~r/eclipse/fnews/~4/X3cTPvpmEvc&quot; width=&quot;1&quot; /&gt;</description>
+	<pubDate>Tue, 20 Dec 2016 10:50:00 +0000</pubDate>
+</item>
+<item>
+	<title>typefox.io: Getting Closer to Xtext 2.11: Beta 2</title>
+	<guid isPermaLink="false">http://typefox.io/?p=13979</guid>
+	<link>http://typefox.io/getting-closer-to-xtext-2-11-beta-2</link>
+	<description>&lt;div class=&quot;fusion-fullwidth fullwidth-box nonhundred-percent-fullwidth&quot; style=&quot;background-color: rgba(255,255,255,0); background-position: center center; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px;&quot;&gt;&lt;div class=&quot;fusion-builder-row fusion-row &quot;&gt;&lt;div class=&quot;fusion-layout-column fusion_builder_column fusion_builder_column_1_1  fusion-one-full fusion-column-first fusion-column-last 1_1&quot; style=&quot;margin-top: 0px; margin-bottom: 0px;&quot;&gt;
+			&lt;div class=&quot;fusion-column-wrapper&quot;&gt;
+				&lt;p&gt;A second milestone towards Xtext 2.11 named &lt;em&gt;Beta 2&lt;/em&gt; has been published today! The feature set is largely at the same state as with the &lt;a href=&quot;http://typefox.io/xtext-2-11-beta-1-is-here&quot;&gt;Beta 1&lt;/a&gt; published on October 21st. The main difference is that we spent a lot of effort in the build system for the &lt;a href=&quot;http://typefox.io/xtext-core-less-is-more&quot;&gt;new repository structure&lt;/a&gt;, allowing us to publish both for Eclipse and for Maven in a clean and consistent way. This means that you can use this new milestone also with Gradle or Maven projects, e.g. in applications built on the &lt;a href=&quot;https://www.eclipse.org/Xtext/documentation/330_web_support.html&quot;&gt;Xtext web integration&lt;/a&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Eclipse update site: &lt;a href=&quot;http://download.eclipse.org/modeling/tmf/xtext/updates/milestones/head/S201612190948/&quot;&gt;http://download.eclipse.org/modeling/tmf/xtext/updates/milestones/head/S201612190948/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Maven version: &lt;code&gt;2.11.0.beta2&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We would like to encourage all Xtext users to check this milestone version with their applications and to give us feedback. Now there’s still time to improve things before 2.11.0 is released (January 24th).&lt;/p&gt;
+&lt;h3&gt;Using the Cutting Edge&lt;/h3&gt;
+&lt;p&gt;As usual you can find nightly built snapshots on the &lt;a href=&quot;http://download.eclipse.org/modeling/tmf/xtext/updates/composite/latest/&quot;&gt;Xtext Latest&lt;/a&gt; update site or on &lt;a href=&quot;https://oss.sonatype.org/content/repositories/snapshots&quot;&gt;Sonatype Snapshots&lt;/a&gt;. However, if you want to apply even more up-to-date versions to your application, all subprojects of Xtext now offer their build artifacts in local repositories on our build server:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;xtext-lib: &lt;a href=&quot;http://services.typefox.io/open-source/jenkins/job/xtext-lib/job/master/lastStableBuild/artifact/build/maven-repository/&quot;&gt;Maven&lt;/a&gt;, &lt;a href=&quot;http://services.typefox.io/open-source/jenkins/job/xtext-lib/job/master/lastStableBuild/artifact/build/p2-repository/&quot;&gt;Eclipse&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;xtext-core: &lt;a href=&quot;http://services.typefox.io/open-source/jenkins/job/xtext-core/job/master/lastStableBuild/artifact/build/maven-repository/&quot;&gt;Maven&lt;/a&gt;, &lt;a href=&quot;http://services.typefox.io/open-source/jenkins/job/xtext-core/job/master/lastStableBuild/artifact/build/p2-repository/&quot;&gt;Eclipse&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;xtext-extras: &lt;a href=&quot;http://services.typefox.io/open-source/jenkins/job/xtext-extras/job/master/lastStableBuild/artifact/build/maven-repository/&quot;&gt;Maven&lt;/a&gt;, &lt;a href=&quot;http://services.typefox.io/open-source/jenkins/job/xtext-extras/job/master/lastStableBuild/artifact/build/p2-repository/&quot;&gt;Eclipse&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;xtext-eclipse: &lt;a href=&quot;http://services.typefox.io/open-source/jenkins/job/xtext-eclipse/job/master/lastStableBuild/artifact/build/p2-repository/&quot;&gt;Eclipse&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;xtext-web: &lt;a href=&quot;http://services.typefox.io/open-source/jenkins/job/xtext-web/job/master/lastStableBuild/artifact/build/maven-repository/&quot;&gt;Maven&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;xtext-maven: &lt;a href=&quot;http://services.typefox.io/open-source/jenkins/job/xtext-maven/job/master/lastStableBuild/artifact/build/maven-repository/&quot;&gt;Maven&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;xtext-xtend: &lt;a href=&quot;http://services.typefox.io/open-source/jenkins/job/xtext-xtend/job/master/lastStableBuild/artifact/build/maven-repository/&quot;&gt;Maven&lt;/a&gt;, &lt;a href=&quot;http://services.typefox.io/open-source/jenkins/job/xtext-xtend/job/master/lastStableBuild/artifact/build/p2-repository/&quot;&gt;Eclipse&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These builds are triggered automatically when changes are pushed to the corresponding GitHub repositories. Please note that while the nightly built snapshots have signed JARs, the cutting edge builds are not signed.&lt;/p&gt;
+&lt;div class=&quot;fusion-clearfix&quot;&gt;&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+	<pubDate>Tue, 20 Dec 2016 08:04:48 +0000</pubDate>
+</item>
+<item>
+	<title>Eclipse Announcements: Eclipse Converge | Program Announced</title>
+	<guid isPermaLink="true">http://feedproxy.google.com/~r/eclipse/fnews/~3/EJ0CCKaOk-4/program-ready</guid>
+	<link>http://feedproxy.google.com/~r/eclipse/fnews/~3/EJ0CCKaOk-4/program-ready</link>
+	<description>Program Announced for Eclipse Converge 2017! Early-bird registration is open. Get $120 off the conference pass.&lt;img alt=&quot;&quot; height=&quot;1&quot; src=&quot;http://feeds.feedburner.com/~r/eclipse/fnews/~4/EJ0CCKaOk-4&quot; width=&quot;1&quot; /&gt;</description>
+	<pubDate>Tue, 20 Dec 2016 07:30:00 +0000</pubDate>
+</item>
+
+</channel>
+</rss>

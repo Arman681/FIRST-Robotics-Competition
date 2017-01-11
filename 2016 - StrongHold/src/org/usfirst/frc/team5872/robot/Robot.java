@@ -591,9 +591,6 @@ public class Robot extends SampleRobot {
     	} // End while
     	
     	
-    	
-    	
-    
     }
     
     /**
