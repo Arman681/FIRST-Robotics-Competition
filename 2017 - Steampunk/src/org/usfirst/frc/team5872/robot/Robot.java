@@ -2,6 +2,10 @@
 package org.usfirst.frc.team5872.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.TalonSRX;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -24,6 +28,16 @@ public class Robot extends IterativeRobot {
 
     Command autonomousCommand;
     SendableChooser chooser;
+    
+    TalonSRX fl;
+    TalonSRX fr;
+    TalonSRX bl;
+    TalonSRX br;
+    
+    //Defines the variables as members of our Robot class
+    RobotDrive myRobot;
+    Joystick stick;
+    Timer timer;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -35,6 +49,17 @@ public class Robot extends IterativeRobot {
         chooser.addDefault("Default Auto", new ExampleCommand());
 //        chooser.addObject("My Auto", new MyAutoCommand());
         SmartDashboard.putData("Auto mode", chooser);
+        
+        fl = new TalonSRX(0);
+        fr = new TalonSRX(1);
+        bl = new TalonSRX(2);
+        br = new TalonSRX(3);
+        
+        myRobot = new RobotDrive(0,1);
+        stick = new Joystick(1);
+        timer = new Timer();
+        
+        
     }
 	
 	/**
@@ -74,14 +99,25 @@ public class Robot extends IterativeRobot {
 		} */
     	
     	// schedule the autonomous command (example)
-        if (autonomousCommand != null) autonomousCommand.start();
+        if (autonomousCommand != null) 
+        	autonomousCommand.start();
+        
+        timer.reset(); // Resets the timer to 0
+        timer.start(); // Start counting
     }
 
     /**
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic() {
+    	
         Scheduler.getInstance().run();
+        
+     // Drive for 2 seconds
+        if (timer.get() < 2.0)
+             myRobot.drive(-0.5,  0); // drive forwards half speed
+        else 
+             myRobot.drive(0.0, 0.0); // stop robot
     }
 
     public void teleopInit() {
@@ -97,6 +133,31 @@ public class Robot extends IterativeRobot {
      */
     public void teleopPeriodic() {
         Scheduler.getInstance().run();
+        myRobot.arcadeDrive(stick); //This line drives the robot using the values of the joystick and the motor controllers selected above
+        
+        double l = stick.getRawAxis(1);
+    	double r = stick.getRawAxis(5);
+    	double tl = stick.getRawAxis(2);
+    	double tr = stick.getRawAxis(3);
+    	
+    	//Left analog stick
+    	if (l > 0.05 || l < -0.05) {
+    		fl.set(l);
+    		bl.set(l);
+    	}
+    	else {
+    		fl.set(0);
+    		bl.set(0);
+    	}
+    	//Right analog stick
+    	if (r > 0.05 || r < -0.05) {
+    		fr.set(r);
+    		br.set(r);
+    	}
+    	else {
+    		fl.set(0);
+    		bl.set(0);
+    	}
     }
     
     /**

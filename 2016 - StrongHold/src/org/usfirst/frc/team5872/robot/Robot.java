@@ -43,7 +43,6 @@ public class Robot extends SampleRobot {
 	Spark intake;
 	Spark winch;
 	
-	
 	DoubleSolenoid dogear;
 	DoubleSolenoid shooterextend;
 	DoubleSolenoid manipulator;
@@ -61,8 +60,6 @@ public class Robot extends SampleRobot {
 	Value forward = DoubleSolenoid.Value.kForward;
 	Value reverse = DoubleSolenoid.Value.kReverse;
 	
-	
-
 	int gboxCnt = 0; //starts in high gear
 	int shooterCnt = 0; //starts in lowered position
 	int maniCnt = 0;//starts in raised position
@@ -110,9 +107,7 @@ public class Robot extends SampleRobot {
     	dogear.set(reverse);//starts low gear
     	manipulator.set(off);
     	hook_rotate.set(reverse);
-    	hook_shoot.set(reverse);
-    	
-    	
+    	hook_shoot.set(reverse);    	
 
     	c = new Compressor(0);
     	c2 = new Compressor(1);
@@ -129,10 +124,7 @@ public class Robot extends SampleRobot {
         server.setQuality(50);
         server.startAutomaticCapture("cam0");
         
-        //Counter counter = new Counter(limitSwitch);
-     
-    	
-    	
+        //Counter counter = new Counter(limitSwitch);    	
     	
     }
     
@@ -167,7 +159,6 @@ public class Robot extends SampleRobot {
 		manipulator.set(reverse);
 		delay(3000);
 		
-    	
     	//shoot ball
     	
     	/*shooterextend.set(forward);
@@ -274,8 +265,6 @@ public class Robot extends SampleRobot {
     	boolean obl = stick2.getRawButton(5);//rotate shoooter
     	boolean test = stick2.getRawButton(8);
     	//Loop control Variables
-    	
-    	
     	
     	
     	//Drive train
