@@ -8,6 +8,708 @@
 	<description>Planet Eclipse - http://planeteclipse.org/planet/</description>
 
 <item>
+	<title>itemis: How to get started with Xtext Language Servers and Che</title>
+	<guid isPermaLink="true">https://blogs.itemis.com/en/how-to-get-started-with-xtext-language-servers-and-che</guid>
+	<link>https://blogs.itemis.com/en/how-to-get-started-with-xtext-language-servers-and-che</link>
+	<description>&lt;p&gt;&lt;a href=&quot;http://www.eclipse.org/che/&quot;&gt;Eclipse Che 5&lt;/a&gt; has support for the &lt;a href=&quot;https://github.com/Microsoft/language-server-protocol&quot;&gt;Microsoft Language Server Protocol&lt;/a&gt; and so has &lt;a href=&quot;https://www.eclipse.org/Xtext/&quot;&gt;Eclipse Xtext&lt;/a&gt; in its new Version 2.11. So let's see how we can bring them both together.&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;  
+&lt;h2&gt;Prerequisites&lt;/h2&gt; 
+&lt;p&gt;This tutorial requires some software to be available on your machine. Please install if not already done:&lt;/p&gt; 
+&lt;ul&gt; 
+ &lt;li&gt;Eclipse Luna or newer with &lt;a href=&quot;http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/&quot;&gt;Xtext 2.11&lt;/a&gt;&lt;/li&gt; 
+ &lt;li&gt;&lt;a href=&quot;https://maven.apache.org/download.cgi&quot;&gt;Maven&lt;/a&gt;&lt;/li&gt; 
+ &lt;li&gt;&lt;a href=&quot;https://nodejs.org/en/download/&quot;&gt;Node.js&lt;/a&gt;&lt;/li&gt; 
+ &lt;li&gt;&lt;a href=&quot;https://docs.docker.com/engine/installation/&quot;&gt;Docker&lt;/a&gt;&lt;/li&gt; 
+ &lt;li&gt;&lt;a href=&quot;https://golang.org/dl/&quot;&gt;Go&lt;/a&gt;&lt;/li&gt; 
+&lt;/ul&gt; 
+&lt;h2&gt;Provide the Xtext Language Server&lt;/h2&gt; 
+&lt;p&gt;The first step is to prepare the Xtext Langauge Server. We create a new Xtext Project using the wizard in Eclipse. We &lt;span style=&quot;font-family: arial,helvetica,sans-serif;&quot;&gt;deselect the &lt;em&gt;Eclipse plug-in&lt;/em&gt; option and choose &lt;em&gt;Gradle&lt;/em&gt; a&lt;/span&gt;s &lt;em&gt;Preferred Build System&lt;/em&gt; (option &lt;em&gt;Generic IDE Support&lt;/em&gt; is preselected and required). We create a very simple example grammar:&lt;br /&gt;&lt;br /&gt;&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt;Model:
+    greetings+=Greeting*;
+
+Greeting:
+'Hello' name=ID ('from' from=[Greeting])? '!';
+&lt;/pre&gt; 
+&lt;p&gt;&lt;br /&gt;We will use the &lt;a href=&quot;https://docs.gradle.org/current/userguide/application_plugin.html&quot;&gt;gradle application plugin&lt;/a&gt; to package our DSL as an executable package. Therefore we edit &lt;code&gt;org.xtext.example.mydsl.ide/build.gradle&lt;/code&gt; and add the following code.&lt;br /&gt;&lt;br /&gt;&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt;apply plugin: 'application'
+mainClassName = &quot;org.eclipse.xtext.ide.server.ServerLauncher&quot;
+
+distributions {
+    main {
+        baseName = 'mydsl'
+    }
+}
+
+distZip {
+    archiveName &quot;mydsl.zip&quot;
+}
+
+distTar {
+    archiveName &quot;mydsl.tar&quot;
+}
+&lt;/pre&gt; 
+&lt;p&gt;&lt;br /&gt;We don't need to code anything to make the DSL Language Server enabled. The real interesting part is the &lt;a href=&quot;https://github.com/eclipse/xtext-core/blob/master/org.eclipse.xtext.ide/xtend-gen/org/eclipse/xtext/ide/server/ServerLauncher.java&quot;&gt;&lt;code&gt;org.eclipse.xtext.ide.server.ServerLauncher&lt;/code&gt;&lt;/a&gt; main class. This is a class shipped with Xtext that enables Language Server support.&lt;/p&gt; 
+&lt;p&gt;We build the projects with Gradle.&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt; 
+./gradlew clean build distZip&lt;/pre&gt; 
+&lt;p&gt;&lt;br /&gt;Inside the &lt;code&gt;org.xtext.example.mydsl.parent/org.xtext.example.mydsl.ide/build/distributions&lt;/code&gt; folder we can now find tar/zip files that we can provide via a webserver so that it later can be pulled from Che.&lt;/p&gt; 
+&lt;p&gt;You can find my prepared version &lt;a href=&quot;http://dl.bintray.com/cdietrich/MyDslXtextLanguageServer/mydsl.tar&quot;&gt;here&lt;/a&gt;.&lt;/p&gt; 
+&lt;h2&gt;Build a custom &quot;Che with Xtext&quot; plugin&lt;/h2&gt; 
+&lt;p&gt;The second step is to add a new Che Plugin that uses our Xtext Lanuage Server to provide editing support for &lt;code&gt;mydsl&lt;/code&gt;files. In order to &lt;a href=&quot;https://www.eclipse.org/che/docs/plugins/create-and-build-extensions/&quot;&gt;build a Che extension&lt;/a&gt; we need to &lt;a href=&quot;https://www.eclipse.org/che/docs/plugins/setup-che-workspace/index.html&quot;&gt;grap the source code, modify and build it locally&lt;/a&gt;.&lt;/p&gt; 
+&lt;h3&gt;Get the Che source code&lt;/h3&gt; 
+&lt;p&gt;We clone the Che git repository and create a new branch from the latest release tag.&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt;https://github.com/eclipse/che.git
+cd che
+git checkout -b che-xtext-example 5.1.2
+&lt;/pre&gt; 
+&lt;h3&gt;Create the Che plugin&lt;/h3&gt; 
+&lt;p&gt;We need to create a plugin that tells Che how to start our Language Server and what the file extension is.&lt;/p&gt; 
+&lt;p&gt;First we create a bunch of folders and pom files.&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt;touch agents/che-core-api-agent/src/main/resources/agents/org.eclipse.che.ls.mydsl.json&lt;br /&gt;touch agents/che-core-api-agent/src/main/resources/agents/scripts/org.eclipse.che.ls.mydsl.script.sh&lt;br /&gt;cd plugins
+mkdir plugin-mydsl
+cd plugin-mydsl
+touch pom.xml
+mkdir che-plugin-mydsl-lang-server
+cd che-plugin-mydsl-lang-server
+touch pom.xml&lt;br /&gt;mkdir -p src/main/java&lt;br /&gt;
+&lt;/pre&gt; 
+&lt;p&gt;&lt;br /&gt;Here is how the &lt;code&gt;plugin-mydsl/pom.xml&lt;/code&gt; looks like:&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&amp;gt;
+&amp;lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd&quot;&amp;gt;
+    &amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
+    &amp;lt;parent&amp;gt;
+        &amp;lt;artifactId&amp;gt;che-plugin-parent&amp;lt;/artifactId&amp;gt;
+        &amp;lt;groupId&amp;gt;org.eclipse.che.plugin&amp;lt;/groupId&amp;gt;
+        &amp;lt;version&amp;gt;5.1.2&amp;lt;/version&amp;gt;
+        &amp;lt;relativePath&amp;gt;../pom.xml&amp;lt;/relativePath&amp;gt;
+    &amp;lt;/parent&amp;gt;
+    &amp;lt;artifactId&amp;gt;che-plugin-mydsl-parent&amp;lt;/artifactId&amp;gt;
+    &amp;lt;packaging&amp;gt;pom&amp;lt;/packaging&amp;gt;
+    &amp;lt;name&amp;gt;Che Plugin :: MyDsl (Xtext) :: Parent&amp;lt;/name&amp;gt;
+    &amp;lt;modules&amp;gt;
+        &amp;lt;module&amp;gt;che-plugin-mydsl-lang-server&amp;lt;/module&amp;gt;
+    &amp;lt;/modules&amp;gt;
+    &amp;lt;build&amp;gt;
+        &amp;lt;pluginManagement&amp;gt;
+            &amp;lt;plugins&amp;gt;
+                &amp;lt;plugin&amp;gt;
+                    &amp;lt;groupId&amp;gt;org.eclipse.che.core&amp;lt;/groupId&amp;gt;
+                    &amp;lt;artifactId&amp;gt;che-core-api-dto-maven-plugin&amp;lt;/artifactId&amp;gt;
+                    &amp;lt;version&amp;gt;${project.version}&amp;lt;/version&amp;gt;
+                &amp;lt;/plugin&amp;gt;
+            &amp;lt;/plugins&amp;gt;
+        &amp;lt;/pluginManagement&amp;gt;
+    &amp;lt;/build&amp;gt;
+&amp;lt;/project&amp;gt;
+
+&lt;/pre&gt; 
+&lt;p&gt; &lt;br /&gt;And here is how the &lt;code&gt;plugin-mydsl/che-plugin-mydsl-lang-server/pom.xml&lt;/code&gt; looks like:&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&amp;gt;
+&amp;lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&amp;gt;
+    &amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
+    &amp;lt;parent&amp;gt;
+        &amp;lt;artifactId&amp;gt;che-plugin-mydsl-parent&amp;lt;/artifactId&amp;gt;
+        &amp;lt;groupId&amp;gt;org.eclipse.che.plugin&amp;lt;/groupId&amp;gt;
+        &amp;lt;version&amp;gt;5.1.2&amp;lt;/version&amp;gt;
+    &amp;lt;/parent&amp;gt;
+    &amp;lt;artifactId&amp;gt;che-plugin-mydsl-lang-server&amp;lt;/artifactId&amp;gt;
+    &amp;lt;name&amp;gt;Che Plugin :: MyDsl (Xtext) :: Extension Server&amp;lt;/name&amp;gt;
+    &amp;lt;properties&amp;gt;
+        &amp;lt;findbugs.failonerror&amp;gt;false&amp;lt;/findbugs.failonerror&amp;gt;
+    &amp;lt;/properties&amp;gt;
+    &amp;lt;dependencies&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;com.google.guava&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;guava&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;com.google.inject&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;guice&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;com.google.inject.extensions&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;guice-multibindings&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;io.typefox.lsapi&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;io.typefox.lsapi.services&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.eclipse.che.core&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;che-core-api-core&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.eclipse.che.core&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;che-core-api-languageserver&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.eclipse.che.core&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;che-core-api-languageserver-shared&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.eclipse.che.core&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;che-core-api-project&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.eclipse.che.core&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;che-core-commons-inject&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.eclipse.che.core&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;che-core-commons-lang&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.slf4j&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;slf4j-api&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+    &amp;lt;/dependencies&amp;gt;
+&amp;lt;/project&amp;gt;
+&lt;/pre&gt; 
+&lt;p&gt;&lt;br /&gt;We register our plugin in the existing &lt;code&gt;plugins/pom.xml.&lt;/code&gt;&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt; &amp;lt;module&amp;gt;plugin-csharp&amp;lt;/module&amp;gt;
+ &amp;lt;!-- this line is the new entry --&amp;gt;
+ &amp;lt;module&amp;gt;plugin-mydsl&amp;lt;/module&amp;gt;
+ &amp;lt;module&amp;gt;plugin-nodejs&amp;lt;/module&amp;gt;
+&lt;/pre&gt; 
+&lt;p&gt;&lt;br /&gt;And (including its version) inside the root-pom of Che (&lt;code&gt;/pom.xml&lt;/code&gt;).&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt;&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;org.eclipse.che.plugin&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;che-plugin-maven-shared&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;${che.version}&amp;lt;/version&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&amp;lt;!-- this is the new entry --&amp;gt;
+&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;org.eclipse.che.plugin&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;che-plugin-mydsl-lang-server&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;${che.version}&amp;lt;/version&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;org.eclipse.che.plugin&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;che-plugin-nodejs-debugger-ide&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;${che.version}&amp;lt;/version&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/pre&gt; 
+&lt;p&gt;&lt;br /&gt;We have to package it into the &lt;code&gt;assembly-wsagent&lt;/code&gt; war (&lt;code&gt;assembly/assembly-wsagent-war/pom.xml&lt;/code&gt;):&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt;&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;org.eclipse.che.plugin&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;che-plugin-maven-server&amp;lt;/artifactId&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&amp;lt;!-- this is the new entry --&amp;gt;
+&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;org.eclipse.che.plugin&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;che-plugin-mydsl-lang-server&amp;lt;/artifactId&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;org.eclipse.che.plugin&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;che-plugin-nodejs-debugger-server&amp;lt;/artifactId&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/pre&gt; 
+&lt;h3&gt;&lt;br /&gt;Implement the code&lt;/h3&gt; 
+&lt;p&gt;Now that we've prepared the infrastructure we can start to write the actual plugin code. The easiest way (at least for me) is to import our plugin into eclipse (as maven projects) so that we can write the plugin-code. This should look like this:&lt;br /&gt;&lt;br /&gt;&lt;/p&gt; 
+&lt;p&gt;&lt;a href=&quot;https://github.com/itemis/itemis-blog/blob/che-xtext/CheBlog_PluginInEclipse.png&quot;&gt;&lt;img alt=&quot;Projects after imported in Eclipse&quot; src=&quot;https://github.com/itemis/itemis-blog/raw/che-xtext/CheBlog_PluginInEclipse.png&quot; style=&quot;width: 724px;&quot; title=&quot;Projects after imported in Eclipse&quot; width=&quot;724&quot; /&gt;&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;We need to create some Java classes to hook into Che.&lt;/p&gt; 
+&lt;p&gt;The first one is &lt;code&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;org.eclipse.che.plugin.mydsl.languageserver.MyDslLanguageServerLauncher&lt;/span&gt;&lt;br /&gt;&lt;/code&gt;&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt;package org.eclipse.che.plugin.mydsl.languageserver;
+
+import static java.util.Arrays.asList;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.eclipse.che.api.languageserver.exception.LanguageServerException;
+import org.eclipse.che.api.languageserver.launcher.LanguageServerLauncherTemplate;
+import org.eclipse.che.api.languageserver.shared.model.LanguageDescription;
+import org.eclipse.che.api.languageserver.shared.model.impl.LanguageDescriptionImpl;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+import io.typefox.lsapi.services.json.JsonBasedLanguageServer;
+
+@Singleton
+public class MyDslLanguageServerLauncher extends LanguageServerLauncherTemplate {
+
+    private static final String   LANGUAGE_ID = &quot;mydsl&quot;;
+    private static final String[] EXTENSIONS  = new String[] {&quot;mydsl&quot;};
+    private static final String[] MIME_TYPES  = new String[] {&quot;text/x-mydsl&quot;};
+    private static final LanguageDescriptionImpl description;
+
+    private final Path launchScript;
+
+    static {
+        description = new LanguageDescriptionImpl();
+        description.setFileExtensions(asList(EXTENSIONS));
+        description.setLanguageId(LANGUAGE_ID);
+        description.setMimeTypes(asList(MIME_TYPES));
+    }
+
+    @Inject
+    public MyDslLanguageServerLauncher() {
+        launchScript = Paths.get(System.getenv(&quot;HOME&quot;), &quot;che/ls-mydsl/mydsl/bin/mydsl-standalone&quot;);
+    }
+
+    @Override
+    public LanguageDescription getLanguageDescription() {
+        return description;
+    }
+
+    @Override
+    public boolean isAbleToLaunch() {
+        return Files.exists(launchScript);
+    }
+
+    protected JsonBasedLanguageServer connectToLanguageServer(Process languageServerProcess) {
+        JsonBasedLanguageServer languageServer = new JsonBasedLanguageServer();
+        languageServer.connect(languageServerProcess.getInputStream(), languageServerProcess.getOutputStream());
+        return languageServer;
+    }
+
+    protected Process startLanguageServerProcess(String projectPath) throws LanguageServerException {
+        ProcessBuilder processBuilder = new ProcessBuilder(launchScript.toString());
+        processBuilder.redirectInput(ProcessBuilder.Redirect.PIPE);
+        processBuilder.redirectOutput(ProcessBuilder.Redirect.PIPE);
+        try {
+            return processBuilder.start();
+        } catch (IOException e) {
+            throw new LanguageServerException(&quot;Can't start JSON language server&quot;, e);
+        }
+    }
+}
+&lt;/pre&gt; 
+&lt;p&gt;&lt;br /&gt;There are only two interesting things: The &lt;code&gt;LanguageDescription&lt;/code&gt; which tells Che what the language id and file extensions etc. are and the &lt;code&gt;startLanguageServerProcess()&lt;/code&gt; method that creates a new process for our language server calling a launch script and wires the stdin/stdout of the child process.&lt;/p&gt; 
+&lt;p&gt;We also need to register the launcher class to Che via a new &lt;code&gt;DynaModule&lt;/code&gt;.&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt;package org.eclipse.che.plugin.mydsl.inject;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.multibindings.Multibinder;
+
+import org.eclipse.che.inject.DynaModule;
+import org.eclipse.che.plugin.mydsl.languageserver.MyDslLanguageServerLauncher;
+import org.eclipse.che.api.languageserver.launcher.LanguageServerLauncher;
+
+@DynaModule
+public class MyDslModule extends AbstractModule {
+    @Override
+    protected void configure() {
+        Multibinder.newSetBinder(binder(), LanguageServerLauncher.class).addBinding().to(MyDslLanguageServerLauncher.class);
+    }
+}
+&lt;/pre&gt; 
+&lt;h3&gt;Prepare the agent&lt;/h3&gt; 
+&lt;p&gt;This Che plugin starts our server via a &lt;code&gt;laucher.sh&lt;/code&gt; shell script. Therefore we need to add a &lt;code&gt;agent&lt;/code&gt; to Che as well. This agent allows us to get the Language Server server part downloaded automatically (side-load). This looks like this:&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt;cd agents/che-core-api-agent/src/main/resources/agents/
+&lt;/pre&gt; 
+&lt;p&gt;&lt;br /&gt;Here we create a new JSON &lt;code&gt;org.eclipse.che.ls.mydsl.json &lt;/code&gt;file for the MyDsl-Agent&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt;{
+&quot;id&quot;: &quot;org.eclipse.che.ls.mydsl&quot;,
+&quot;name&quot;: &quot;MyDsl (Xtext) language server&quot;,
+&quot;description&quot;: &quot;MyDsl (Xtext) language server&quot;,
+&quot;dependencies&quot;: [],
+&quot;properties&quot;: {},
+&quot;script&quot; : &quot;&quot;
+}
+&lt;/pre&gt; 
+&lt;p&gt;and &lt;code&gt;scripts/org.eclipse.che.ls.mydsl.script.sh&lt;/code&gt; that does the download of the server and the unpacking stuff (we basically copy&amp;amp;paste an existing file and adapt it to our needs).&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt;#
+# Copyright (c) 2012-2017 Codenvy, S.A.
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors:
+#   Codenvy, S.A. - initial API and implementation
+#
+
+unset PACKAGES
+unset SUDO
+command -v tar &amp;gt;/dev/null 2&amp;gt;&amp;amp;1 || { PACKAGES=${PACKAGES}&quot; tar&quot;; }
+command -v curl &amp;gt;/dev/null 2&amp;gt;&amp;amp;1 || { PACKAGES=${PACKAGES}&quot; curl&quot;; }
+test &quot;$(id -u)&quot; = 0 || SUDO=&quot;sudo&quot;
+
+AGENT_BINARIES_URI=http://dl.bintray.com/cdietrich/MyDslXtextLanguageServer/mydsl.tar
+CHE_DIR=$HOME/che
+LS_DIR=${CHE_DIR}/ls-mydsl
+LS_LAUNCHER=${LS_DIR}/launch.sh
+
+if [ -f /etc/centos-release ]; then
+    FILE=&quot;/etc/centos-release&quot;
+    LINUX_TYPE=$(cat $FILE | awk '{print $1}')
+ elif [ -f /etc/redhat-release ]; then
+    FILE=&quot;/etc/redhat-release&quot;
+    LINUX_TYPE=$(cat $FILE | cut -c 1-8)
+ else
+    FILE=&quot;/etc/os-release&quot;
+    LINUX_TYPE=$(cat $FILE | grep ^ID= | tr '[:upper:]' '[:lower:]')
+    LINUX_VERSION=$(cat $FILE | grep ^VERSION_ID=)
+fi
+
+MACHINE_TYPE=$(uname -m)
+
+mkdir -p ${CHE_DIR}
+mkdir -p ${LS_DIR}
+
+########################
+### Install packages ###
+########################
+
+# Red Hat Enterprise Linux 7
+############################
+if echo ${LINUX_TYPE} | grep -qi &quot;rhel&quot;; then
+    test &quot;${PACKAGES}&quot; = &quot;&quot; || {
+        ${SUDO} yum install ${PACKAGES};
+    }
+
+# Red Hat Enterprise Linux 6
+############################
+elif echo ${LINUX_TYPE} | grep -qi &quot;Red Hat&quot;; then
+    test &quot;${PACKAGES}&quot; = &quot;&quot; || {
+        ${SUDO} yum install ${PACKAGES};
+    }
+
+# Ubuntu 14.04 16.04 / Linux Mint 17
+####################################
+elif echo ${LINUX_TYPE} | grep -qi &quot;ubuntu&quot;; then
+    test &quot;${PACKAGES}&quot; = &quot;&quot; || {
+        ${SUDO} apt-get update;
+        ${SUDO} apt-get -y install ${PACKAGES};
+    }
+
+
+# Debian 8
+##########
+elif echo ${LINUX_TYPE} | grep -qi &quot;debian&quot;; then
+    test &quot;${PACKAGES}&quot; = &quot;&quot; || {
+        ${SUDO} apt-get update;
+        ${SUDO} apt-get -y install ${PACKAGES};
+    }
+
+# Fedora 23
+###########
+elif echo ${LINUX_TYPE} | grep -qi &quot;fedora&quot;; then
+    command -v ps &amp;gt;/dev/null 2&amp;gt;&amp;amp;1 || { PACKAGES=${PACKAGES}&quot; procps-ng&quot;; }
+    test &quot;${PACKAGES}&quot; = &quot;&quot; || {
+        ${SUDO} dnf -y install ${PACKAGES};
+    }
+
+
+# CentOS 7.1 &amp;amp; Oracle Linux 7.1
+###############################
+elif echo ${LINUX_TYPE} | grep -qi &quot;centos&quot;; then
+    test &quot;${PACKAGES}&quot; = &quot;&quot; || {
+        ${SUDO} yum -y install ${PACKAGES};
+    }
+
+# openSUSE 13.2
+###############
+elif echo ${LINUX_TYPE} | grep -qi &quot;opensuse&quot;; then
+    test &quot;${PACKAGES}&quot; = &quot;&quot; || {
+        ${SUDO} zypper install -y ${PACKAGES};
+    }
+
+else
+    &amp;gt;&amp;amp;2 echo &quot;Unrecognized Linux Type&quot;
+    &amp;gt;&amp;amp;2 cat /etc/os-release
+    exit 1
+fi
+
+
+######################
+### Install MYDSL LS ###
+######################
+
+curl -L -s ${AGENT_BINARIES_URI} &amp;gt; ${LS_DIR}/mydsl.tar &amp;amp;&amp;amp; tar xvf ${LS_DIR}/mydsl.tar -C ${LS_DIR}
+touch ${LS_LAUNCHER}
+chmod +x ${LS_LAUNCHER}
+echo &quot;exec ${LS_DIR}/mydsl/bin/mydsl-standalone&quot; &amp;gt;&amp;gt; ${LS_LAUNCHER}&lt;br /&gt;
+&lt;/pre&gt; 
+&lt;p&gt;&lt;br /&gt;The script looks quite complicated but that's caused by Che's ability to support different linuxes as workspace machines. The relevant part does&lt;/p&gt; 
+&lt;ul&gt; 
+ &lt;li&gt;download the server tar file from the internet&lt;/li&gt; 
+ &lt;li&gt;unpack it&lt;/li&gt; 
+ &lt;li&gt;create a launch script&lt;/li&gt; 
+&lt;/ul&gt; 
+&lt;p&gt;We update &lt;code&gt;scripts/update_agents.sh&lt;/code&gt; so that it knows to process ours shell script and JSON&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt; 
+updateAgentScript &quot;..&quot; &quot;org.eclipse.che.ls.mydsl&quot;&lt;/pre&gt; 
+&lt;p&gt;and run it. Our &lt;code&gt;org.eclipse.che.ls.mydsl.json&lt;/code&gt; should be updated with the script now.&lt;/p&gt; 
+&lt;h3&gt;Adapt the stacks&lt;/h3&gt; 
+&lt;p&gt;To make our agent available we need to create a new Che stack or edit and existing one so that it contains our agent. We edit the &lt;code&gt;debianlsp&lt;/code&gt; stack inside &lt;code&gt;ide/che-core-ide-stacks/src/main/resources/stacks.json&lt;br /&gt;&lt;br /&gt;&lt;/code&gt;&lt;/p&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt; &quot;agents&quot;: [
+                &quot;org.eclipse.che.terminal&quot;,
+                &quot;org.eclipse.che.ws-agent&quot;,
+                &quot;org.eclipse.che.ssh&quot;,
+                &quot;org.eclipse.che.ls.csharp&quot;,
+                &quot;org.eclipse.che.ls.json&quot;,
+                &quot;org.eclipse.che.ls.php&quot;,
+                &quot;org.eclipse.che.ls.mydsl&quot;
+              ],
+&lt;/pre&gt; 
+&lt;p&gt;&lt;br /&gt;That's it for coding. So lets build and test it.&lt;/p&gt; 
+&lt;h3&gt;Build and run Che&lt;/h3&gt; 
+&lt;pre class=&quot;prettyprint&quot;&gt;npm install -g bower gulp typings
+mvn clean install -P fast
+docker run -v /var/run/docker.sock:/var/run/docker.sock -e CHE_DEBUG_SERVER=true -e CHE_ASSEMBLY=/home/dietrich/che-dev/che/assembly/assembly-main/target/eclipse-che-5.1.2/eclipse-che-5.1.2/ codenvy/che-launcher:nightly start
+&lt;/pre&gt; 
+&lt;p&gt;(if you face an &lt;code&gt;EACCES&lt;/code&gt; error please refer to &lt;a href=&quot;https://docs.npmjs.com/getting-started/fixing-npm-permissions&quot;&gt;this document&lt;/a&gt;)&lt;/p&gt; 
+&lt;h3&gt;Test it&lt;/h3&gt; 
+&lt;p&gt;After the server has started we open a browser and go to &lt;code&gt;http://172.17.0.1:8080&lt;/code&gt; (or the URL Che tells you to go to).&lt;/p&gt; 
+&lt;p&gt;We create a new workspace using the &lt;code&gt;Debian LSP&lt;/code&gt; stack and a &lt;code&gt;Blank Project&lt;/code&gt;. Once the workspace is started and the project is created we create a new &lt;code&gt;test.mydsl&lt;/code&gt; file. We get notified that the Language Server is started and finally can start editing.&lt;br /&gt;&lt;br /&gt;&lt;/p&gt; 
+&lt;p&gt;&lt;a href=&quot;https://github.com/itemis/itemis-blog/blob/che-xtext/CheBlog_InAction.png&quot;&gt;&lt;img alt=&quot;Xtext in Che in Action&quot; src=&quot;https://github.com/itemis/itemis-blog/raw/che-xtext/CheBlog_InAction.png&quot; style=&quot;width: 320px; display: block; margin-left: auto; margin-right: auto;&quot; title=&quot;Xtext in Che in Action&quot; width=&quot;320&quot; /&gt;&lt;/a&gt;&lt;br /&gt;That's it. You can find the example code &lt;a href=&quot;https://github.com/cdietrich/che/tree/che-xtext-example&quot;&gt;here&lt;/a&gt;.&lt;/p&gt; 
+&lt;p&gt; &lt;/p&gt;  
+&lt;img alt=&quot;&quot; height=&quot;1&quot; src=&quot;http://track.hubspot.com/__ptq.gif?a=761475&amp;amp;k=14&amp;amp;r=https%3A%2F%2Fblogs.itemis.com%2Fen%2Fhow-to-get-started-with-xtext-language-servers-and-che&amp;amp;bu=https%253A%252F%252Fblogs.itemis.com&amp;amp;bvt=rss&quot; style=&quot;width: 1px!important;&quot; width=&quot;1&quot; /&gt;</description>
+	<pubDate>Wed, 01 Feb 2017 13:03:17 +0000</pubDate>
+	<author>dietrich@itemis.de (Christian Dietrich)</author>
+</item>
+<item>
+	<title>itemis: Eclipse Xtext 2.11 is released!</title>
+	<guid isPermaLink="true">https://blogs.itemis.com/en/eclipse-xtext-2.11-is-released</guid>
+	<link>https://blogs.itemis.com/en/eclipse-xtext-2.11-is-released</link>
+	<description>&lt;p&gt;The Xtext team is happy to announce the release 2.11. The update is available on the &lt;a href=&quot;http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/&quot;&gt;release repository&lt;/a&gt;. Eclipse independent libraries are published to &lt;a href=&quot;http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.eclipse.xtext%22&quot;&gt;Maven Central&lt;/a&gt;. We encourage users to upgrade now and enjoy an even better experience with the Xtext framework.&lt;/p&gt;  
+&lt;h2&gt;&lt;strong&gt;Commit Activity&lt;/strong&gt;&lt;/h2&gt; 
+&lt;p&gt;Much work has been done for the new release. A large portion of it has been invested into the restructuring activities. Finally, these activities are finished and Xtext is splitted into several repositories with clear dependencies. We hope to have now a clearer structure, faster builds and better separation of core code from IDE or tool specific code.&lt;/p&gt; 
+&lt;p&gt;We have collected the number of commits per release to get a better impression on the team’s activity per release:&lt;br /&gt;&lt;br /&gt;&lt;/p&gt; 
+&lt;p&gt;&lt;img alt=&quot;Xtext Commit Activity.png&quot; height=&quot;262&quot; src=&quot;https://blogs.itemis.com/hs-fs/hubfs/Blog/Xtext/Xtext%20Commit%20Activity.png?t=1485952184739&amp;amp;width=724&amp;amp;height=262&amp;amp;name=Xtext%20Commit%20Activity.png&quot; width=&quot;724&quot; /&gt;&lt;/p&gt; 
+&lt;p&gt;While Xtext’s Neon release 2.10 was mostly a smaller bug fix release, the activity for 2.11 notably increased. This clearly shows how vital the Xtext project is. &lt;/p&gt; 
+&lt;h2&gt;&lt;strong&gt;Language Server Protocol&lt;/strong&gt;&lt;/h2&gt; 
+&lt;p&gt;Xtext’s most notable new feature the support of the &lt;a href=&quot;https://github.com/Microsoft/language-server-protocol&quot;&gt;Language Server Protocol&lt;/a&gt; (LSP). This enables Xtext DSLs to be used in any editor supporting the LSP. Currently this includes Visual Studio Code, Eclipse Che and Eclipse Orion is following. Other editors are working on the integration of the protocol’s client side. This big step could only happen because of the brand new project &lt;a href=&quot;https://projects.eclipse.org/projects/technology.lsp4j&quot;&gt;LSP4J&lt;/a&gt;, that enabled the java world to participate in the LSP.&lt;/p&gt; 
+&lt;p&gt;We have prepared an example for a DSL language server that integrates with VS Code in the GitHub repo &lt;a href=&quot;https://github.com/itemis/xtext-languageserver-example&quot;&gt;xtext-languageserver-example&lt;/a&gt;.&lt;/p&gt; 
+&lt;h2&gt;&lt;strong&gt;Usability&lt;/strong&gt;&lt;/h2&gt; 
+&lt;p&gt;We are paying more attention on the user experience and listen to our users. While power users appreciate Xtext’s flexibility, performance and functional richness, the less experienced and new users struggled in some areas.&lt;/p&gt; 
+&lt;p&gt;Because of that we performed a &lt;a href=&quot;http://www.slideshare.net/SandraSchering/usability-test-results-xtext-new-project-wizard&quot;&gt;usability test for Xtext’s Project Wizard&lt;/a&gt; together with the itemis usability engineering team. That gave us new insights on usability flaws that we were not so aware of. As a result, we made some improvements on the Advanced Configuration page and its messages.&lt;/p&gt; 
+&lt;p&gt;We plan to continue our work with the usability engineers to identify more potential for improvements.&lt;/p&gt; 
+&lt;h2&gt;&lt;strong&gt;Xbase Compiler&lt;/strong&gt;&lt;/h2&gt; 
+&lt;p&gt;Xbase and Xtend code is automatically generated to Java. Most of this work is done by the XbaseCompiler class, while the XtendCompiler is deriving from it and adds Xtend specific stuff. The code is meant to be compilable, debuggable and performant, but not necessarily readable.&lt;/p&gt; 
+&lt;p&gt;The compiler was optimized to reduce the amount of synthetic variables in favor of readability now. In this diff you can see what Xtend compiled from the same code before (red) and after (green). As you can see the code becomes far more compact and readability. On the other hand the more verbose code could be more debuggable. We plan to make the “verbosity” of the compiled code configurable later, but leave with the compact mode as default.&lt;/p&gt; 
+&lt;p&gt;Other optimizations on the compiler increase the performance for template expressions and robustness.&lt;/p&gt; 
+&lt;h2&gt;&lt;strong&gt;Deprecation of the old generator infrastructure&lt;/strong&gt;&lt;/h2&gt; 
+&lt;p&gt;Xtext’s generator was initially build with Xpand. With Xtext 2.9 the language generator was reimplemented with Xtend, with a new project layout and generator workflow. While Xtext keeps the old generator for backward compatibility, it has now been deprecated and we encourage users to switch to the new generator. New extensions and improvements to the generator won’t be backported to the old one.&lt;/p&gt; 
+&lt;p&gt;Note that we can not remove the old generator from Xtext for backward compatibility. For the case that Xtext gets a major upgrade to Xtext 3.0, we will definitely remove that code. At the moment there are no concrete plans about a version 3, we will continue with 2.12 for Eclipse Oxygen.&lt;/p&gt; 
+&lt;h2&gt;&lt;strong&gt;Advanced Oomph Setup&lt;/strong&gt;&lt;/h2&gt; 
+&lt;p&gt;The repository split and increasing usage of Gradle for the Xtext build had many implications on the development environment. Xtext provides a setup for Oomph which has been changed to support these changes and add some other benefits. Provisioning an Xtext development environment has never been easier!&lt;/p&gt; 
+&lt;p&gt;The updated set up considers the splitted repository structure and enables a specific selection on the project set that a developer works on. Or the other way around: It allows to leave out projects that are not in the developer’s scope.&lt;/p&gt; 
+&lt;p&gt;Xtext uses the recently released Buildship 2.0 feature for Gradle support. However, Xtext’s multi-repository multi-project structure hit limitations of the Buildship tooling in regards of cross-repository project relationship resolution. This implied the introduction of a &lt;a href=&quot;https://blogs.itemis.com/en/eclipse-xtexts-new-umbrella-repository&quot;&gt;new umbrella project&lt;/a&gt; and scripting of Buildship preferences generation. The Oomph setup takes care of these details, so developers don’t have to be bothered with them.&lt;/p&gt; 
+&lt;h2&gt;&lt;strong&gt;Conclusion&lt;/strong&gt;&lt;/h2&gt; 
+&lt;p&gt;Xtext 2.11 is a major shift in the frameworks history. Especially its support for the Language Server Protocol will be a game changer that opens DSLs for increasing more editors. Besides that this release provides a ton of bug fixes and small improvements, especially which affect stability, performance and usability. Xtend users will appreciate the improved Java code generated from Xtend classes.&lt;/p&gt; 
+&lt;p&gt;Go and get the new release now. The Xtext team is happily awaiting your feedback!&lt;/p&gt;  
+&lt;img alt=&quot;&quot; height=&quot;1&quot; src=&quot;http://track.hubspot.com/__ptq.gif?a=761475&amp;amp;k=14&amp;amp;r=https%3A%2F%2Fblogs.itemis.com%2Fen%2Feclipse-xtext-2.11-is-released&amp;amp;bu=https%253A%252F%252Fblogs.itemis.com&amp;amp;bvt=rss&quot; style=&quot;width: 1px!important;&quot; width=&quot;1&quot; /&gt;</description>
+	<pubDate>Wed, 01 Feb 2017 12:34:36 +0000</pubDate>
+	<author>thoms@itemis.de (Karsten Thoms)</author>
+</item>
+<item>
+	<title>typefox.io: Xtext 2.11 Is Released</title>
+	<guid isPermaLink="false">http://typefox.io/?p=14106</guid>
+	<link>http://typefox.io/xtext-2-11-is-released</link>
+	<description>&lt;div class=&quot;fusion-fullwidth fullwidth-box nonhundred-percent-fullwidth&quot; style=&quot;background-color: rgba(255,255,255,0); background-position: center center; padding-top: 20px; padding-right: 0px; padding-bottom: 20px; padding-left: 0px;&quot;&gt;&lt;div class=&quot;fusion-builder-row fusion-row &quot;&gt;&lt;div class=&quot;fusion-layout-column fusion_builder_column fusion_builder_column_1_1  fusion-one-full fusion-column-first fusion-column-last 1_1&quot; style=&quot;margin-top: 0px; margin-bottom: 20px;&quot;&gt;
+			&lt;div class=&quot;fusion-column-wrapper&quot;&gt;
+				&lt;p&gt;After more than 7 months we finally got Xtext 2.11 out the door. Thanks for your patience. But good things come to those who wait! So go and &lt;a href=&quot;http://www.eclipse.org/Xtext/download.html&quot;&gt;get it while it’s hot&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Xtext 2.11 comes with tons of bugfixes and improvements for the framework itself and for Xtend. If you want more technical details, please have a look at the &lt;a href=&quot;http://www.eclipse.org/Xtext/releasenotes.html&quot;&gt;release notes&lt;/a&gt;. In this post, I want to highlight three points that are special to this release from my perspective.&lt;/p&gt;
+&lt;p&gt;With Xtext 2.11 we have &lt;a href=&quot;http://typefox.io/xtext-core-less-is-more&quot;&gt;split up our monolithic repository&lt;/a&gt; into multiple smaller parts. It was a huge effort to separate the Git repos without losing their history or tags, get the individual builds running, setup a staged CI and make all tests green again. But as of now, it should be much easier to fork, build and consume just the parts of the framework you are really interested in.&lt;/p&gt;
+&lt;p&gt;The biggest innovation in Xtext 2.11 is that it allows you to &lt;a href=&quot;http://typefox.io/tutorial-building-a-language-server-for-your-dsl&quot;&gt;generate a language server for your language&lt;/a&gt;. This language server provides the smartness of your language to various editor clients such as VS Code, the Eclipse Generic Editor, Eclipse Che, Sublime, Eclipse Orion and hopefully more in the future. In short, we are close to provide support for your language in all major editors and IDEs by a single implementation. We have started the new Eclipse project LSP4J with an implementation of the &lt;a href=&quot;http://typefox.io/eclipse-lsp4j-is-here&quot;&gt;language server protocol in Java&lt;/a&gt; to be picked up by other LSP implementors.&lt;/p&gt;
+&lt;p&gt;Last but not least, this release is a joint effort by multiple individuals and companies. I want to thank Christian Dietrich, Karsten Thoms, Holger Schill, Lorenzo Bettini and of course everybody from TypeFox for their great work. And of course thanks to the community for your helpful feedback and appreciation.&lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;div class=&quot;fusion-clearfix&quot;&gt;&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+	<pubDate>Wed, 01 Feb 2017 12:04:09 +0000</pubDate>
+</item>
+<item>
+	<title>Tom Schindl: e(fx)clipse runtime library – Dealing with listeners on JavaFX-Observables</title>
+	<guid isPermaLink="false">http://tomsondev.bestsolution.at/?p=4940</guid>
+	<link>https://tomsondev.bestsolution.at/2017/01/31/efxclipse-runtime-library-dealing-with-listeners-on-javafx-observables/</link>
+	<description>&lt;p&gt;Now that the e(fx)clipse runtime code base is available to any application developer (&lt;a href=&quot;https://tomsondev.bestsolution.at/2017/01/26/make-it-easy-to-consume-efxclipse-libraries-in-maven-or-gradle/&quot;&gt;see this blog post&lt;/a&gt;). It is time to explore all the cool stuff it provides for Java(FX) application development.&lt;/p&gt;
+&lt;p&gt;In the next few weeks I’ll blog about new stuff and old stuff you can make use by just adding a dependency on one of our libraries. I’ll use maven in the samples because that’s what I’m most used to but IIRC things will work for gradle as well.&lt;/p&gt;
+&lt;p&gt;In this first post I’d like to draw your attention to an Utility-Class (&lt;code&gt;org.eclipse.fx.core.observable.FXObservableUtil&lt;/code&gt;) I just checked in a few minutes ago into the repository helping you to write fewer and less error prone code:&lt;/p&gt;
+&lt;h1&gt;FXObservableUtil.onChange for ObservableValue &amp;amp; Property&lt;/h1&gt;
+&lt;p&gt;Let’s take a look at a first code-pattern, I’ve noticed frequently in my JavaFX code-bases:&lt;/p&gt;
+&lt;pre class=&quot;brush: java; title: ; notranslate&quot;&gt;private StringProperty p = ...;
+
+void attachHandler() {
+   p.addListener( this::handle );
+}
+
+void detachHandler() {
+   p.removeListener( this::handle );
+}
+
+void handle(Observable ob, String ol, String ne) {
+   System.out.println( ne );
+}
+&lt;/pre&gt;
+&lt;p&gt;The code above has the following problems:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;I have to declare a method with 3 arguments although I only make use of the new value&lt;/li&gt;
+&lt;li&gt;I have created a &lt;strong&gt;huuuge&lt;/strong&gt; listener leak (Arghhh!)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Let’s improve the situation by using one of our core-libraries &lt;code&gt;org.eclipse.fx.core&lt;/code&gt;. Just the following to your maven build:&lt;/p&gt;
+&lt;pre class=&quot;brush: xml; title: ; notranslate&quot;&gt;...
+&amp;lt;repositories&amp;gt;
+  ...
+  &amp;lt;repository&amp;gt;
+    &amp;lt;name&amp;gt;BestSolution e(fx)clipse snapshots&amp;lt;/name&amp;gt;
+    &amp;lt;id&amp;gt;efxclipse-snapshots&amp;lt;/id&amp;gt;
+    &amp;lt;url&amp;gt;http://maven.bestsolution.at/efxclipse-snapshots/&amp;lt;/url&amp;gt;
+    &amp;lt;snapshots&amp;gt;
+      &amp;lt;enabled&amp;gt;true&amp;lt;/enabled&amp;gt;
+    &amp;lt;/snapshots&amp;gt;
+  &amp;lt;/repository&amp;gt;
+&amp;lt;/repositories&amp;gt;
+...
+&amp;lt;dependencies&amp;gt;
+  ...
+  &amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;at.bestsolution.efxclipse.rt&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;org.eclipse.fx.core&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;3.0.0-SNAPSHOT&amp;lt;/version&amp;gt;
+  &amp;lt;/dependency&amp;gt;
+&amp;lt;/dependencies&amp;gt;
+&lt;/pre&gt;
+&lt;p&gt;And now we can change our code using an Utility-Class named &lt;code&gt;org.eclipse.fx.core.observable.FXObservableUtil&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&quot;brush: java; title: ; notranslate&quot;&gt;import org.eclipse.fx.core.observable.FXObservableUtil;
+
+private StringProperty p = ...;
+private Subscription s;
+
+void attachHandler() {
+   s = FXObservableUtil.onChange( p, this::handle );
+}
+
+void detachHandler() {
+   if( s != null ) {
+     s.dispose();
+     s = null;
+   }
+}
+
+void handle(Observable ob, String ol, String ne) {
+   System.out.println( ne );
+}
+&lt;/pre&gt;
+&lt;p&gt;But we can improve the code even more because:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;We can add static imports&lt;/li&gt;
+&lt;li&gt;Instead of using &lt;code&gt;FXObservableUtil#onChange(ObservableValue&amp;lt;T&amp;gt;, ChangeListener&amp;lt;T&amp;gt;)&lt;/code&gt; we can use the overloaded method with the signature &lt;code&gt;FXObservableUtil#onChange(ObservableValue&amp;lt;T&amp;gt;, Consumer&amp;lt;T&amp;gt;)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&quot;brush: java; title: ; notranslate&quot;&gt;import static org.eclipse.fx.core.observable.FXObservableUtil.*;
+
+private StringProperty p = ...;
+private Subscription s;
+
+void attachHandler() {
+   s = onChange( p, System.out::println );
+}
+
+void detachHandler() {
+   if( s != null ) {
+     s.dispose();
+     s = null;
+   }
+}
+&lt;/pre&gt;
+&lt;h1&gt;FXObservableUtil.onChange for ObservableList&lt;/h1&gt;
+&lt;p&gt;In general the JavaFX APIs is designed very well to work with &lt;code&gt;@FunctionalInterface&lt;/code&gt; types but IMHO there’s one big mistake that has happened when we look at the &lt;code&gt;Observable&lt;/code&gt;-API who strikes back in case of &lt;code&gt;ObservableList&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The class hierarchy in JavaFX looks like this:&lt;/p&gt;
+&lt;pre class=&quot;brush: plain; title: ; notranslate&quot;&gt;+ Observable
+  - addListener( InvalidationListener listener ) : void
+  + ObservableValue
+    - addListener( ChangeListener&amp;lt;? super T&amp;gt; listener )
+  + ObservableList
+    - addListener( ListChangeListener&amp;lt;? super E&amp;gt; listener )
+&lt;/pre&gt;
+&lt;p&gt;The overloading of &lt;code&gt;addListener()&lt;/code&gt; in case of &lt;code&gt;ObservableValue&lt;/code&gt; is fine as &lt;code&gt;ChangeListener#changed(ObservableValue&amp;lt;? extends T&amp;gt; , T , T )&lt;/code&gt; requires 3 arguments wherease &lt;code&gt;InvalidationListener#invalidated(Observable)&lt;/code&gt; takes only one.&lt;/p&gt;
+&lt;p&gt;In case of &lt;code&gt;ObservableList&lt;/code&gt; unfortunately &lt;code&gt;ListChangeListener#onChanged( Change&amp;lt;? extends E&amp;gt; c)&lt;/code&gt; like &lt;code&gt;InvalidationListener#invalidated(Observable)&lt;/code&gt; accepts one argument. Because of this it’s impossible to benefit of the automatic type inference done by the compiler to remove boilerplate code for lambda expressions and you need to fill in the correct type in the lambdas argument section:&lt;/p&gt;
+&lt;pre class=&quot;brush: java; title: ; notranslate&quot;&gt;ObservableList&amp;lt;String&amp;gt; l = ...
+
+l.addListener( (Change&amp;lt;? extends String&amp;gt; c) -&amp;gt; 
+  { while( c.next() ) { /* ... */ } } );
+// although you really wanted to write
+l.addListener( c -&amp;gt; { while( c.next() ) { /* ... */ } } );
+
+&lt;/pre&gt;
+&lt;p&gt;To make this usecase less type heavy &lt;code&gt;FXObservableUtil&lt;/code&gt; distinguishes between&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Invalidation: &lt;code&gt;FXObservableUtil.onInvalidate(Observable,InvalidationListener)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Change: &lt;code&gt;FXObservableUtil.onChange(ObservableList&amp;lt;E&amp;gt;,ListChangeListener&amp;lt;? super E&amp;gt;)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&quot;brush: java; title: ; notranslate&quot;&gt;import static org.eclipse.fx.core.observable.FXObservableUtil.*;
+
+ObservableList&amp;lt;String&amp;gt; l = ...
+Subscription s = 
+  onChange( l, c -&amp;gt; { while( c.next() ) { /* ... */ } } );
+&lt;/pre&gt;&lt;br /&gt;  &lt;a href=&quot;http://feeds.wordpress.com/1.0/gocomments/tomsondev.wordpress.com/4940/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/comments/tomsondev.wordpress.com/4940/&quot; /&gt;&lt;/a&gt; &lt;img alt=&quot;&quot; border=&quot;0&quot; height=&quot;1&quot; src=&quot;https://pixel.wp.com/b.gif?host=tomsondev.bestsolution.at&amp;amp;blog=7995503&amp;amp;post=4940&amp;amp;subd=tomsondev&amp;amp;ref=&amp;amp;feed=1&quot; width=&quot;1&quot; /&gt;</description>
+	<pubDate>Tue, 31 Jan 2017 22:35:07 +0000</pubDate>
+</item>
+<item>
+	<title>vert.x project: An Introduction to the Vert.x Context Object</title>
+	<guid isPermaLink="true">http://vertx.io/blog/an-introduction-to-the-vert-x-context-object</guid>
+	<link>http://vertx.io/blog/an-introduction-to-the-vert-x-context-object</link>
+	<description>&lt;article&gt;&lt;p&gt;Under the hood, the vert.x Context class plays a critical part in maintaining the thread-safety guarantees of verticles. Most of the time, vert.x coders don’t need to make use of Context objects directly. However, sometimes you may need to. This article provides a brief introduction to the vert.x Context class, which covers why it’s important, and why and when you might wish to make use of the Context directly, based on the author’s experience of building a generic async library which can be used with vert.x.&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;&lt;div class=&quot;admonition-block note&quot;&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;admonition-icon&quot;&gt;&lt;i class=&quot;admonition-icon fa fa-comment&quot;&gt;&lt;/i&gt;&lt;/td&gt;&lt;td class=&quot;content&quot;&gt;&lt;span class=&quot;content&quot;&gt;this is a re-publication of the following &lt;a href=&quot;http://www.millross-consultants.com/vertx_context_object.html&quot;&gt;blog post&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;p&gt;&lt;/p&gt;
+&lt;h2 id=&quot;the-context-object-in-vert-x-a-brief-introduction&quot;&gt;The Context object in Vert.x - a brief introduction&lt;/h2&gt;
+&lt;h3 id=&quot;introduction&quot;&gt;Introduction&lt;/h3&gt;
+&lt;p&gt;Recently I’ve been looking at the possibility of building an asynchronous version of the &lt;a href=&quot;http://www.pac4j.org&quot;&gt;pac4j&lt;/a&gt; library, with a view to then migrating the &lt;a href=&quot;https://github.com/pac4j/vertx-pac4j&quot;&gt;vertx-pac4j&lt;/a&gt; implementation to use the asynchronous version of pac4j by default.&lt;/p&gt;
+&lt;p&gt;I’m keen (for obvious reasons) that the async version of pac4j is not tightly coupled to  one particular asynchronous/non-blocking framework, I decided to expose the API via the &lt;a href=&quot;http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html&quot;&gt;CompletableFuture&lt;/a&gt; class, using this to wrap values which will be determined in the future. However, I opted to use the &lt;a href=&quot;http://vertx.io&quot;&gt;vert.x&lt;/a&gt; framework for my asynchronous testing as a way of testing the API as it emerged. This in turn has led me to learn some aspects of the vert.x &lt;a href=&quot;http://vertx.io/docs/apidocs/io/vertx/core/Context.html&quot;&gt;Context&lt;/a&gt; class which I didn’t really understand before.&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;&lt;div class=&quot;admonition-block note&quot;&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;admonition-icon&quot;&gt;&lt;i class=&quot;admonition-icon fa fa-comment&quot;&gt;&lt;/i&gt;&lt;/td&gt;&lt;td class=&quot;content&quot;&gt;&lt;span class=&quot;content&quot;&gt;The information presented relates to Vert.x version 3.3.3. It is conceivable that later versions of vert.x could render aspects of this article incorrect.&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;p&gt;&lt;/p&gt;
+&lt;h3 id=&quot;introduction-to-the-context-class&quot;&gt;Introduction to the Context class&lt;/h3&gt;
+&lt;p&gt;Whenever a vert.x &lt;a href=&quot;http://vertx.io/docs/apidocs/io/vertx/core/Handler.html&quot;&gt;Handler&lt;/a&gt; is executed, or the start or step method of a verticle is called, then that execution is associated with a specific context. Generally a context is an event-loop context and is therefore associated with an event loop thread (exceptions are covered in the Further Reading referenced below). Contexts are propagated. When a handler is set by code running on a specific context, then that handler will also be executed on the same context. This means for example, that if the start method of a verticle instance sets a number of event bus handlers (as many do), then they will all run on the same context as the start method for that verticle (so all handlers for that verticle instance will share a common context). &lt;/p&gt;
+&lt;p&gt;A schematic of the relationships between non-worker verticles, contexts and eventloop threads is shown in Figure 1. &lt;/p&gt;
+&lt;p&gt;&lt;img alt=&quot;Vertx Context/Thread/Verticle Relationships&quot; src=&quot;http://vertx.io/assets/blog/vertx3-intro-to-context-object/VertxContextRelationships.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Note that each verticle effectively has only one context for handlers created by its start method, and each context is bound to a single event-loop thread. A given event-loop thread can, however, have multiple contexts bound to it. &lt;/p&gt;
+&lt;h3 id=&quot;when-are-contexts-not-propagated-&quot;&gt;When are contexts not propagated?&lt;/h3&gt;
+&lt;p&gt;When a verticle’s start method is called, a new context is created. If 4 identical verticles are deployed via the instances parameter on DeploymentOptions, the start method of each will be on a new context. This is logical as we may not want all non-worker verticles to be bound to a single eventloop thread when multiple eventloop threads are available. &lt;/p&gt;
+&lt;h3 id=&quot;threading-guarantees&quot;&gt;Threading Guarantees&lt;/h3&gt;
+&lt;p&gt;There are certain consequences of the propagation of contexts to handlers as mentioned above. The most important one is that since all handlers in a given eventloop verticle run on the same context (the one on which its start method ran), they all run on the same eventloop thread. This gives rise to the threading guarantee within vert.x, that as long as a given verticle is the only one to ever access a piece of state, then that state is being accessed by only one thread, so no synchronization will be necessary. &lt;/p&gt;
+&lt;h3 id=&quot;exception-handling&quot;&gt;Exception Handling&lt;/h3&gt;
+&lt;p&gt;Each context can have its own exception handler attached for handling exceptions which occur during event loop processing.&lt;/p&gt;
+&lt;h4 id=&quot;why-might-you-not-want-the-default-exception-handler-&quot;&gt;Why might you not want the default exception handler?&lt;/h4&gt;
+&lt;p&gt;As one example, you might have some verticles running whose job it is to monitor other verticles, and if something appears to go wrong with them, undeploy and restart them, a frequent pattern in an actor- or microservices- style archictecture. So one option could be that when a supervised verticle encounters an unrecoverable error, it could simply notify its supervisor that it has gone wrong via an eventbus message, and its supervisor could then undeploy and redeploy (and after a number of failures in rapid succession possibly give up hope or escalate to its own supervisor.&lt;/p&gt;
+&lt;h3 id=&quot;going-off-context-and-getting-back-onto-a-particular-context&quot;&gt;Going off-context and getting back onto a particular context&lt;/h3&gt;
+&lt;p&gt;There are several reasons why you might execute code off-context and then want to operate back on a vert.x context when complete. I’ll outline a couple of scenarios below&lt;/p&gt;
+&lt;h4 id=&quot;running-code-on-a-separate-thread&quot;&gt;Running code on a separate thread&lt;/h4&gt;
+&lt;p&gt;Firstly you might be using an asynchronous driver which is entirely vertx-unaware. Its code will run on non-eventloop threads but it’s possible you may then want to use the results of that code to update information within your verticle. If you don’t get back onto the correct context, you can’t make any guarantees about thread-safety, so your subsequent processing needs to be run back on the correct eventloop thread.&lt;/p&gt;
+&lt;h4 id=&quot;using-asynchronous-java-8-apis&quot;&gt;Using asynchronous Java 8 APIs&lt;/h4&gt;
+&lt;p&gt;APIs such as CompletableFuture are context-unaware. In one example, I created an already completed future on the vert.x event loop in a test. I then attached subsequent processing to it via thenRun:-&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;hljs java&quot;&gt;&lt;span class=&quot;hljs-annotation&quot;&gt;@RunWith&lt;/span&gt;(VertxUnitRunner.class)
+&lt;span class=&quot;hljs-keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;hljs-class&quot;&gt;&lt;span class=&quot;hljs-keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;hljs-title&quot;&gt;ImmediateCompletionTest&lt;/span&gt; &lt;/span&gt;{
+    &lt;span class=&quot;hljs-annotation&quot;&gt;@Rule&lt;/span&gt;
+    &lt;span class=&quot;hljs-keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;hljs-keyword&quot;&gt;final&lt;/span&gt; RunTestOnContext rule = &lt;span class=&quot;hljs-keyword&quot;&gt;new&lt;/span&gt; RunTestOnContext();
+
+    &lt;span class=&quot;hljs-annotation&quot;&gt;@Test&lt;/span&gt;
+    &lt;span class=&quot;hljs-function&quot;&gt;&lt;span class=&quot;hljs-keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;hljs-keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;hljs-title&quot;&gt;testImmediateCompletion&lt;/span&gt;&lt;span class=&quot;hljs-params&quot;&gt;(TestContext context)&lt;/span&gt; &lt;/span&gt;{
+
+        &lt;span class=&quot;hljs-keyword&quot;&gt;final&lt;/span&gt; Async async = context.async();
+        &lt;span class=&quot;hljs-keyword&quot;&gt;final&lt;/span&gt; Vertx vertx = rule.vertx();
+        &lt;span class=&quot;hljs-keyword&quot;&gt;final&lt;/span&gt; CompletableFuture toComplete = &lt;span class=&quot;hljs-keyword&quot;&gt;new&lt;/span&gt; CompletableFuture&lt;span&gt;();
+        &lt;span class=&quot;hljs-comment&quot;&gt;// delay future completion by 500 ms&lt;/span&gt;
+        &lt;span class=&quot;hljs-keyword&quot;&gt;final&lt;/span&gt; String threadName = Thread.currentThread().getName();
+        toComplete.complete(&lt;span class=&quot;hljs-number&quot;&gt;100&lt;/span&gt;);
+        toComplete.thenRun(() -&amp;gt; {
+            assertThat(Thread.currentThread().getName(), is(threadName));
+            async.complete();
+        });
+    }
+}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;  Naively one might expect this to automatically run on the context, since it hasn’t left the eventloop thread on which the future was completed, and indeed it’s provable that it is on the correct thread. However, it will not be on the correct context. This would mean that it wouldn’t, for example, invoke any modified exception handler attached to the context.&lt;/p&gt;
+&lt;h4 id=&quot;getting-back-on-context&quot;&gt;Getting back on context&lt;/h4&gt;
+&lt;p&gt;Fortunately, once we’ve left the context, it’s quite straightforward to return to it. Prior to definition of the code block within thenRun, we can use Vertx.currentContext() or vertx.getOrCreateContext() to get a handle to the context on which our eventloop code is running, We can then execute the code block inside a call to Context::runOnContext, similar to&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;hljs java&quot;&gt;&lt;span class=&quot;hljs-keyword&quot;&gt;final&lt;/span&gt; Context currentContext = vertx.getOrCreateContext();
+toComplete.thenRun(() -&amp;gt; {
+        currentContext.runOnContext(v -&amp;gt; {
+        assertThat(Thread.currentThread().getName(), is(threadName));
+        async.complete();
+    }
+});&lt;/code&gt;&lt;/pre&gt;
+While getting back onto the correct context may not be critical if you have remained on the event loop thread throughout, it is critical if you are going to invoke subsequent vert.x handlers, update verticle state or anything similar, so it’s a sensible general approach.&lt;p&gt;&lt;/p&gt;
+&lt;h3 id=&quot;further-reading&quot;&gt;Further Reading&lt;/h3&gt;
+&lt;p&gt;The vert.x team themselves offer an excellent blog about the Vert.x eventloop, with excellent material on the context, on &lt;a href=&quot;https://github.com/vietj/vertx-materials/blob/master/src/main/asciidoc/Demystifying_the_event_loop.adoc&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&quot;thanks&quot;&gt;Thanks&lt;/h3&gt;
+&lt;p&gt;Thanks very much to the vert.x core team for their clear github pages on the eventloop, and also to &lt;a href=&quot;https://twitter.com/alexlehm?lang=en&quot;&gt;Alexander Lehmann&lt;/a&gt; for his answers to my stupid and naive questions on the &lt;a href=&quot;https://groups.google.com/forum/#!forum/vertx&quot;&gt;Vert.x google group&lt;/a&gt;.&lt;/p&gt;
+&lt;/article&gt;</description>
+	<pubDate>Tue, 31 Jan 2017 00:00:00 +0000</pubDate>
+</item>
+<item>
 	<title>Eclipse Announcements: Keynotes for Devoxx US Announced</title>
 	<guid isPermaLink="true">http://feedproxy.google.com/~r/eclipse/fnews/~3/49_scA5uE0w/20170130devoxxuskeynotes.php</guid>
 	<link>http://feedproxy.google.com/~r/eclipse/fnews/~3/49_scA5uE0w/20170130devoxxuskeynotes.php</link>
@@ -31,26 +733,6 @@
 &lt;p&gt;&lt;span&gt;Liebe Grüße&lt;/span&gt;&lt;/p&gt; 
 &lt;p&gt;&lt;span&gt;Sandra&lt;/span&gt;&lt;/p&gt;  
 &lt;img alt=&quot;&quot; height=&quot;1&quot; src=&quot;http://track.hubspot.com/__ptq.gif?a=761475&amp;amp;k=14&amp;amp;r=https%3A%2F%2Fblogs.itemis.com%2Fde%2Fbewirb-dich-bei-itemis&amp;amp;bu=https%253A%252F%252Fblogs.itemis.com&amp;amp;bvt=rss&quot; style=&quot;width: 1px!important;&quot; width=&quot;1&quot; /&gt;</description>
-	<pubDate>Sat, 28 Jan 2017 11:54:26 +0000</pubDate>
-	<author>rennemann@itemis.de (Sandra Rennemann)</author>
-</item>
-<item>
-	<title>itemis: Bewirb dich bei itemis und werde Teil unseres Xtext Teams</title>
-	<guid isPermaLink="true">https://blogs.itemis.com/bewirb-dich-bei-itemis</guid>
-	<link>https://blogs.itemis.com/bewirb-dich-bei-itemis</link>
-	<description>&lt;p&gt;&lt;span&gt;&lt;a href=&quot;https://hosting.itemis.de/author/holger-schill&quot;&gt;Holger Schill&lt;/a&gt; und &lt;a href=&quot;https://hosting.itemis.de/author/Karsten-Thoms&quot;&gt;Karsten Thoms&lt;/a&gt; sind Softwarearchitekten und entwickeln neue Programmiersprachen. Beide sind Committer im &lt;a href=&quot;http://www.eclipse.org/Xtext/&quot;&gt;Eclipse Xtext Projekt&lt;/a&gt; und suchen dringend gute Leute zur Verstärkung ihres Teams. Schaut euch doch mal an, was die beiden in ihrem Video zu sagen haben. Vielleicht habt ihr ja Lust mit ihnen zusammenzuarbeiten.&lt;/span&gt;&lt;/p&gt; 
-&lt;p&gt;&lt;span&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;div class=&quot;wistia_responsive_padding&quot; style=&quot;padding: 56.25% 0 0 0;&quot;&gt;
- &lt;div class=&quot;wistia_responsive_wrapper&quot; style=&quot;height: 100%; width: 100%;&quot;&gt;
-  &lt;span class=&quot;wistia_embed wistia_async_44u1f1ayde  videoFoam=true&quot; style=&quot;display: inline-block; height: 100%; width: 100%;&quot;&gt;undefined&lt;/span&gt;
- &lt;/div&gt;
-&lt;/div&gt; 
-&lt;p&gt;&lt;/p&gt; 
-&lt;p&gt;&lt;span&gt;Wenn wir euer Interesse geweckt haben, hinterlasst uns einfach und unverbindlich eine Nachricht am Ende des Videos. Wir nehmen dann gerne Kontakt mit euch auf.&lt;/span&gt;&lt;/p&gt; 
-&lt;p&gt;&lt;span&gt;Natürlich könnte ihr euch auch gerne offziell bewerben. Besucht dazu einfach unsere &lt;a href=&quot;https://www.itemis.com/de/jobs/bewerben/&quot;&gt;Karriereseiten&lt;/a&gt;.&lt;/span&gt;&lt;/p&gt; 
-&lt;p&gt;&lt;span&gt;Liebe Grüße&lt;/span&gt;&lt;/p&gt; 
-&lt;p&gt;&lt;span&gt;Sandra&lt;/span&gt;&lt;/p&gt;  
-&lt;img alt=&quot;&quot; height=&quot;1&quot; src=&quot;http://track.hubspot.com/__ptq.gif?a=761475&amp;amp;k=14&amp;amp;r=https%3A%2F%2Fblogs.itemis.com%2Fbewirb-dich-bei-itemis&amp;amp;bu=https%253A%252F%252Fblogs.itemis.com&amp;amp;bvt=rss&quot; style=&quot;width: 1px!important;&quot; width=&quot;1&quot; /&gt;</description>
 	<pubDate>Sat, 28 Jan 2017 11:54:26 +0000</pubDate>
 	<author>rennemann@itemis.de (Sandra Rennemann)</author>
 </item>
@@ -399,22 +1081,6 @@ It also uses HTTP status codes in application properties of the different messag
 	<pubDate>Tue, 24 Jan 2017 16:40:19 +0000</pubDate>
 </item>
 <item>
-	<title>itemis: XtextSummit goes EclipseCon France</title>
-	<guid isPermaLink="true">https://blogs.itemis.com/en/xtextsummit-goes-eclipsecon-france</guid>
-	<link>https://blogs.itemis.com/en/xtextsummit-goes-eclipsecon-france</link>
-	<description>&lt;p class=&quot;p1&quot;&gt;&lt;a href=&quot;https://www.itemis.com/en/xtext/&quot;&gt;Xtext&lt;/a&gt; is a well known framework and highly represented at conferences like EclipseCon around the world. It is always fun getting together with people who build great software and talk about their experiences &lt;span&gt;with the framework&lt;/span&gt;. In 2014 itemis decided to host a dedicated conference on Xtext – the XtextCon – to present more advanced talks on this special topic. We have come a long way since then...&lt;/p&gt;  
-&lt;h2&gt;From XtextCon to XtextSummit&lt;/h2&gt; 
-&lt;p class=&quot;p1&quot;&gt;&lt;span class=&quot;s1&quot;&gt;The conference attracted around 100 people and that meant a lot to us. It was a great event and the attendees enjoyed it. People from around the globe came to the city of Kiel. It was such a big thing to us that we decided to have another XtextCon in 2015 and so the story continued with even more attendees.&lt;/span&gt;&lt;/p&gt; 
-&lt;p class=&quot;p1&quot;&gt;&lt;span class=&quot;s1&quot;&gt;In 2016 we decided to take a break. We took a deep breath to come back in 2017 with a new idea:&lt;/span&gt;&lt;/p&gt; 
-&lt;p class=&quot;p1&quot;&gt;&lt;span class=&quot;s1&quot;&gt;Together with Sven Efftinge from &lt;a href=&quot;http://typefox.io/&quot;&gt;TypeFox&lt;/a&gt; and &lt;a href=&quot;http://www.lorenzobettini.it/&quot;&gt;Lorenzo Bettini&lt;/a&gt;, we are more than happy to announce that we are hosting a brand new event called &lt;strong&gt;XtextSummit&lt;/strong&gt; at &lt;a href=&quot;https://www.eclipsecon.org/france2017/&quot;&gt;EclipseCon France&lt;/a&gt; in lovely Toulouse this June.&lt;/span&gt;&lt;/p&gt; 
-&lt;p class=&quot;p1&quot;&gt;&lt;span class=&quot;s1&quot;&gt;We’ll start with a full day at the unconference where the Xtext community can exchange their thoughts and experience. At the conference we’ll have a full track to talk about advanced Xtext-related technical aspects, as we have done it before at XtextCon.&lt;/span&gt;&lt;/p&gt; 
-&lt;h2&gt;Be part of the Xtext story&lt;/h2&gt; 
-&lt;p class=&quot;p1&quot;&gt;&lt;span&gt;By &lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&lt;a href=&quot;https://www.eclipsecon.org/france2017/cfp&quot;&gt;submitting a talk&lt;/a&gt; you can help make it a great event and let the story continue. We are looking forward to your talks and the EclipseCon France!&lt;/span&gt;&lt;/p&gt;  
-&lt;img alt=&quot;&quot; height=&quot;1&quot; src=&quot;http://track.hubspot.com/__ptq.gif?a=761475&amp;amp;k=14&amp;amp;r=https%3A%2F%2Fblogs.itemis.com%2Fen%2Fxtextsummit-goes-eclipsecon-france&amp;amp;bu=https%253A%252F%252Fblogs.itemis.com&amp;amp;bvt=rss&quot; style=&quot;width: 1px!important;&quot; width=&quot;1&quot; /&gt;</description>
-	<pubDate>Mon, 23 Jan 2017 15:11:06 +0000</pubDate>
-	<author>schill@itemis.com (Holger Schill)</author>
-</item>
-<item>
 	<title>Maximilian and Jonas: EMF Forms 1.11.0 Feature: Change Input Domain Object</title>
 	<guid isPermaLink="false">http://eclipsesource.com/blogs/?p=27605</guid>
 	<link>http://eclipsesource.com/blogs/2017/01/23/emf-forms-1-11-0-feature-change-input-domain-object/</link>
@@ -588,138 +1254,10 @@ This is all much simpler now through &lt;a href=&quot;http://docs.openhab.org/in
 	<description>&lt;div class=&quot;fusion-fullwidth fullwidth-box nonhundred-percent-fullwidth&quot; style=&quot;background-color: rgba(255,255,255,0); background-position: center center; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px;&quot;&gt;&lt;div class=&quot;fusion-builder-row fusion-row &quot;&gt;&lt;div class=&quot;fusion-layout-column fusion_builder_column fusion_builder_column_1_1  fusion-one-full fusion-column-first fusion-column-last 1_1&quot; style=&quot;margin-top: 0px; margin-bottom: 0px;&quot;&gt;
 			&lt;div class=&quot;fusion-column-wrapper&quot;&gt;
 				&lt;p&gt;The Eclipse Foundation has just released the&lt;strong&gt; Call For Papers for the upcoming EclipseCon France&lt;/strong&gt; in lovely Toulouse. EclipseCon France is a three-day conference,  starting with an unconference day and followed by two days of sessions about Eclipse technologies. In previous years, introductory sessions and new &amp;amp; noteworthy talks about Xtext have been part of the standard program. This year, however, we decided to go for a &lt;strong&gt;full track and an unconference day related to Xtext&lt;/strong&gt;, which allows for the Xtext community to gather together and exchange their experiences. This includes the possibility to talk about technically challenging aspects of Xtext, that would have been too focussed at a regular EclipseCon. Please help making this a great event and submit your sessions.&lt;/p&gt;
-&lt;div class=&quot;fusion-button-wrapper&quot;&gt;&lt;a class=&quot;fusion-button button-flat button-round button-large button-default button-1&quot; href=&quot;https://www.eclipsecon.org/france2017/cfp&quot; target=&quot;_self&quot;&gt;&lt;span class=&quot;fusion-button-text&quot;&gt;Submit A Session&lt;/span&gt;&lt;/a&gt;&lt;/div&gt;&lt;p&gt; &lt;/p&gt;
-&lt;div class=&quot;fusion-clearfix&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;fusion-button-wrapper&quot;&gt;&lt;a class=&quot;fusion-button button-flat button-round button-large button-default button-1&quot; href=&quot;https://www.eclipsecon.org/france2017/cfp&quot; target=&quot;_self&quot;&gt;&lt;span class=&quot;fusion-button-text&quot;&gt;Submit A Session&lt;/span&gt;&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;fusion-clearfix&quot;&gt;&lt;/div&gt;
 			&lt;/div&gt;
 		&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
 	<pubDate>Thu, 19 Jan 2017 06:59:24 +0000</pubDate>
-</item>
-<item>
-	<title>Wayne Beaton: Eclipse Infrastructure Support for IP Due Due Diligence Type</title>
-	<guid isPermaLink="false">http://waynebeaton.wordpress.com/?p=3996</guid>
-	<link>https://waynebeaton.wordpress.com/2017/01/16/eclipse-infrastructure-support-for-ip-due-due-diligence-type/</link>
-	<description>&lt;p&gt;The Eclipse Foundation’s &lt;a href=&quot;https://www.eclipse.org/org/documents/Eclipse_IP_Policy.pdf&quot;&gt;Intellectual Property (IP) Policy&lt;/a&gt; was recently updated and we’re in the process of updating our processes and support infrastructure to accommodate the changes. With the updated IP Policy, we introduced the notion of &lt;em&gt;Type A&lt;/em&gt; (license certified) and &lt;em&gt;Type B&lt;/em&gt; (license certified, provenance checked, and scanned) due diligence types for third-party dependencies that projects can opt to adopt.&lt;/p&gt;
-&lt;p&gt;With &lt;em&gt;Type A&lt;/em&gt;, we assert only that third-party content is license compatible with a project. For &lt;em&gt;Type B&lt;/em&gt; third-party content, the Eclipse Foundation’s IP Team invests considerable effort to also assert that the provenance is clear and that the code has been scanned to ensure that it is clear of all sorts of potential issues (e.g. copyright or license violations). The type of due diligence &lt;strong&gt;applies at the release level&lt;/strong&gt;. That is, a project team can decide the level of scrutiny that they’d like to apply on a release-by-release basis.&lt;/p&gt;
-&lt;p&gt;For more background, please review &lt;a href=&quot;https://waynebeaton.wordpress.com/2017/01/12/license-certification-due-diligence/&quot;&gt;License Certification Due Diligence&lt;/a&gt; and &lt;a href=&quot;https://waynebeaton.wordpress.com/2017/01/13/whats-your-ip-due-diligence-type/&quot;&gt;What’s Your (IP Due Diligence) Type?&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;By default all new projects at the Eclipse Foundation now start configured to use &lt;em&gt;Type A&lt;/em&gt; by default. We envision that many project teams will eventually employ a hybrid solution where they have many &lt;em&gt;Type A&lt;/em&gt; releases with period &lt;em&gt;Type B&lt;/em&gt; releases.&lt;/p&gt;
-&lt;p&gt;The default due diligence type is recorded in the project’s metadata, stored in the &lt;a href=&quot;https://www.eclipse.org/projects/handbook/#pmi&quot;&gt;Project Management Infrastructure&lt;/a&gt; (PMI). Any project committer or project lead can navigate to their project page, and click the “Edit” button to access project metadata.&lt;/p&gt;
-&lt;p&gt;&lt;img alt=&quot;project_edit.png&quot; class=&quot;alignnone size-full wp-image-4032&quot; src=&quot;https://waynebeaton.files.wordpress.com/2017/01/project_edit.png?w=640&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;In the section titled “The Basics” (near the bottom), there’s a place where the project team can specify the default &lt;em&gt;due diligence type&lt;/em&gt; for the project (it’s reported on the &lt;em&gt;Governance&lt;/em&gt; page). If nothing is specified, &lt;em&gt;Type B&lt;/em&gt; is assumed. Specifying the value at the project level is basically a way for the project team to make a statement that their releases &lt;em&gt;tend&lt;/em&gt; to employ a certain type of due diligence for third-party content.&lt;/p&gt;
-&lt;p&gt;&lt;img alt=&quot;project_dd_type.png&quot; class=&quot;alignnone size-full wp-image-4016 aligncenter&quot; src=&quot;https://waynebeaton.files.wordpress.com/2017/01/project_dd_type.png?w=640&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;Project teams can also specify the due diligence type for third-party content in the release record. Again, a project committer or project lead can navigate to a release record page, and click “Edit” to gain access to the release metadata.&lt;/p&gt;
-&lt;p&gt;&lt;img alt=&quot;release_dd_type.png&quot; class=&quot;alignnone size-full wp-image-4018 aligncenter&quot; src=&quot;https://waynebeaton.files.wordpress.com/2017/01/release_dd_type.png?w=640&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;As for projects, the metadata for IP due diligence type is found in the section titled “The Basics”. The field’s description is not exactly correct: if not specified in the release record, our processes all assume the value specified in the project metadata. We’ll fix this.&lt;/p&gt;
-&lt;p&gt;When the time comes to create a request to the Eclipse Foundation’s IP Team to review a contribution (a &lt;em&gt;contribution questionnaire&lt;/em&gt;, or &lt;em&gt;CQ&lt;/em&gt;), committers will see an extra question on the page for third-party content.&lt;/p&gt;
-&lt;p&gt;&lt;img alt=&quot;create_cq.png&quot; class=&quot;alignnone  wp-image-4019 aligncenter&quot; height=&quot;350&quot; src=&quot;https://waynebeaton.files.wordpress.com/2017/01/create_cq.png?w=493&amp;amp;h=350&quot; width=&quot;493&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;As an aside, committers that have tried to use our legacy system for requesting IP reviews (the &lt;em&gt;Eclipse Developer Portal&lt;/em&gt;) will have noticed that we’re now redirecting those requests to the PMI-based implementation. Project committers will find a direct link to this implementation under the &lt;em&gt;Committer Tools&lt;/em&gt; block on their project’s PMI page.&lt;/p&gt;
-&lt;p&gt;We’ve added an extra field to the record that gets created in our IP tracking system (&lt;a href=&quot;https://www.eclipse.org/projects/handbook/#ip-ipzilla&quot;&gt;IPZilla&lt;/a&gt;), &lt;em&gt;Type&lt;/em&gt;, that will be set to &lt;code&gt;Type_A&lt;/code&gt; or &lt;code&gt;Type_B&lt;/code&gt; (in some cases, it may be empty, “–“). We’ve also added a new &lt;em&gt;state&lt;/em&gt;, &lt;span style=&quot;background-color: #f3f6f8;&quot;&gt;license_certified&lt;/span&gt;, that indicates that the licenses has been checked and the content can be used by the project in any &lt;em&gt;Type A&lt;/em&gt; release.&lt;/p&gt;
-&lt;p&gt;Any content that is approved can be assumed to also be license certified.&lt;/p&gt;
-&lt;p&gt;There are many other questions that need to be answered, especially with regard to IP Logs, mixing IP due diligence types, and branding downloads. I’ll try to address these topics and more in posts over the next few days.&lt;/p&gt;&lt;br /&gt;  &lt;a href=&quot;http://feeds.wordpress.com/1.0/gocomments/waynebeaton.wordpress.com/3996/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/comments/waynebeaton.wordpress.com/3996/&quot; /&gt;&lt;/a&gt; &lt;img alt=&quot;&quot; border=&quot;0&quot; height=&quot;1&quot; src=&quot;https://pixel.wp.com/b.gif?host=waynebeaton.wordpress.com&amp;amp;blog=19425814&amp;amp;post=3996&amp;amp;subd=waynebeaton&amp;amp;ref=&amp;amp;feed=1&quot; width=&quot;1&quot; /&gt;</description>
-	<pubDate>Mon, 16 Jan 2017 22:01:21 +0000</pubDate>
-</item>
-<item>
-	<title>Benjamin Cabe: Using MQTT-SN over BLE with the BBC micro:bit</title>
-	<guid isPermaLink="false">https://blog.benjamin-cabe.com/?p=2808</guid>
-	<link>http://feedproxy.google.com/~r/benjamin-cabe-planet-eclipse/~3/mZ66SVtQ9yU/using-mqtt-sn-over-ble-with-the-bbc-microbit</link>
-	<description>&lt;p&gt;The &lt;a href=&quot;http://microbit.org/&quot; target=&quot;_blank&quot;&gt;micro:bit&lt;/a&gt; is one of the best IoT prototyping platforms I’ve come across in the past few months.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2017/01/microbit-hardware.png&quot;&gt;&lt;img class=&quot;aligncenter wp-image-2809&quot; height=&quot;253&quot; src=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2017/01/microbit-hardware-300x169.png&quot; width=&quot;450&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;The main MCU is a &lt;strong&gt;Nordic nRF51822&lt;/strong&gt; with 16K RAM and 256K Flash. A Freescale KL26Z is used for conveniently implementing a USB interface as well as a mass storage driver so as deploying code onto the micro:bit is as simple as directly copying a .hex file over USB (if your familiar with the mbed ecosystem, this will sound familiar :-)).&lt;/p&gt;
-&lt;p&gt;The board is packed with all the typical sensors and actuators you need for prototyping an IoT solution: accelerometer, compass, push buttons, an LED matrix, … What’s really cool, is the built-in BLE support, combined with the battery connector, making it really easy to have a tetherless, low-power  &lt;a class=&quot;simple-footnote&quot; href=&quot;http://feeds.feedburner.com/benjamin-cabe-planet-eclipse#note-2808-1&quot; id=&quot;return-note-2808-1&quot; title=&quot;You should keep in mind that the micro:bit, like other similar boards, is meant to be a prototyping platform, and for example having the KL26Z core taking core of the USB controller might not be ideal battery-wise, if you only care about doing tetherless BLE communications.&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;, IoT testing device.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;So how does one take the micro:bit and turn it into an IoT device?&lt;/strong&gt; Since there is no Internet connectivity, you need to rely on some kind of gateway to bridge the constrained device that is the micro:bit to the Internet. You can of course implement your own protocol to do just that, but then you have to basically reimplement the wheel. That’s the reason why I thought the &lt;strong&gt;micro:bit would be ideal to experiment with MQTT-SN&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;You can &lt;a href=&quot;http://feeds.feedburner.com/benjamin-cabe-planet-eclipse#video-tutorial-and-wrap-up&quot;&gt;jump directly to the video tutorial at the end of the post&lt;/a&gt;, and come back later for more in-depth reading.&lt;/p&gt;
-&lt;h1&gt;What is MQTT-SN and why you should care&lt;/h1&gt;
-&lt;p&gt;If I were to over simplify things, I would just say that MQTT-SN (which stands for “MQTT for Sensor Networks”, by the way) is an adaptation of the MQTT protocol to deal with constrained devices, both from a footprint/complexity standpoint, and to adapt to the fact constrained devices may not have TCP/IP support.&lt;/p&gt;
-&lt;p&gt;MQTT-SN is designed so as to &lt;strong&gt;make the packets as small as possible&lt;/strong&gt;. An example is the fact that an MQTT-SN client registers the topic(s) it wishes to us against the  server, this way further PUBLISH or SUBSCRIBE exchanges only have to deal with a 2-byte long ID, as opposed to a possibly very long UTF-8 string.&lt;/p&gt;
-&lt;p&gt;Like I said before, you really don’t want to reimplement your own protocol, and using MQTT-SN just makes lot of sense since it bridges very naturally to good ol’ MQTT.&lt;/p&gt;
-&lt;h1&gt;Setting up an MQTT-SN client on the micro:bit&lt;/h1&gt;
-&lt;p&gt;The MQTT-SN supports the BLE UARTService from Nordic, that essentially mimics a classical UART by means of two BLE characteristics, for RX and TX. This is what we’ll use as our communication channel.&lt;/p&gt;
-&lt;p&gt;The Eclipse Paho project provides an &lt;a href=&quot;https://github.com/eclipse/paho.mqtt-sn.embedded-c&quot; target=&quot;_blank&quot;&gt;MQTT-SN embedded library&lt;/a&gt; that turns out to be really easy to use. It allows you to serialize and deserialize MQTT-SN packets, the only remaining thing to do is for you to effectively transmit them (send or receive) over your communication channel – BLE UART in our case.&lt;/p&gt;
-&lt;p&gt;In order to show you how simple the library is to use, here’s an example of how you would issue a CONNECT:&lt;/p&gt;
-&lt;pre class=&quot;brush: cpp; title: ; notranslate&quot;&gt;MQTTSNPacket_connectData options = MQTTSNPacket_connectData_initializer;
-options.clientID.cstring = microbit_friendly_name();
-int len = MQTTSNSerialize_connect(buf, buflen, &amp;amp;options);
-int rc = transport_sendPacketBuffer(buf, len);
-
-/* wait for connack */
-rc = MQTTSNPacket_read(buf, buflen, transport_getdata);
-if (rc == MQTTSN_CONNACK)
-{
-    int connack_rc = -1;
-
-    if (MQTTSNDeserialize_connack(&amp;amp;connack_rc, buf, buflen) != 1 || connack_rc != 0)
-    {
-        return -1;
-    }
-    else {
-        // CONNECTION OK - continue
-    }
-} else {
-    return -1;
-}
-&lt;/pre&gt;
-&lt;p&gt;Now what’s behind the &lt;code&gt;transport_sendPacketBuffer&lt;/code&gt; and &lt;code&gt;transport_getdata&lt;/code&gt; functions? You’ve guess correctly, this is where either send or read a buffer to/from the BLE UART.&lt;br /&gt;
-Using the micro:bit UART service API, the code for &lt;code&gt;transport_getdata&lt;/code&gt; is indeed very straightforward:&lt;/p&gt;
-&lt;pre class=&quot;brush: cpp; title: ; notranslate&quot;&gt;int transport_getdata(unsigned char* buf, int count)
-{
-    int rc = uart-&amp;gt;read(buf, count, ASYNC);
-    return rc;
-}
-&lt;/pre&gt;
-&lt;p&gt;You can find the complete code for publishing the micro:bit acceloremeter data over BLE &lt;a href=&quot;https://github.com/kartben/microbit-mqttsn-ble&quot; target=&quot;_blank&quot;&gt;on my Github&lt;/a&gt;. Note that for the sake of simplifying things, I’ve disabled Bluetooth pairing so as connecting to a BLE/MQTT-SN gateway just works out of the box.&lt;/p&gt;
-&lt;h1&gt;MQTT-SN gateway&lt;/h1&gt;
-&lt;p&gt;There are a few MQTT-SN gateways available out there, and you should feel free to use the one that floats your boat. Some (most?) MQTT-SN gateways will also behave as regular MQTT brokers so you won’t necessarily have to bridge the MQTT-SN devices to MQTT strictly speaking, but rather directly use the gateway as your MQTT broker.&lt;br /&gt;
-For my tests, I’ve been pretty happy with &lt;strong&gt;RSMB&lt;/strong&gt;, an &lt;a href=&quot;https://eclipse.org/paho&quot; target=&quot;_blank&quot;&gt;Eclipse Paho&lt;/a&gt; component, that you can &lt;a href=&quot;https://github.com/eclipse/mosquitto.rsmb&quot; target=&quot;_blank&quot;&gt;get from Github&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The &lt;a href=&quot;https://github.com/eclipse/mosquitto.rsmb/blob/master/README.md&quot; target=&quot;_blank&quot;&gt;README&lt;/a&gt; of the project is pretty complete and you should be able to have your RSMB broker compiled in no time. The default configuration file for RSMB should be named &lt;code&gt;broker.cfg&lt;/code&gt; (you can specify a different configuration file on the command line, of course).&lt;br /&gt;
-Below is an example of the configuration file so as RSMB behaves as both a good ol’ MQTT broker, but also an MQTT-SN gateway, bridged to iot.eclipse.org’s MQTT sandbox broker. Note that in my example I only care about publishing messages, so the bridge is configured in &lt;code&gt;out&lt;/code&gt; mode, meaning that messages only flow from my MQTT-SN devices to iot.eclipse.org, and not the other way around. Your mileage may vary if you also want your MQTT-SN devices to be able to subscribe to message, in which case the bridging mode should be set to &lt;code&gt;both&lt;/code&gt;&lt;/p&gt;
-&lt;pre class=&quot;brush: bash; title: broker.cfg; notranslate&quot;&gt;# will show you packets being sent and received
-trace_output protocol
-
-# MQTT listener
-listener 1883 INADDR_ANY mqtt
-
-# MQTT-S listener
-listener 1884 INADDR_ANY mqtts
-
-# QoS 2 MQTT-S bridge
-connection mqtts
-  protocol mqtt
-  address 198.41.30.241:1883
-  topic # out
-&lt;/pre&gt;
-&lt;h1&gt;Bridging the BLE device(s) to the MQTT-SN gateway&lt;/h1&gt;
-&lt;p&gt;Now there is still one missing piece, right? We need some piece of software for forwarding the messages coming from the BLE link, to the MQTT-SN gateway.&lt;/p&gt;
-&lt;p&gt;I’ve &lt;a href=&quot;https://github.com/kartben/ble-uart-to-udp&quot; target=&quot;_blank&quot;&gt;adapted an existing Node.js application that does just that&lt;/a&gt;. For each BLE device that attaches to it, it creates a UDP socket to the MQTT-SN gateway, and transparently routes packets back and forth. When the micro:bit “publishes” an MQTT-SN packet, it is just as if it were directly talking to the MQTT-SN gateway.&lt;/p&gt;
-&lt;p&gt;The overall architecture is as follows:&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2017/01/mqtt-sn-microbit-overview.png&quot;&gt;&lt;img class=&quot;aligncenter wp-image-2834&quot; height=&quot;373&quot; src=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2017/01/mqtt-sn-microbit-overview-1024x617.png&quot; width=&quot;619&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Note that it would be more elegant (and also avoid some nasty bugs, actually &lt;a class=&quot;simple-footnote&quot; href=&quot;http://feeds.feedburner.com/benjamin-cabe-planet-eclipse#note-2808-2&quot; id=&quot;return-note-2808-2&quot; title=&quot;RSMB expects the first packet received on an incoming UDP connection to be a CONNECT packet. If the bridge forwards everything to the gateway transparently, that may not always be the case. If, instead, it takes care of encapsulating all MQTT-SN packets properly, that means you know need only one UDP socket from your BLE/UDP bridge to the gateway)&quot;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;) to leverage MQTT-SN’s encapsulation mechanism so as to make the bridge even more straightforward, and not have to maintain one UDP socket per BLE device. To quote the &lt;a href=&quot;http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf&quot; target=&quot;_blank&quot;&gt;MQTT-SN specification&lt;/a&gt;:&lt;/p&gt;
-&lt;blockquote&gt;&lt;p&gt;The forwarder simply encapsulates the MQTT-SN frames it receives on the wireless side and forwards them unchanged to the GW; in the opposite direction, it decapsulates the frames it receives from the gateway and sends them to the clients, unchanged too.&lt;/p&gt;&lt;/blockquote&gt;
-&lt;p&gt;Unfortunately RSMB does not support encapsulated packets at this point, but you can rely on this fork if you want to use encapsulation: &lt;a href=&quot;https://github.com/MichalFoksa/rsmb&quot; target=&quot;_blank&quot;&gt;https://github.com/MichalFoksa/rsmb&lt;/a&gt;.&lt;/p&gt;
-&lt;h1&gt;Visualizing the data: mqtt-spy to the rescue!&lt;/h1&gt;
-&lt;p&gt;Like in my &lt;a href=&quot;https://blog.benjamin-cabe.com/2016/12/16/using-mqtt-and-eclipse-paho-in-android-things&quot;&gt;previous article about Android Things&lt;/a&gt;, I used &lt;a href=&quot;https://github.com/eclipse/paho.mqtt-spy&quot; target=&quot;_blank&quot;&gt;mqtt-spy&lt;/a&gt; to visualize the data coming from the sensors.&lt;/p&gt;
-&lt;p&gt;Note that publishing sensor data in JSON might not be the best idea in production: the MTU of a BLE packet is just 20 bytes. Those extra curly braces, commas, and double quotes are as many bytes you won’t be able to use for your MQTT payload. You may want to look at something like &lt;a href=&quot;http://cbor.io/&quot; target=&quot;_blank&quot;&gt;CBOR&lt;/a&gt; for creating small, yet typed, binary payloads.&lt;br /&gt;
-However, JSON is of course pretty convenient since there’s a plethora of libraries out there that will allow you to easily manipulate the data…&lt;/p&gt;
-&lt;p&gt;Using mqtt-spy, it’s very easy to visualize the values we’re collecting from the accelerometer of the micro:bit, either in “raw” form, or on a chart, using mqtt-spy’s ability to parse JSON payloads.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2017/01/mqtt-sn-microbit-mqttspy1.png&quot;&gt;&lt;img alt=&quot;&quot; class=&quot;aligncenter size-medium wp-image-2829&quot; height=&quot;219&quot; src=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2017/01/mqtt-sn-microbit-mqttspy1-300x219.png&quot; width=&quot;300&quot; /&gt;&lt;/a&gt;&lt;img alt=&quot;&quot; class=&quot;aligncenter size-medium wp-image-2828&quot; height=&quot;238&quot; src=&quot;https://blog.benjamin-cabe.com/wp-content/uploads/2017/01/mqtt-sn-microbit-mqttspy2-300x238.png&quot; width=&quot;300&quot; /&gt;&lt;/p&gt;
-&lt;h1 id=&quot;video-tutorial-and-wrap-up&quot;&gt;Video tutorial and wrap-up&lt;/h1&gt;
-&lt;p&gt;&lt;/p&gt;
-&lt;p&gt;I’ve wanted to give MQTT-SN a try for a long time now, and I’m really happy I took the time to do so. All in all, I would summarize my findings as follow:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;The Eclipse Paho MQTT-SN embedded client just works!&lt;/strong&gt; Similarly to the MQTT embedded client, it is very easy to take it and port it to your embedded device, and no matter what actual transport layer you are using (Bluetooth, Zigbee, UDP, …), you essentially just have to provide an implementation of “transport_read” and “transport_write”.&lt;/li&gt;
-&lt;li&gt;You may want to be careful when doing things like “UART over BLE”. The main point of BLE is that it’s been designed to be really low-power, so if you tend to overly communicate or to remain paired with the gateway all the time, you will likely kill your battery in no time!&lt;/li&gt;
-&lt;li&gt;The NRF5x series from Nordic is very widely available on the market, so it would be really interesting to run a similar MQTT-SN stack on other devices than the micro:bit, therefore demonstrating how it truly enables interoperability. If you build something like this, I really want to hear from you!&lt;/li&gt;
-&lt;li&gt;Although it’s true that there are not quite as many MQTT-SN libraries and gateways available out there as there are for MQTT, &lt;strong&gt;the protocol is pretty straightforward and that shouldn’t be preventing you from giving it a try!&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt; &lt;/p&gt;
- &lt;div class=&quot;simple-footnotes&quot;&gt;&lt;p class=&quot;notes&quot;&gt;Notes:&lt;/p&gt;&lt;ol&gt;&lt;li id=&quot;note-2808-1&quot;&gt;You should keep in mind that the micro:bit, like other similar boards, is meant to be a prototyping platform, and for example having the KL26Z core taking core of the USB controller might not be ideal battery-wise, if you only care about doing tetherless BLE communications. &lt;a href=&quot;http://feeds.feedburner.com/benjamin-cabe-planet-eclipse#return-note-2808-1&quot;&gt;↩&lt;/a&gt;&lt;/li&gt;&lt;li id=&quot;note-2808-2&quot;&gt;RSMB expects the first packet received on an incoming UDP connection to be a CONNECT packet. If the bridge forwards everything to the gateway transparently, that may not always be the case. If, instead, it takes care of encapsulating all MQTT-SN packets properly, that means you know need only one UDP socket from your BLE/UDP bridge to the gateway) &lt;a href=&quot;http://feeds.feedburner.com/benjamin-cabe-planet-eclipse#return-note-2808-2&quot;&gt;↩&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;&lt;/div&gt;&lt;img alt=&quot;&quot; height=&quot;1&quot; src=&quot;http://feeds.feedburner.com/~r/benjamin-cabe-planet-eclipse/~4/mZ66SVtQ9yU&quot; width=&quot;1&quot; /&gt;</description>
-	<pubDate>Mon, 16 Jan 2017 11:11:39 +0000</pubDate>
-</item>
-<item>
-	<title>Scott Lewis: ECF 3.13.4 now available</title>
-	<guid isPermaLink="false">tag:blogger.com,1999:blog-20358640.post-1812222818293130137</guid>
-	<link>http://eclipseecf.blogspot.com/2017/01/ecf-3134-now-available.html</link>
-	<description>ECF &lt;a href=&quot;https://www.eclipse.org/ecf/downloads.php&quot; target=&quot;_blank&quot;&gt;3.13.4 is now available&lt;/a&gt;.  This was a maintenance release, with bug fixes for the &lt;a href=&quot;https://www.eclipse.org/ecf/NewAndNoteworthy.html&quot; target=&quot;_blank&quot;&gt;Eclipse tooling for OSGi Remote Services&lt;/a&gt; and an update of the Apache Httpclient filetransfer provider contributed to Eclipse.</description>
-	<pubDate>Sun, 15 Jan 2017 18:13:39 +0000</pubDate>
-	<author>noreply@blogger.com (Scott Lewis)</author>
 </item>
 
 </channel>

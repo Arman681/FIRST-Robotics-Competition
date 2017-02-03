@@ -1,7 +1,10 @@
 eclipse.preferences.version=1
+org.eclipse.jdt.core.classpathVariable.ECLIPSE_HOME=C\:/Users/Arman/eclipse/committers-neon/eclipse/
 org.eclipse.jdt.core.classpathVariable.JRE_LIB=C\:/Program Files/Java/jdk1.8.0_101/jre/lib/rt.jar
 org.eclipse.jdt.core.classpathVariable.JRE_SRC=C\:/Program Files/Java/jdk1.8.0_101/src.zip
 org.eclipse.jdt.core.classpathVariable.JRE_SRCROOT=
+org.eclipse.jdt.core.classpathVariable.JUNIT_HOME=C\:/Users/Arman/.p2/pool/plugins/org.junit_4.12.0.v201504281640
+org.eclipse.jdt.core.classpathVariable.JUNIT_SRC_HOME=C\:/Users/Arman/.p2/pool/plugins/org.junit.source_4.12.0.v201504281640.jar
 org.eclipse.jdt.core.classpathVariable.USERLIBS_DIR=C\:/Users/Arman/wpilib/user/java/lib
 org.eclipse.jdt.core.classpathVariable.cscore=C\:/Users/Arman/wpilib/java/current/lib/cscore.jar
 org.eclipse.jdt.core.classpathVariable.cscore.sources=C\:/Users/Arman/wpilib/java/current/lib/cscore-sources.jar
