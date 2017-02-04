@@ -5,4 +5,5 @@
 <fullyQualifiedTypeName name="edu.wpi.first.wpilibj.Timer"/>
 <fullyQualifiedTypeName name="edu.wpi.first.wpilibj.interfaces.Gyro"/>
 <fullyQualifiedTypeName name="edu.wpi.first.wpilibj.AnalogGyro"/>
+<fullyQualifiedTypeName name="edu.wpi.first.wpilibj.PIDController"/>
 </qualifiedTypeNameHistroy>

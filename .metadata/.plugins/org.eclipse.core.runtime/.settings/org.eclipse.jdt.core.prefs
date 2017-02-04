@@ -8,6 +8,7 @@ org.eclipse.jdt.core.classpathVariable.JUNIT_SRC_HOME=C\:/Users/Arman/.p2/pool/p
 org.eclipse.jdt.core.classpathVariable.USERLIBS_DIR=C\:/Users/Arman/wpilib/user/java/lib
 org.eclipse.jdt.core.classpathVariable.cscore=C\:/Users/Arman/wpilib/java/current/lib/cscore.jar
 org.eclipse.jdt.core.classpathVariable.cscore.sources=C\:/Users/Arman/wpilib/java/current/lib/cscore-sources.jar
+org.eclipse.jdt.core.classpathVariable.navx-mxp=C\:/Users/Arman/wpilib/user/java/lib/navx_frc.jar
 org.eclipse.jdt.core.classpathVariable.networktables=C\:/Users/Arman/wpilib/java/current/lib/NetworkTables.jar
 org.eclipse.jdt.core.classpathVariable.networktables.sources=C\:/Users/Arman/wpilib/java/current/lib/NetworkTables-sources.jar
 org.eclipse.jdt.core.classpathVariable.opencv=C\:/Users/Arman/wpilib/java/current/lib/opencv.jar

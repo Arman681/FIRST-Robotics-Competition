@@ -5,7 +5,6 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -45,8 +44,7 @@ public class Robot extends IterativeRobot {
     double rotateToAngleRate;
     double Kp = 0.03;
     
-
-    
+    ahrs = new AHRS(I2C.Port.kMXP); 
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -71,9 +69,6 @@ public class Robot extends IterativeRobot {
         
         //Sensor Assignments
         gyro = new AnalogGyro(1);
-        ahrs = new AHRS(I2C.Port.kMXP); 
-        
-        
     }
 	
 	/**
@@ -215,14 +210,9 @@ public class Robot extends IterativeRobot {
         		br.set(0);
         	}
         	
-        	if (stick.getRawButton(1) && ahrs.getAngle() < 5){
-        		gyroturn(90, 0.5);
-        	}
-        	else{
-        		fl.set(0);
-        		fr.set(0);
-        		bl.set(0);
-        		br.set(0);
+        	if (stick.getRawButton(1)){
+        		
+        		
         	}
     	}
     }
@@ -233,26 +223,5 @@ public class Robot extends IterativeRobot {
     public void testPeriodic() {
         LiveWindow.run();
     }
-    public void gyroturn(int degrees, double speed){
-    	
-    	if(ahrs.getAngle() < degrees && ahrs.getAngle() == 0){
-    		
-    		fl.set(speed);
-    		fr.set(-speed);
-    		bl.set(speed);
-    		br.set(-speed);
-    		
-    	}
-    	else{
-    		
-    		fl.set(0);
-    		fr.set(0);
-    		bl.set(0);
-    		br.set(0);
-    		ahrs.reset();
-    		
-    	}
-    	
-    }
+    
 }
-
