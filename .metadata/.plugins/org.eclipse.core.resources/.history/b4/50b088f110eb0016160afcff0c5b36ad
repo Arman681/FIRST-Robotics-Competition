@@ -16,6 +16,13 @@ import org.usfirst.frc.team5872.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/**
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to each mode, as described in the IterativeRobot
+ * documentation. If you change the name of this class or the package after
+ * creating this project, you must also update the manifest file in the resource
+ * directory.
+ */
 public class Robot extends IterativeRobot {
 
 	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
@@ -23,6 +30,11 @@ public class Robot extends IterativeRobot {
 
     Command autonomousCommand;
     SendableChooser chooser;
+    
+   /* CANTalon fl; //CAN 3
+    CANTalon fr; //CAN 2
+    CANTalon bl; //CAN 1
+    CANTalon br; //CAN 0 */
     
     //Motor Controller Declarations
     CANTalon fl;
@@ -91,7 +103,7 @@ public class Robot extends IterativeRobot {
     public void autonomousInit() {
         autonomousCommand = (Command) chooser.getSelected();
         
-		/*String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
+		/* String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
 		switch(autoSelected) {
 		case "My Auto":
 			autonomousCommand = new MyAutoCommand();
@@ -100,7 +112,7 @@ public class Robot extends IterativeRobot {
 		default:
 			autonomousCommand = new ExampleCommand();
 			break;
-		}*/
+		} */
     	
     	//schedule the autonomous command (example)
         if (autonomousCommand != null) 
@@ -135,75 +147,63 @@ public class Robot extends IterativeRobot {
     }
 
     public void teleopInit() {
-    	
 		//This makes sure that the autonomous stops running when
         //teleop starts running. If you want the autonomous to 
         //continue until interrupted by another command, remove
         //this line or comment it out.
-        if (autonomousCommand != null) 
-        	autonomousCommand.cancel();
+        if (autonomousCommand != null) autonomousCommand.cancel();
     }
 
     /**
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-    	while(true) {
-    		
-    		Scheduler.getInstance().run();
-    		myRobot.arcadeDrive(stick); //This line drives the robot using the values of the joystick and the motor controllers selected above
+    	while(true){
+        Scheduler.getInstance().run();
+        myRobot.arcadeDrive(stick); //This line drives the robot using the values of the joystick and the motor controllers selected above
         
-    		//Tank Drive Logitech Controller Joystick Declarations and Assignments
-    		double l = -stick.getRawAxis(1);
-    		double r = stick.getRawAxis(5);
+        double l = -stick.getRawAxis(1);
+    	double r = stick.getRawAxis(5);
+    	double tl = stick.getRawAxis(2);
+    	double tr = stick.getRawAxis(3);
         
-    		//Arcade Drive Joystick Declarations and Assignments
-    		double y = -stick.getRawAxis(1);
-    		double z = stick.getRawAxis(2);
+        double y = -stick.getRawAxis(1);
+        double z = stick.getRawAxis(2);
+    	//Tank Drive
+    	fl.set(l);
+    	fr.set(r);
+    	bl.set(l);
+    	br.set(r);
     	
-    		//Tank Drive
-    		if (stick.getRawAxis(1) != 0) { //if left joystick is active
-    			fl.set(l);
-    			bl.set(l);
-    		}
-    		else {
-    			fl.set(0);
-    			bl.set(0);
-    		}
-    		if (stick.getRawAxis(5) != 0) { //if right joystick is active
-    			fr.set(r);
-        		br.set(r);
-    		}
-    		else {
-    			fr.set(0);
-    			br.set(0);
-    		}
-    		
-    		//Arcade Drive
-    		if (stick.getRawAxis(1) != 0) { //if y-axis is active
-    			fl.set(y);
-            	bl.set(y);
-           		fr.set(y);
-           		br.set(y);
-    		}
-    		else {
-    			fl.set(0);
-    			bl.set(0);
-    			fr.set(0);
-    			br.set(0);
-    		}
-        	if (stick.getRawAxis(2) != 0) { //if z-axis is active
-        		fl.set(-z);
-        		bl.set(-z);
-        		fr.set(z);
-        		br.set(z);
-        	}
-        	else {
-        		fl.set(0);
-        		bl.set(0);
-        		fr.set(0);
-        		br.set(0);
-        	}
+        /*//Arcade Drive
+        if(y < 0 || y > 0){
+        	
+        	fl.set(y);
+        	bl.set(y);
+        	fr.set(y);
+        	br.set(y);
+        }
+        else{
+        	
+        	fl.set(0);
+        	bl.set(0);
+        	fr.set(0);
+        	br.set(0);
+        }
+        if(z < 0 || z > 0){
+        	
+        	fl.set(-z);
+        	bl.set(-z);
+        	fr.set(z);
+        	br.set(z);
+        }
+        else{
+        	
+        	fl.set(0);
+        	bl.set(0);
+        	fr.set(0);
+        	br.set(0);
+        }*/
     	}
     }
     
