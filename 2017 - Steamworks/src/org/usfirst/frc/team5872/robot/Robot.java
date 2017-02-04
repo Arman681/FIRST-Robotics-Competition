@@ -64,6 +64,12 @@ public class Robot extends IterativeRobot {
         fr = new CANTalon(1);
         br = new CANTalon(0);
         
+        //Initialize encoders
+        fl.configEncoderCodesPerRev(1000);
+        bl.configEncoderCodesPerRev(1000);
+        fr.configEncoderCodesPerRev(1000);
+        br.configEncoderCodesPerRev(1000);
+        
         //Essential Assignments
         myRobot = new RobotDrive(3, 1, 2, 0);
         stick = new Joystick(0);
@@ -216,7 +222,7 @@ public class Robot extends IterativeRobot {
         	}
         	
         	if (stick.getRawButton(1) && ahrs.getAngle() < 5){
-        		gyroturn(90, 0.5);
+        		gyroRight(90, 0.5);
         	}
         	else{
         		fl.set(0);
@@ -233,26 +239,70 @@ public class Robot extends IterativeRobot {
     public void testPeriodic() {
         LiveWindow.run();
     }
-    public void gyroturn(int degrees, double speed){
+    public void gyroRight(int degrees, double speed){
     	
     	if(ahrs.getAngle() < degrees && ahrs.getAngle() == 0){
     		
-    		fl.set(speed);
-    		fr.set(-speed);
-    		bl.set(speed);
-    		br.set(-speed);
+    		setSpeed(speed,-speed);
     		
     	}
     	else{
     		
-    		fl.set(0);
-    		fr.set(0);
-    		bl.set(0);
-    		br.set(0);
+    		stopMotors();
     		ahrs.reset();
     		
     	}
     	
+    }
+    public void gyrotLeft(int degrees, double speed){
+    	
+    	if(ahrs.getAngle() < degrees && ahrs.getAngle() == 0){
+    		setSpeed(-speed,speed);
+    	}
+    	else{
+    		stopMotors();
+    		ahrs.reset();
+    	}
+    	
+    }
+    public void setSpeed(double left,double right) {
+    	fl.set(left);
+		fr.set(right);
+		bl.set(left);
+		br.set(right);
+    }
+    public void stopMotors() {
+    	fl.set(0);
+		fr.set(0);
+		bl.set(0);
+		br.set(0);
+    }
+    public void resetEncoders() {
+    	fl.setEncPosition(0);
+    	bl.setEncPosition(0);
+    	fr.setEncPosition(0);
+    	br.setEncPosition(0);
+    }
+    public void encoderDrive(int rightTicks, int leftTicks, double leftPower, double rightPower, double timeout) {
+    	resetEncoders();
+    	int targetFrontRight = fr.getEncPosition()+rightTicks;
+    	int targetBackRight = br.getEncPosition()+rightTicks;
+    	int targetFrontLeft = fl.getEncPosition()+leftTicks;
+    	int targetBackLeft = bl.getEncPosition()+leftTicks;
+    	int curFrontRight = fr.getEncPosition();
+    	int curBackRight = br.getEncPosition();
+    	int curFrontLeft = fl.getEncPosition();
+    	int curBackLeft = bl.getEncPosition();
+    	boolean done = (Math.abs(targetFrontRight - curFrontRight) < 5 || Math.abs(targetBackRight - curBackRight) < 5 || Math.abs(targetFrontLeft - curFrontLeft) < 5 || Math.abs(targetBackLeft - curBackLeft) < 5);
+    	setSpeed(leftPower,rightPower);
+    	while(isAutonomous() && !done) {
+    		curFrontRight = fr.getEncPosition();
+        	curBackRight = br.getEncPosition();
+        	curFrontLeft = fl.getEncPosition();
+        	curBackLeft = bl.getEncPosition();
+        	done = (Math.abs(targetFrontRight - curFrontRight) < 5 || Math.abs(targetBackRight - curBackRight) < 5 || Math.abs(targetFrontLeft - curFrontLeft) < 5 || Math.abs(targetBackLeft - curBackLeft) < 5);
+    	}
+    	stopMotors();
     }
 }
 
