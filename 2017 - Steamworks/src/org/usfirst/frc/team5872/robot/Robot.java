@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.RobotDrive;
 import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
+//import com.ctre.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -178,13 +178,13 @@ public class Robot extends IterativeRobot {
     		double z = stick.getRawAxis(2);
     	
     		//Tank Drive
-    		if (stick.getRawAxis(1) != 0) { //if left joystick is active
+    		/*if (stick.getRawAxis(1) != 0) { //if left joystick is active
     			fl.set(l);
     			bl.set(l);
     		}
     		else {
     			fl.set(0);
-    			bl.set(0);
+    			bl.set(0;
     		}
     		if (stick.getRawAxis(5) != 0) { //if right joystick is active
     			fr.set(r);
@@ -193,10 +193,10 @@ public class Robot extends IterativeRobot {
     		else {
     			fr.set(0);
     			br.set(0);
-    		}
+    		}*/
     		
     		//Arcade Drive
-    		if (stick.getRawAxis(1) != 0) { //if y-axis is active
+    		if (y != 0) { //if y-axis is active
     			fl.set(y);
             	bl.set(y);
            		fr.set(y);
@@ -208,7 +208,7 @@ public class Robot extends IterativeRobot {
     			fr.set(0);
     			br.set(0);
     		}
-        	if (stick.getRawAxis(2) != 0) { //if z-axis is active
+        	if (z != 0) { //if z-axis is active
         		fl.set(-z);
         		bl.set(-z);
         		fr.set(z);
