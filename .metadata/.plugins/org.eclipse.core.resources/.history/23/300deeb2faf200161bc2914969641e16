@@ -33,7 +33,6 @@ public class Robot extends IterativeRobot {
 	CANTalon fr;
 	CANTalon br;
     CANTalon shooter;
-    CANTalon mixer;
 	
     //Essential Declarations
     RobotDrive myRobot;
@@ -66,7 +65,6 @@ public class Robot extends IterativeRobot {
         fr = new CANTalon(1);
         br = new CANTalon(0);
         shooter = new CANTalon(5);
-        mixer = new CANTalon(4);
         
         //Initialize encoders
         fl.configEncoderCodesPerRev(1000);
@@ -187,16 +185,16 @@ public class Robot extends IterativeRobot {
     	
     		//Tank Drive
     		if (stick.getRawAxis(1) != 0) { //if left joystick is active
-    			fl.set(r);
-    			bl.set(r);
+    			fl.set(l);
+    			bl.set(l);
     		}
     		else {
     			fl.set(0);
     			bl.set(0);
     		}
     		if (stick.getRawAxis(5) != 0) { //if right joystick is active
-    			fr.set(l);
-        		br.set(l);
+    			fr.set(r);
+        		br.set(r);
     		}
     		else {
     			fr.set(0);
@@ -283,22 +281,12 @@ public class Robot extends IterativeRobot {
         	//Holding
         	if(oy && !stick.getRawButton(2)){
         		
-        		shooter.set(0.5);
+        		shooter.set(0.8);
         		
         	}
         	else if(stick.getRawButton(2) && !oy){
         		
         		shooter.set(0.0);
-        		
-        	}
-        	if(stick.getRawButton(3) && !stick.getRawButton(4)){
-        		
-        		mixer.set(-0.25);
-        		
-        	}
-        	else if(stick.getRawButton(4) && !stick.getRawButton(3)){
-        		
-        		mixer.set(0);
         		
         	}
     	}

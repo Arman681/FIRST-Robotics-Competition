@@ -8,6 +8,345 @@
 	<description>Planet Eclipse - http://planeteclipse.org/planet/</description>
 
 <item>
+	<title>Kichwa Coders: Getting Started With Eclipse Che on Windows 10</title>
+	<guid isPermaLink="false">http://kichwacoders.com/?p=1220</guid>
+	<link>https://kichwacoders.com/2017/02/14/getting-started-with-eclipse-che-on-windows-10/</link>
+	<description>&lt;p&gt;&lt;img alt=&quot;chewindows&quot; class=&quot;alignnone size-full wp-image-1136&quot; src=&quot;https://kichwacoders.files.wordpress.com/2017/02/chewindows1.png?w=840&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Over the last year or so there has been a reasonable amount of evolution of the best way to get &lt;a href=&quot;https://kichwacoders.com/2016/07/05/is-eclipse-che-really-the-next-generation-eclipse-ide/&quot; target=&quot;_blank&quot;&gt;Eclipse Che&lt;/a&gt; running on Windows. The latest set of instructions are reasonably straightforward though not a complete no-brainer. This post records my snapshot of the step-by-step install process for Eclipse Che 5.2.2 including Docker install, dead ends &amp;amp; false starts.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The aim is to set up a local install of pre-built Che on Windows 10 Home Edition. Starting point, scan documentation at &lt;a href=&quot;https://www.eclipse.org/che/docs/setup/getting-started/&quot;&gt;https://www.eclipse.org/che/docs/setup/getting-started/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Install prerequisite Docker. Download &amp;amp; install ‘&lt;a href=&quot;https://docs.docker.com/docker-for-windows&quot; target=&quot;_blank&quot;&gt;Docker for Windows&lt;/a&gt;’. Helpful error message redirects me to use Docker Toolbox. &lt;img alt=&quot;dockerforwindows&quot; class=&quot;aligncenter size-medium wp-image-1140&quot; height=&quot;235&quot; src=&quot;https://kichwacoders.files.wordpress.com/2017/02/dockerforwindows.png?w=300&amp;amp;h=235&quot; width=&quot;300&quot; /&gt;&lt;/li&gt;
+&lt;li&gt;Download &lt;a href=&quot;https://www.docker.com/products/docker-toolbox&quot; target=&quot;_blank&quot;&gt;Docker Toolbox&lt;/a&gt; for Windows. Run installer. Requires 77.6M, and also wants to install Git.  The reason it needs to install a full source control system is merely down to the fact that the Git install comes with a nicely packaged bash &amp;amp; terminal implementation. Nevertheless I already have git installed so no need to here.&lt;/li&gt;
+&lt;li&gt;Install completes, use shortcut ‘Docker Quickstart Terminal’ doesn’t work as it can’t find bash.exe (The shortcut expects Git to be in a certain default location).&lt;/li&gt;
+&lt;li&gt;Update shortcut to point at my installed version of Git’s bash.exe (after another false start trying to use Git’s bash directly, fiddling with running things as Admin, etc).&lt;/li&gt;
+&lt;li&gt;Success &amp;amp; I can run docker run hello-world&lt;img alt=&quot;helloworlddocker&quot; class=&quot;aligncenter size-full wp-image-1172&quot; src=&quot;https://kichwacoders.files.wordpress.com/2017/02/helloworlddocker.png?w=840&quot; /&gt;&lt;/li&gt;
+&lt;li&gt;Now to the actual Eclipse Che part, try default command line
+&lt;pre class=&quot;brush: plain; light: true; title: ; notranslate&quot;&gt;docker run -it eclipse/che start&lt;/pre&gt;
+&lt;p&gt;Not so hasty there, a helpful error message tells me I’m missing a mandatory parameter.&lt;img alt=&quot;cherun1&quot; class=&quot;aligncenter size-full wp-image-1177&quot; src=&quot;https://kichwacoders.files.wordpress.com/2017/02/cherun1.png?w=840&quot; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Add in missing parameter, try again
+&lt;pre class=&quot;brush: plain; light: true; title: ; notranslate&quot;&gt;docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock \
+    eclipse/che start&lt;/pre&gt;
+&lt;p&gt;Get another useful message about needing to mount a directory to save data:&lt;img alt=&quot;cherun2&quot; class=&quot; size-full wp-image-1183 aligncenter&quot; src=&quot;https://kichwacoders.files.wordpress.com/2017/02/cherun2.png?w=840&quot; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt; Create a temporary directory and rerun the command specifying a data directory. Get a warning about data folder needing to be in %userprofile% (now you tell me). &lt;img alt=&quot;cherun3&quot; class=&quot;aligncenter size-full wp-image-1187&quot; src=&quot;https://kichwacoders.files.wordpress.com/2017/02/cherun3.png?w=840&quot; /&gt;&lt;/li&gt;
+&lt;li&gt;Make a different directory and run command again
+&lt;pre class=&quot;brush: plain; light: true; title: ; notranslate&quot;&gt;docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock \
+    -v /c/Users/tracy/tmp:/data eclipse/che start&lt;/pre&gt;
+&lt;p&gt;Success!&lt;img alt=&quot;cherun4&quot; class=&quot; size-full wp-image-1198 aligncenter&quot; src=&quot;https://kichwacoders.files.wordpress.com/2017/02/cherun4.png?w=840&quot; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Launch up browser, point at &lt;a href=&quot;http://192.168.99.100:8080&quot; rel=&quot;nofollow&quot;&gt;http://192.168.99.100:8080&lt;/a&gt;, Eclipse Che is up and running.&lt;img alt=&quot;chewindows&quot; class=&quot;alignnone size-full wp-image-1136&quot; src=&quot;https://kichwacoders.files.wordpress.com/2017/02/chewindows1.png?w=840&quot; /&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;br /&gt;  &lt;a href=&quot;http://feeds.wordpress.com/1.0/gocomments/kichwacoders.wordpress.com/1220/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/comments/kichwacoders.wordpress.com/1220/&quot; /&gt;&lt;/a&gt; &lt;img alt=&quot;&quot; border=&quot;0&quot; height=&quot;1&quot; src=&quot;https://pixel.wp.com/b.gif?host=kichwacoders.com&amp;amp;blog=68353182&amp;amp;post=1220&amp;amp;subd=kichwacoders&amp;amp;ref=&amp;amp;feed=1&quot; width=&quot;1&quot; /&gt;</description>
+	<pubDate>Tue, 14 Feb 2017 13:29:20 +0000</pubDate>
+</item>
+<item>
+	<title>Stefan Winkler: MultiPageEditor with Xtext</title>
+	<guid isPermaLink="true">https://www.winklerweb.net/index.php/blog/12-eclipse/26-multipageeditor-with-xtext</guid>
+	<link>https://www.winklerweb.net/index.php/blog/12-eclipse/26-multipageeditor-with-xtext</link>
+	<description>&lt;p&gt;Domain specific languages are a great tool when we want to give our users control over complex aspects in our applications; and in most cases, experienced uses can learn syntax and semantics of a well-designed DSL quickly. But on the other hand, there are also inexperienced users, who usually struggle with DSLs and do not want to deal with textual input. Instead, they are used to graphical user interfaces which help them to grasp the structure of information and to enter new data.&lt;/p&gt;
+&lt;p&gt;Last week, I had a project, in which I needed to provide both groups of users with a suitable user interface. In other words, I needed to create an editor, which provides both an Xtext source editor for my DSL, and a GUI editor for the model behind the DSL.&lt;/p&gt;
+&lt;p&gt;I started to search the Internet for some hints on how to do this but I did not find a complete example. Basically, to combine multiple editors into a single one, we have to subclass and implement an &lt;code&gt;org.eclipse.ui.part.MultiPageEditorPart&lt;/code&gt;. But I did not find more than hints about how to share the model between an Xtext editor and another editor. So, I started experimenting and after some time I was successful, and I wanted to let you participate in my results. Maybe this helps someone who is looking for an example as well.&lt;/p&gt;
+&lt;p&gt;For the rest of this post, I will use the state machine example that comes with the Xtext distribution as a starting point. To demonstrate the solution I will add a GUI editor for events to the generated Xtext editor. For brevity, I will only show the relevant parts. The full modified example source code is available on &lt;a href=&quot;https://github.com/xpomul/xtext-multi-edit-example&quot; rel=&quot;alternate&quot; target=&quot;_blank&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2&gt;Step 1: Setup&lt;/h2&gt;
+&lt;p&gt;To get started, we create the State Machine Example (File &amp;gt; New… &amp;gt; Xtext &amp;gt; Xtext State-Machine Example) in our workspace. The example code is a bit old; to be able to use Java 8 features, we need to switch the Execution Environment, Java Compiler Settings and Java Library Path to Java 1.8.&lt;/p&gt;
+&lt;h2&gt;Step 2: Create the MultiPageEditor&lt;/h2&gt;
+&lt;p&gt;Inside the UI bundle, I have created a new package &lt;code&gt;org.eclipse.xtext.example.fowlerdsl.ui.editor&lt;/code&gt; for my editor code. In there, I have created the class &lt;code&gt;StatemachineMultiPageEditor&lt;/code&gt; as follows:&lt;/p&gt;
+&lt;div style=&quot;background: #ffffff; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;&quot;&gt;
+&lt;pre style=&quot;margin: 0; line-height: 125%;&quot;&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;public&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;class&lt;/span&gt; &lt;span style=&quot;color: #bb0066; font-weight: bold;&quot;&gt;StatemachineMultiPageEditor&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;extends&lt;/span&gt; MultiPageEditorPart
+&lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+  &lt;span style=&quot;color: #888888;&quot;&gt;// get the default XtextEditor injected to use as a page&lt;/span&gt;
+  &lt;span style=&quot;color: #555555; font-weight: bold;&quot;&gt;@Inject&lt;/span&gt;
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;private&lt;/span&gt; XtextEditor sourceEditor&lt;span style=&quot;color: #333333;&quot;&gt;;&lt;/span&gt;
+
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;private&lt;/span&gt; &lt;span style=&quot;color: #333399; font-weight: bold;&quot;&gt;int&lt;/span&gt; sourcePageIndex&lt;span style=&quot;color: #333333;&quot;&gt;;&lt;/span&gt;
+
+  &lt;span style=&quot;color: #888888;&quot;&gt;// create and name our editor page&lt;/span&gt;
+  &lt;span style=&quot;color: #888888;&quot;&gt;// The instance is already injected. We only have to add it to the MultiPageEditorPart&lt;/span&gt;
+  &lt;span style=&quot;color: #555555; font-weight: bold;&quot;&gt;@Override&lt;/span&gt;
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;protected&lt;/span&gt; &lt;span style=&quot;color: #333399; font-weight: bold;&quot;&gt;void&lt;/span&gt; &lt;span style=&quot;color: #0066bb; font-weight: bold;&quot;&gt;createPages&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;()&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;try&lt;/span&gt;
+    &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+      &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;sourcePageIndex&lt;/span&gt; &lt;span style=&quot;color: #333333;&quot;&gt;=&lt;/span&gt; addPage&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;sourceEditor&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;,&lt;/span&gt; getEditorInput&lt;span style=&quot;color: #333333;&quot;&gt;());&lt;/span&gt;
+      setPageText&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;sourcePageIndex&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;,&lt;/span&gt; &lt;span style=&quot;background-color: #fff0f0;&quot;&gt;&quot;Source&quot;&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;);&lt;/span&gt;
+    &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;catch&lt;/span&gt; &lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;PartInitException e&lt;span style=&quot;color: #333333;&quot;&gt;)&lt;/span&gt;
+    &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+      &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;throw&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;new&lt;/span&gt; &lt;span style=&quot;color: #0066bb; font-weight: bold;&quot;&gt;IllegalStateException&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;background-color: #fff0f0;&quot;&gt;&quot;Failed to add Xtext editor&quot;&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;,&lt;/span&gt; e&lt;span style=&quot;color: #333333;&quot;&gt;);&lt;/span&gt;
+    &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+
+  &lt;span style=&quot;color: #888888;&quot;&gt;// there are a few abstract methods, we need to implement. &lt;/span&gt;
+  &lt;span style=&quot;color: #888888;&quot;&gt;// Because the XtextEditor is the master regarding model management, we just delegate every call there &lt;/span&gt;
+  &lt;span style=&quot;color: #555555; font-weight: bold;&quot;&gt;@Override&lt;/span&gt;
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;public&lt;/span&gt; &lt;span style=&quot;color: #333399; font-weight: bold;&quot;&gt;void&lt;/span&gt; &lt;span style=&quot;color: #0066bb; font-weight: bold;&quot;&gt;doSave&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;final&lt;/span&gt; IProgressMonitor monitor&lt;span style=&quot;color: #333333;&quot;&gt;)&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;sourceEditor&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;doSave&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;monitor&lt;span style=&quot;color: #333333;&quot;&gt;);&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+
+  &lt;span style=&quot;color: #888888;&quot;&gt;// ... other methods likewise&lt;/span&gt;
+&lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;This implementation more or less just wraps the Xtext editor. To enable it in the runtime application, we can edit the &lt;code&gt;plugin.xml&lt;/code&gt; and replace the &lt;code&gt;XtextEditor&lt;/code&gt; which is configured by Xtext with our own implementation:&lt;/p&gt;
+&lt;div style=&quot;background: #ffffff; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;&quot;&gt;
+&lt;pre style=&quot;margin: 0; line-height: 125%;&quot;&gt;&lt;span style=&quot;color: #007700;&quot;&gt;&amp;lt;extension&lt;/span&gt;
+        &lt;span style=&quot;color: #0000cc;&quot;&gt;point=&lt;/span&gt;&lt;span style=&quot;background-color: #fff0f0;&quot;&gt;&quot;org.eclipse.ui.editors&quot;&lt;/span&gt;&lt;span style=&quot;color: #007700;&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span style=&quot;color: #007700;&quot;&gt;&amp;lt;editor&lt;/span&gt;
+        &lt;span style=&quot;color: #0000cc;&quot;&gt;class=&lt;/span&gt;&lt;span style=&quot;background-color: #fff0f0;&quot;&gt;&quot;org.eclipse.xtext.example.fowlerdsl.ui.StatemachineExecutableExtensionFactory:org.eclipse.xtext.example.fowlerdsl.ui.editor.StatemachineMultiPageEditor&quot;&lt;/span&gt;
+        &lt;span style=&quot;color: #0000cc;&quot;&gt;contributorClass=&lt;/span&gt;&lt;span style=&quot;background-color: #fff0f0;&quot;&gt;&quot;org.eclipse.ui.editors.text.TextEditorActionContributor&quot;&lt;/span&gt;
+        &lt;span style=&quot;color: #0000cc;&quot;&gt;default=&lt;/span&gt;&lt;span style=&quot;background-color: #fff0f0;&quot;&gt;&quot;true&quot;&lt;/span&gt;
+        &lt;span style=&quot;color: #0000cc;&quot;&gt;extensions=&lt;/span&gt;&lt;span style=&quot;background-color: #fff0f0;&quot;&gt;&quot;statemachine&quot;&lt;/span&gt;
+        &lt;span style=&quot;color: #0000cc;&quot;&gt;id=&lt;/span&gt;&lt;span style=&quot;background-color: #fff0f0;&quot;&gt;&quot;org.eclipse.xtext.example.fowlerdsl.Statemachine&quot;&lt;/span&gt;
+        &lt;span style=&quot;color: #0000cc;&quot;&gt;name=&lt;/span&gt;&lt;span style=&quot;background-color: #fff0f0;&quot;&gt;&quot;Statemachine Editor&quot;&lt;/span&gt;&lt;span style=&quot;color: #007700;&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span style=&quot;color: #007700;&quot;&gt;&amp;lt;/editor&amp;gt;&lt;/span&gt;
+&lt;span style=&quot;color: #007700;&quot;&gt;&amp;lt;/extension&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;When we start the runtime application, we should be able to create a state machine file (see &lt;code&gt;README&lt;/code&gt; in the example project for instructions) and when opening it, we should see that it opens in our own &lt;code&gt;StatemachineMultiPageEditor&lt;/code&gt;, which has a single tab called “Source”.&lt;/p&gt;
+&lt;h2&gt;Step 3: Create the UI editor&lt;/h2&gt;
+&lt;p&gt;Now comes the interesting part. To implement our own editor, we need a suitable editor input which provides our editor with access to the &lt;code&gt;XtextEditor&lt;/code&gt; model, which is the &lt;code&gt;XtextDocument&lt;/code&gt;. So, I decided to wrap the &lt;code&gt;IXtextDocument&lt;/code&gt; in an &lt;code&gt;IEditorInput&lt;/code&gt; for our own editor:&lt;/p&gt;
+&lt;div style=&quot;background: #ffffff; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;&quot;&gt;
+&lt;pre style=&quot;margin: 0; line-height: 125%;&quot;&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;public&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;class&lt;/span&gt; &lt;span style=&quot;color: #bb0066; font-weight: bold;&quot;&gt;XtextDocumentBasedEditorInput&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;implements&lt;/span&gt; IEditorInput
+&lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;private&lt;/span&gt; IXtextDocument document&lt;span style=&quot;color: #333333;&quot;&gt;;&lt;/span&gt;
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;private&lt;/span&gt; IFile file&lt;span style=&quot;color: #333333;&quot;&gt;;&lt;/span&gt;
+
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;public&lt;/span&gt; &lt;span style=&quot;color: #0066bb; font-weight: bold;&quot;&gt;XtextDocumentBasedEditorInput&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;final&lt;/span&gt; IXtextDocument document&lt;span style=&quot;color: #333333;&quot;&gt;)&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;document&lt;/span&gt; &lt;span style=&quot;color: #333333;&quot;&gt;=&lt;/span&gt; document&lt;span style=&quot;color: #333333;&quot;&gt;;&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;file&lt;/span&gt; &lt;span style=&quot;color: #333333;&quot;&gt;=&lt;/span&gt; document&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;getAdapter&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;IFile&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;class&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;);&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;public&lt;/span&gt; IXtextDocument &lt;span style=&quot;color: #0066bb; font-weight: bold;&quot;&gt;getDocument&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;()&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;return&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;document&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;;&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+
+  &lt;span style=&quot;color: #555555; font-weight: bold;&quot;&gt;@Override&lt;/span&gt;
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;public&lt;/span&gt; &lt;span style=&quot;color: #333399; font-weight: bold;&quot;&gt;boolean&lt;/span&gt; &lt;span style=&quot;color: #0066bb; font-weight: bold;&quot;&gt;exists&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;()&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;return&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;file&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;exists&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;();&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+
+  &lt;span style=&quot;color: #555555; font-weight: bold;&quot;&gt;@Override&lt;/span&gt;
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;public&lt;/span&gt; ImageDescriptor &lt;span style=&quot;color: #0066bb; font-weight: bold;&quot;&gt;getImageDescriptor&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;()&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;return&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;file&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;getAdapter&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;IWorkbenchAdapter&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;class&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;).&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;getImageDescriptor&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;file&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;);&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+  
+  &lt;span style=&quot;color: #888888;&quot;&gt;// the other methods delegate similarly &lt;/span&gt;
+  &lt;span style=&quot;color: #888888;&quot;&gt;// ...&lt;/span&gt;
+&lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;Based on this, we can implement the GUI editor. For this simple example, we will just have a &lt;code&gt;ListViewer&lt;/code&gt; showing the list of &lt;code&gt;Event&lt;/code&gt;s and three buttons (add, edit, delete).&lt;/p&gt;
+&lt;div style=&quot;background: #ffffff; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;&quot;&gt;
+&lt;pre style=&quot;margin: 0; line-height: 125%;&quot;&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;public&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;class&lt;/span&gt; &lt;span style=&quot;color: #bb0066; font-weight: bold;&quot;&gt;EventEditor&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;extends&lt;/span&gt; EditorPart
+&lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;private&lt;/span&gt; XtextDocumentBasedEditorInput xtextEditorInput&lt;span style=&quot;color: #333333;&quot;&gt;;&lt;/span&gt;
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;private&lt;/span&gt; ListViewer listViewer&lt;span style=&quot;color: #333333;&quot;&gt;;&lt;/span&gt;
+  
+  &lt;span style=&quot;color: #888888;&quot;&gt;// &amp;lt;irrelevant methods omitted&amp;gt;&lt;/span&gt;
+
+  &lt;span style=&quot;color: #555555; font-weight: bold;&quot;&gt;@Override&lt;/span&gt;
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;public&lt;/span&gt; &lt;span style=&quot;color: #333399; font-weight: bold;&quot;&gt;void&lt;/span&gt; &lt;span style=&quot;color: #0066bb; font-weight: bold;&quot;&gt;createPartControl&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;final&lt;/span&gt; Composite parent&lt;span style=&quot;color: #333333;&quot;&gt;)&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+    &lt;span style=&quot;color: #888888;&quot;&gt;// &amp;lt;some GUI code omitted&amp;gt;&lt;/span&gt;
+    
+    &lt;span style=&quot;color: #888888;&quot;&gt;// create the list viewer&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;listViewer&lt;/span&gt; &lt;span style=&quot;color: #333333;&quot;&gt;=&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;new&lt;/span&gt; ListViewer&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;mainComposite&lt;span style=&quot;color: #333333;&quot;&gt;,&lt;/span&gt; SWT&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;BORDER&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;);&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;listViewer&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;getControl&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;().&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;setLayoutData&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;GridDataFactory&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;fillDefaults&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;().&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;grab&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;true&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;,&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;true&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;).&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;create&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;());&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;listViewer&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;setContentProvider&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;new&lt;/span&gt; ArrayContentProvider&lt;span style=&quot;color: #333333;&quot;&gt;());&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;listViewer&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;setLabelProvider&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;new&lt;/span&gt; LabelProvider&lt;span style=&quot;color: #333333;&quot;&gt;()&lt;/span&gt;
+    &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+      &lt;span style=&quot;color: #555555; font-weight: bold;&quot;&gt;@Override&lt;/span&gt;
+      &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;public&lt;/span&gt; String &lt;span style=&quot;color: #0066bb; font-weight: bold;&quot;&gt;getText&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;final&lt;/span&gt; Object element&lt;span style=&quot;color: #333333;&quot;&gt;)&lt;/span&gt;
+      &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+        &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;if&lt;/span&gt; &lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;element &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;instanceof&lt;/span&gt; Event&lt;span style=&quot;color: #333333;&quot;&gt;)&lt;/span&gt;
+        &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+          Event event &lt;span style=&quot;color: #333333;&quot;&gt;=&lt;/span&gt; &lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;Event&lt;span style=&quot;color: #333333;&quot;&gt;)&lt;/span&gt; element&lt;span style=&quot;color: #333333;&quot;&gt;;&lt;/span&gt;
+          &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;return&lt;/span&gt; event&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;getName&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;()&lt;/span&gt; &lt;span style=&quot;color: #333333;&quot;&gt;+&lt;/span&gt; &lt;span style=&quot;background-color: #fff0f0;&quot;&gt;&quot; [&quot;&lt;/span&gt; &lt;span style=&quot;color: #333333;&quot;&gt;+&lt;/span&gt; event&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;getCode&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;()&lt;/span&gt; &lt;span style=&quot;color: #333333;&quot;&gt;+&lt;/span&gt; &lt;span style=&quot;background-color: #fff0f0;&quot;&gt;&quot;]&quot;&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;;&lt;/span&gt;
+        &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+        &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;return&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;super&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;getText&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;element&lt;span style=&quot;color: #333333;&quot;&gt;);&lt;/span&gt;
+      &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+    &lt;span style=&quot;color: #333333;&quot;&gt;});&lt;/span&gt;
+
+    &lt;span style=&quot;color: #888888;&quot;&gt;// create the buttons&lt;/span&gt;
+    Composite buttonComposite &lt;span style=&quot;color: #333333;&quot;&gt;=&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;new&lt;/span&gt; Composite&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;mainComposite&lt;span style=&quot;color: #333333;&quot;&gt;,&lt;/span&gt; SWT&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;NONE&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;);&lt;/span&gt;
+    buttonComposite&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;setLayout&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;new&lt;/span&gt; FillLayout&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;SWT&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;VERTICAL&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;));&lt;/span&gt;
+    buttonComposite&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;setLayoutData&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;GridDataFactory&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;swtDefaults&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;().&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;create&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;());&lt;/span&gt;
+    Button addButton &lt;span style=&quot;color: #333333;&quot;&gt;=&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;new&lt;/span&gt; Button&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;buttonComposite&lt;span style=&quot;color: #333333;&quot;&gt;,&lt;/span&gt; SWT&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;PUSH&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;);&lt;/span&gt;
+    addButton&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;setText&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;background-color: #fff0f0;&quot;&gt;&quot;Add&quot;&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;);&lt;/span&gt;
+    addButton&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;addListener&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;SWT&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;Selection&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;,&lt;/span&gt; e &lt;span style=&quot;color: #333333;&quot;&gt;-&amp;gt;&lt;/span&gt; addEvent&lt;span style=&quot;color: #333333;&quot;&gt;());&lt;/span&gt;
+
+    &lt;span style=&quot;color: #888888;&quot;&gt;// &amp;lt;edit and remove button likewise&amp;gt;&lt;/span&gt;
+
+    &lt;span style=&quot;color: #888888;&quot;&gt;// Synchonize the list viewer input with the Xtext document&lt;/span&gt;
+    refreshInput&lt;span style=&quot;color: #333333;&quot;&gt;();&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+
+  &lt;span style=&quot;color: #888888;&quot;&gt;/**&lt;/span&gt;
+&lt;span style=&quot;color: #888888;&quot;&gt;   * Recalculates the input to the list viewer, so it is in sync with the source in the Xtext editor.&lt;/span&gt;
+&lt;span style=&quot;color: #888888;&quot;&gt;   * &lt;/span&gt;
+&lt;span style=&quot;color: #888888;&quot;&gt;   * This is called - when the page becomes visible - after performing an edit operation&lt;/span&gt;
+&lt;span style=&quot;color: #888888;&quot;&gt;   * &lt;/span&gt;
+&lt;span style=&quot;color: #888888;&quot;&gt;   */&lt;/span&gt;
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;public&lt;/span&gt; &lt;span style=&quot;color: #333399; font-weight: bold;&quot;&gt;void&lt;/span&gt; &lt;span style=&quot;color: #0066bb; font-weight: bold;&quot;&gt;refreshInput&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;()&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+    IXtextDocument doc &lt;span style=&quot;color: #333333;&quot;&gt;=&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;xtextEditorInput&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;getDocument&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;();&lt;/span&gt;
+    Collection&lt;span style=&quot;color: #333333;&quot;&gt;&amp;lt;&lt;/span&gt;Event&lt;span style=&quot;color: #333333;&quot;&gt;&amp;gt;&lt;/span&gt; events &lt;span style=&quot;color: #333333;&quot;&gt;=&lt;/span&gt; doc&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;readOnly&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;res &lt;span style=&quot;color: #333333;&quot;&gt;-&amp;gt;&lt;/span&gt; EcoreUtil&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;copyAll&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(((&lt;/span&gt;Statemachine&lt;span style=&quot;color: #333333;&quot;&gt;)&lt;/span&gt; res&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;getContents&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;().&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;get&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #0000dd; font-weight: bold;&quot;&gt;0&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;)).&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;getEvents&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;()));&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;listViewer&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;setInput&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;events&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;toArray&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;());&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+
+  &lt;span style=&quot;color: #888888;&quot;&gt;/**&lt;/span&gt;
+&lt;span style=&quot;color: #888888;&quot;&gt;   * Add a new event.&lt;/span&gt;
+&lt;span style=&quot;color: #888888;&quot;&gt;   * &lt;/span&gt;
+&lt;span style=&quot;color: #888888;&quot;&gt;   * This initializes a new Event object, opens the dialog to let the user specify the event information and if the user closes the dialog by clicking ok, the&lt;/span&gt;
+&lt;span style=&quot;color: #888888;&quot;&gt;   * new event is added to the Xtext document.&lt;/span&gt;
+&lt;span style=&quot;color: #888888;&quot;&gt;   */&lt;/span&gt;
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;protected&lt;/span&gt; &lt;span style=&quot;color: #333399; font-weight: bold;&quot;&gt;void&lt;/span&gt; &lt;span style=&quot;color: #0066bb; font-weight: bold;&quot;&gt;addEvent&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;()&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+    Event event &lt;span style=&quot;color: #333333;&quot;&gt;=&lt;/span&gt; StatemachineFactory&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;eINSTANCE&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;createEvent&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;();&lt;/span&gt;
+    event&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;setName&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;background-color: #fff0f0;&quot;&gt;&quot;newEvent&quot;&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;);&lt;/span&gt;
+    event&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;setCode&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;background-color: #fff0f0;&quot;&gt;&quot;CODE&quot;&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;);&lt;/span&gt;
+
+    &lt;span style=&quot;color: #333399; font-weight: bold;&quot;&gt;boolean&lt;/span&gt; result &lt;span style=&quot;color: #333333;&quot;&gt;=&lt;/span&gt; EditEventDialog&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;editEvent&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;getSite&lt;span style=&quot;color: #333333;&quot;&gt;().&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;getShell&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(),&lt;/span&gt; event&lt;span style=&quot;color: #333333;&quot;&gt;);&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;if&lt;/span&gt; &lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;result&lt;span style=&quot;color: #333333;&quot;&gt;)&lt;/span&gt;
+    &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+      IXtextDocument doc &lt;span style=&quot;color: #333333;&quot;&gt;=&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;xtextEditorInput&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;getDocument&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;();&lt;/span&gt;
+      doc&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;modify&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;res &lt;span style=&quot;color: #333333;&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span style=&quot;color: #333333;&quot;&gt;((&lt;/span&gt;Statemachine&lt;span style=&quot;color: #333333;&quot;&gt;)&lt;/span&gt; res&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;getContents&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;().&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;get&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #0000dd; font-weight: bold;&quot;&gt;0&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;)).&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;getEvents&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;().&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;add&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;event&lt;span style=&quot;color: #333333;&quot;&gt;));&lt;/span&gt;
+    &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+
+    refreshInput&lt;span style=&quot;color: #333333;&quot;&gt;();&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+  
+  &lt;span style=&quot;color: #888888;&quot;&gt;// &amp;lt;event handlers for edit and remove button omitted&amp;gt;&lt;/span&gt;
+&lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;The interesting methods here are &lt;code&gt;refreshInput()&lt;/code&gt; and &lt;code&gt;addEvent()&lt;/code&gt;. They use the &lt;code&gt;XtextDocument&lt;/code&gt; to access the model in its (dirty) state and/or to manipulate it. It is important to note that the custom code should not hold on to the EMF instances retrieved this way, because when the text is reparsed, Xtext usually throws away old &lt;code&gt;EObject&lt;/code&gt; instances and create new ones. Likewise, when modifying the model, make sure that you use the &lt;code&gt;XtextResource&lt;/code&gt; and own copies of the information to navigate to the desired model element(s), instead of using previously retrieved &lt;code&gt;EObject&lt;/code&gt;s etc.&lt;/p&gt;
+&lt;h2&gt;Step 4: Add the UI editor as a page to the MultiPageEditor&lt;/h2&gt;
+&lt;p&gt;Now we need to add our &lt;code&gt;EventEditor&lt;/code&gt; to the &lt;code&gt;StatemachineMultiPageEditor&lt;/code&gt;. We let Guice inject our editor just like the &lt;code&gt;XtextEditor&lt;/code&gt;. Then we create the editor input and add a second page with our new &lt;code&gt;EventEditor&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Finally, we need to take care of the synchronization between the editors. We could have our editor install a listener on the &lt;code&gt;XtextDocument&lt;/code&gt;, so that we get notified on any change. But I decided that it should be enough (and is simpler) to refresh the GUI whenever the user switches the page and the &lt;code&gt;EventEditor&lt;/code&gt; becomes visible. To do this, we override the method &lt;code&gt;pageChange()&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The resulting changes to the StatemachineMultiPageEditor look like this:&lt;/p&gt;
+&lt;div style=&quot;background: #ffffff; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;&quot;&gt;
+&lt;pre style=&quot;margin: 0; line-height: 125%;&quot;&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;public&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;class&lt;/span&gt; &lt;span style=&quot;color: #bb0066; font-weight: bold;&quot;&gt;StatemachineMultiPageEditor&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;extends&lt;/span&gt; MultiPageEditorPart
+&lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+  &lt;span style=&quot;color: #888888;&quot;&gt;// ...&lt;/span&gt;
+  &lt;span style=&quot;color: #555555; font-weight: bold;&quot;&gt;@Inject&lt;/span&gt;
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;private&lt;/span&gt; EventEditor formEditor&lt;span style=&quot;color: #333333;&quot;&gt;;&lt;/span&gt;
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;private&lt;/span&gt; &lt;span style=&quot;color: #333399; font-weight: bold;&quot;&gt;int&lt;/span&gt; formPageIndex&lt;span style=&quot;color: #333333;&quot;&gt;;&lt;/span&gt;
+
+  &lt;span style=&quot;color: #555555; font-weight: bold;&quot;&gt;@Override&lt;/span&gt;
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;protected&lt;/span&gt; &lt;span style=&quot;color: #333399; font-weight: bold;&quot;&gt;void&lt;/span&gt; &lt;span style=&quot;color: #0066bb; font-weight: bold;&quot;&gt;createPages&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;()&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+    &lt;span style=&quot;color: #888888;&quot;&gt;// ...&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;try&lt;/span&gt;
+    &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+      &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;formPageIndex&lt;/span&gt; &lt;span style=&quot;color: #333333;&quot;&gt;=&lt;/span&gt; addPage&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;formEditor&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;,&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;new&lt;/span&gt; XtextDocumentBasedEditorInput&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;sourceEditor&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;getDocument&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;()));&lt;/span&gt;
+      setPageText&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;formPageIndex&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;,&lt;/span&gt; &lt;span style=&quot;background-color: #fff0f0;&quot;&gt;&quot;States&quot;&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;);&lt;/span&gt;
+    &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;catch&lt;/span&gt; &lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;PartInitException e&lt;span style=&quot;color: #333333;&quot;&gt;)&lt;/span&gt;
+    &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+      &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;throw&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;new&lt;/span&gt; &lt;span style=&quot;color: #0066bb; font-weight: bold;&quot;&gt;IllegalStateException&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;background-color: #fff0f0;&quot;&gt;&quot;Failed to add State editor&quot;&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;,&lt;/span&gt; e&lt;span style=&quot;color: #333333;&quot;&gt;);&lt;/span&gt;
+    &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+
+  &lt;span style=&quot;color: #555555; font-weight: bold;&quot;&gt;@Override&lt;/span&gt;
+  &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;protected&lt;/span&gt; &lt;span style=&quot;color: #333399; font-weight: bold;&quot;&gt;void&lt;/span&gt; &lt;span style=&quot;color: #0066bb; font-weight: bold;&quot;&gt;pageChange&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;final&lt;/span&gt; &lt;span style=&quot;color: #333399; font-weight: bold;&quot;&gt;int&lt;/span&gt; newPageIndex&lt;span style=&quot;color: #333333;&quot;&gt;)&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;if&lt;/span&gt; &lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;newPageIndex &lt;span style=&quot;color: #333333;&quot;&gt;==&lt;/span&gt; &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;formPageIndex&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;)&lt;/span&gt;
+    &lt;span style=&quot;color: #333333;&quot;&gt;{&lt;/span&gt;
+      &lt;span style=&quot;color: #888888;&quot;&gt;// when the GUI editor becomes visible, synchronize with the Xtext document&lt;/span&gt;
+      &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;this&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;formEditor&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;refreshInput&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;();&lt;/span&gt;
+    &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+    &lt;span style=&quot;color: #008800; font-weight: bold;&quot;&gt;super&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #0000cc;&quot;&gt;pageChange&lt;/span&gt;&lt;span style=&quot;color: #333333;&quot;&gt;(&lt;/span&gt;newPageIndex&lt;span style=&quot;color: #333333;&quot;&gt;);&lt;/span&gt;
+  &lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+&lt;span style=&quot;color: #333333;&quot;&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;And here is a small demo of the running editor:&lt;/p&gt;
+&lt;p&gt; &lt;img alt=&quot;Editor in Action&quot; class=&quot;pull-center&quot; src=&quot;https://www.winklerweb.net/images/stories/blog/XtextMultiPageEditor.gif&quot; /&gt;&lt;/p&gt;
+&lt;h2&gt;Odds and Ends&lt;/h2&gt;
+&lt;p&gt;Of course, this example is only a proof of concept and not fully implemented in all detail. For example, validation in the GUI is completely missing. So far, I have not found a good way to include Xtext validation in the GUI (it would be nice to have a name or code checked against the DSL syntax instead of writing an own validator). Also, some additional cases must be handled (for example, what happens if the list of events becomes empty or if there are events with the same name etc.)&lt;/p&gt;
+&lt;p&gt;Additionally, to have a good interoperability between DSL source and GUI, you have to customize the formatter so that generated model elements are serialized nicely (not like in my example). Also keep in mind that hidden tokens (such as comments) are not represented in the model itself and could be deleted by accident in model modification operations.&lt;/p&gt;
+&lt;p&gt;{jcomments on}&lt;/p&gt;</description>
+	<pubDate>Tue, 14 Feb 2017 12:34:03 +0000</pubDate>
+</item>
+<item>
+	<title>Antoine Thomas: Introduction to WireframeSketcher</title>
+	<guid isPermaLink="false">http://blog.ttoine.net/?p=1194</guid>
+	<link>http://blog.ttoine.net/en/2017/02/14/introduction-to-wireframesketcher/</link>
+	<description>&lt;p&gt;WireframeSketcher is based on &lt;a href=&quot;http://www.eclipse.org&quot;&gt;Eclipse&lt;/a&gt; platform. I use it a lot to create mockups for websites and applications. It helps to focus on content, usability and features, instead of design. When your mockup is tested with future end users and documented for developers, it’s time think about design.&lt;/p&gt;
+&lt;h3&gt;Overview&lt;/h3&gt;
+&lt;p&gt;Eclipse users will not be disappointed, the workbench is quite the same, but in the middle, you draw instead of writing code. Also, instead of just drawing basic shape, there is a style added so everything looks like it has been done on paper with a pen. This way, in the mind of people looking at the mockup, you are sure they think about it as a mockup, and not as a definitive design.&lt;/p&gt;
+&lt;p&gt;You can also add annotations for documentation purpose.&lt;/p&gt;
+&lt;p&gt;And you can create links on items to other screens, in order to create a live mockup. You can play the live mockup in Wireframesketcher, and also export in HTML to share it.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://blog.ttoine.net/files/2017/01/fullscreen-17-01-2017--11-44.png&quot;&gt;&lt;img alt=&quot;&quot; class=&quot;aligncenter size-large wp-image-1196 colorbox-1194&quot; height=&quot;640&quot; src=&quot;http://blog.ttoine.net/files/2017/01/fullscreen-17-01-2017--11-44-1024x640.png&quot; width=&quot;1024&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h3&gt;First project&lt;/h3&gt;
+&lt;p&gt;Menu: File / New / Wireframe project&lt;/p&gt;
+&lt;p&gt;You can select different type of project, from web to smartphone app, …&lt;/p&gt;
+&lt;h3&gt;Assets&lt;/h3&gt;
+&lt;p&gt;You might want to build a mockup using elements you already have: logo, screenshots or pictures, icons, … You can add them to the “assets” folder of WireframeSketcher folder. They will be available on the right column. When possible add SVG files, so that the software can apply the “hand style”.&lt;/p&gt;
+&lt;p&gt;WireframeSketcher provides Stencils, it is libraries of screens, icons, mockups, ready to use. You can find them on their website:&lt;br /&gt;
+&lt;a href=&quot;http://wireframesketcher.com/mockups/index.html&quot;&gt;http://wireframesketcher.com/mockups/index.html&lt;/a&gt;&lt;/p&gt;
+&lt;h3&gt;Icons&lt;/h3&gt;
+&lt;p&gt;You can add an icon alone or with a label, by adding the “Icon” element from the palette.&lt;/p&gt;
+&lt;p&gt;It is also possible to add icons in some content (text) or attached to an item (button, input, …). To attach an icon to an item, you can click on the properties on the left sidebar, and you can browse the different icon librairies available. With text, you can start to type the name of an icon in { } and use ctrl+space to display some help.&lt;/p&gt;
+&lt;h3&gt;Links&lt;/h3&gt;
+&lt;p&gt;Draw at least 2 screens. You can add links to another screen on elements like buttons, but also on text. Text must be between [ ] to be considered as link. You can’t add links to external resource.&lt;/p&gt;
+&lt;p&gt;In a screen, select the element. On the left sidebar, next to “Properties”, select “Links”. You will find a list of possible links, just click on the one you want and select the screen to open. That’s all. You will notice the link on the mockup with a special small yellow icon on the item.&lt;/p&gt;
+&lt;p&gt;The most difficult part of it is to think about the structure, all the links between all the pages. On a live demo, you can highlight links, so testers can easily find the clickable areas.&lt;/p&gt;
+&lt;h3&gt;Annotations&lt;/h3&gt;
+&lt;p&gt;On the right column you will find annotations elements. You can of course change the colour. If you need to use an other element (a square, a round, …), and make it an annotation, you can do that in the menu: Object / Mark as annotation.&lt;/p&gt;
+&lt;p&gt;During export, you can choose if you want to see them, or hide them.&lt;/p&gt;
+&lt;h3&gt;Storyboard&lt;/h3&gt;
+&lt;p&gt;A storyboard is what will allow you to run the mockup. Put in it all the screens. Be careful about the order of the screens, so the user starts the mockups at the good place. Once done, you can run or export your live mockup.&lt;/p&gt;
+&lt;p&gt;During a live demo, users will be able to click on the links, or to use left and right keyboard arrows.&lt;/p&gt;
+&lt;h3&gt;Missing features&lt;/h3&gt;
+&lt;p&gt;IMHO, there are two issues with the current version of Wireframesketcher:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;You can’t hide annotation while working on the screen, so if you have stuff below, you can not select them. It’s really bad for productivity. There should be at least a layer management system, so one can put all the annotations in one layer and hide them. This is really a missing feature. &lt;a href=&quot;http://wireframesketcher.com/forum/topic/166289/add_an_annotation_feature?p5&quot;&gt;I already discussed about it on the user forum&lt;/a&gt;, the solution they propose is not really useful. And there is no workaround.&lt;/li&gt;
+&lt;li&gt;There are a lot of &lt;a href=&quot;http://wireframesketcher.com/help/help.html#working_with_screens/editing_text&quot;&gt;text styling options&lt;/a&gt;, but no equivalent of the “pre” html tag. It means there is &lt;a href=&quot;http://wireframesketcher.com/forum/topic/166375/mono_type_font?p1&quot;&gt;no way to add monotype text&lt;/a&gt;.  Let say you want to show how command line or code should look in a design, with fixed characters size, this is not possible. If you are interested too, do not hesitate to tell the developers on the forum.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;Conclusion&lt;/h3&gt;
+&lt;p&gt;Despite a few missing features, I really appreciate WireframeSketcher to work on features and UX. I use it at the moment mainly for web stuff. However, I really think that would be awesome to have Eclipse Platform stencils. This way, Eclipse developers could use that to work on their UI/UX before starting to code, collect end user feedback. And also, very important thing, this would be great to share best practice and have a more consistant UI across different Eclipse plugins, applications, tools, …&lt;/p&gt;</description>
+	<pubDate>Tue, 14 Feb 2017 11:00:58 +0000</pubDate>
+</item>
+<item>
+	<title>Maximilian and Jonas: EMF Support for Che – Day 1: Run Che and Import existing EMF project</title>
+	<guid isPermaLink="false">http://eclipsesource.com/blogs/?p=27822</guid>
+	<link>http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/</link>
+	<description>&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;In this blog series, we share our experience with extending &lt;/span&gt;&lt;a href=&quot;http://eclipse.org/che&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Eclipse Che&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; and describe how we have built initial EMF support for the Eclipse Che IDE. In the last blog post (TBD Add link), we have described our overall goals and the use case.&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;br /&gt;
+&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;In this blog post, we describe the first steps in getting started with Che. Before we start to extend Che, let’s run it and see what’s already there. To get started, let us explore the simplest way to get an existing modeling project into a Che workspace. The modeling project is not yet created by Che, but by an Eclipse Modeling Tools IDE. By importing this existing project, we can see what features are already there and what we are going to need to extend later.&lt;br /&gt;
+&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;As a template project, we will be using the existing “Make it happen!” model (see more details &lt;/span&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/2013/06/13/emf-client-platform-make-it-happen-day-0-and-1/&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;). This example model is also shipped with every Eclipse Modeling Tools IDE (don’t confuse the desktop IDE with Eclipse Che here), you can instantiate it with New =&amp;gt; Example =&amp;gt; “Make it happen: Example Model”. The template project already contains generated code. As we will later want to do this directly in Che, we created a version of the “Make it happen!” model without the generated code (“makeinhappen_blank”), which is available here: &lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;a href=&quot;https://github.com/eclipsesource/emfforms-makeithappen-blank&quot;&gt;https://github.com/eclipsesource/emfforms-makeithappen-blank&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;As a preparation, we have just downloaded and execute Che as described &lt;/span&gt;&lt;a href=&quot;https://www.eclipse.org/che/docs/setup/getting-started/index.html&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;. So for now, we will use the released and unextended version.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;When launching Che and opening it in your browser, you will first see the “Dashboard”. It enables you to create “Workspaces”, but not projects. Che starts a separate runtime for each workspace. Each can be defined as a single Docker container or a group of containers with a composed recipe. However, the default is one container per workspace.&lt;br /&gt;
+&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;The source code and the corresponding runtime (i.e. a JDK or any other arbitrary tools) are encapsulated in that container and can therefore be shared easily. As you can see in the dashboard, there are a variety of pre-defined workspaces to chose from (also called stacks). The “Java” stack serves as a good basis to begin with.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image04-1.png&quot;&gt;&lt;img alt=&quot;image04&quot; class=&quot;alignnone wp-image-27823&quot; height=&quot;171&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image04-1-300x102.png&quot; width=&quot;503&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;After we have selected the workspace, Che will launch it for us. Again, technically, a docker container is launched which is pretty similar to  a server-site virtual machine, we will do our development in.&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;br /&gt;
+&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;After the workspace has been started, the browser IDE connected to that workspace will be shown (currently empty).&lt;br /&gt;
+&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;So let us get an existing modeling project into our fresh workspace.&lt;br /&gt;
+&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;To import a project select Workspace -&amp;gt; Import Project. The default is to use a GIT repository, which is what we use in this example. All you need to do is paste the repository url &lt;/span&gt;&lt;a href=&quot;https://github.com/eclipsesource/emfforms-makeithappen-blank&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;https://github.com/eclipsesource/emfforms-makeithappen-blank&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; and click “Import”.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image05.png&quot;&gt;&lt;img alt=&quot;image05&quot; class=&quot;alignnone wp-image-27824&quot; height=&quot;367&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image05-300x236.png&quot; width=&quot;467&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Now that we have a fully configured template project in our workspace, we can already have a look at the artifacts. As we have no custom editors yet, all files would be handled as plain text. However, we can open them and have a look:&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image00.png&quot;&gt;&lt;img alt=&quot;image00&quot; class=&quot;alignnone wp-image-27825&quot; height=&quot;281&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image00-300x181.png&quot; width=&quot;466&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Of course modifying plain XML is not sufficient, we will have a look at creating custom editors later in this series.&lt;br /&gt;
+&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Another interesting thing to see at this point is that the project has been added to the underlying workspace. The console in the lower area of the Che IDE provides us direct access to it. So by typing  &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;i&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;vi /projects/makeithappen/org.eclipse.emf.ecp.makeithappen.model/model/task.ecore&lt;/span&gt;&lt;/i&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; we can look at our Ecore on the console, too:&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image09.png&quot;&gt;&lt;img alt=&quot;image09&quot; class=&quot;alignnone wp-image-27826&quot; height=&quot;258&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image09-300x167.png&quot; width=&quot;464&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;This means, any command-line based tool can also access our projects artifacts. This is an interesting extension mechanism, that we will use later in our project.&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;br /&gt;
+&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;For now, as we have a simple and reproducible way of creating a template project for testing, and we can begin to look at the next requirements for EMF support in Che. It would be obvious to next create a project wizard, a custom modeling project, or a custom editor for Ecore. However, in the next part of this series, we will first enable code generation. This is mainly for risk mitigation. We believe that it is possible with some effort to create our own UI extensions for the Che IDE. &lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;br /&gt;
+&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;However, for the code generation, we want to use the existing code generator already provided by EMF. So is there a way to integrate existing Eclipse features into Che without much effort? Stay tuned for the next part of this series!&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;If you are interested in learning more about the prototype for EMF support, if you want to contribute or sponsor its further development, or if you want support for creating your own extension for Che, please &lt;/span&gt;&lt;a href=&quot;mailto:munich@eclipsesource.com&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;get in contact with us&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;&lt;div style=&quot;display: inline-block;&quot;&gt;&lt;a href=&quot;https://twitter.com/intent/tweet?source=webclient&amp;amp;text=EMF+Support+for+Che+%26%238211%3B+Day+1%3A+Run+Che+and+Import+existing+EMF+project&amp;amp;via=eclipsesource&amp;amp;url=http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot;&gt;&lt;img alt=&quot;Twitter&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/twitter.png&quot; title=&quot;Twitter&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;https://plus.google.com/share?url=http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;+1&quot;&gt;&lt;img alt=&quot;Google+&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/google_plus.png&quot; title=&quot;Google+&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;http://www.linkedin.com/cws/share?url=http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Share on LinkedIn&quot;&gt;&lt;img alt=&quot;LinkedIn&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/linkedin.png&quot; title=&quot;LinkedIn&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;https://www.facebook.com/sharer/sharer.php?u=http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/&amp;amp;t=EMF+Support+for+Che+%26%238211%3B+Day+1%3A+Run+Che+and+Import+existing+EMF+project&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Facebook&quot;&gt;&lt;img alt=&quot;Facebook&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/facebook.png&quot; title=&quot;Facebook&quot; /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/#respond&quot;&gt;Leave a Comment&lt;/a&gt;&lt;p&gt;&lt;/p&gt;</description>
+	<pubDate>Tue, 14 Feb 2017 08:28:55 +0000</pubDate>
+</item>
+<item>
 	<title>Geniutec: Connecting your Angular 2 App to your Java EE Backend</title>
 	<guid isPermaLink="false">https://www.genuitec.com/?p=509516</guid>
 	<link>https://www.genuitec.com/angular-java/</link>
@@ -935,38 +1274,6 @@ server.listen(ar -&amp;gt; {
 	<pubDate>Tue, 07 Feb 2017 10:45:00 +0000</pubDate>
 </item>
 <item>
-	<title>Maximilian and Jonas: EMF Forms 1.11.0 Feature: View Cache for Tree Master Detail</title>
-	<guid isPermaLink="false">http://eclipsesource.com/blogs/?p=27642</guid>
-	<link>http://eclipsesource.com/blogs/2017/02/06/emf-forms-1-11-0-feature-view-cache-for-tree-master-detail/</link>
-	<description>&lt;p&gt;With Neon.2, we released EMF Forms 1.11.0. EMF Forms makes it simple to create forms which edit your data based on an EMF model. To get started with EMF Forms please refer to our tutorial. In this post, we want to outline a new feature in the 1.11.0 release: A view cache for master detail views.&lt;br /&gt;
-In the last post, we introduced a related feature, that is the ability to replace the input of an already rendered view. This saves rendering time in master detail scenarios. The following screenshot shows such an example of this, the left panel shows a list of objects (“User” in this case), the right side shows a form rendering the object selected on the left.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image04.png&quot;&gt;&lt;img alt=&quot;image04&quot; class=&quot;alignnone wp-image-27644&quot; height=&quot;223&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image04-300x179.png&quot; width=&quot;374&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Now instead of re-rendering the right side on every selection change, EMF Forms allows you to replace the input of the already rendered view like this:&lt;/span&gt;&lt;/p&gt;
-
-&lt;pre lang=&quot;&quot;&gt;renderedComposite.getViewModelContext().changeDomainModel(eObject);
-&lt;/pre&gt;
-
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;While this works well with tables or lists, which show only one type of element, the approach does not directly work for master detail scenarios with mixed types (e.g. in a tree). In the following scenario, we show a tree on the left site, which contains two types of elements (“User” and “UserGroup”).&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image20.png&quot;&gt;&lt;img alt=&quot;image20&quot; class=&quot;alignnone wp-image-27646&quot; height=&quot;191&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image20-300x155.png&quot; width=&quot;370&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Those TreeMasterDetail elements can be created with EMF Forms using the following line of code (more details &lt;/span&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/2016/03/09/emf-forms-1-8-0-feature-factories-for-treeviewer-and-tableviewer/&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;):&lt;/span&gt;&lt;/p&gt;
-
-&lt;pre lang=&quot;&quot;&gt;TreeMasterDetailSWTFactory.createTreeMasterDetail(parent,
-			SWT.NONE, userGroup);
-&lt;/pre&gt;
-
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Again, we have to re-load the details area on selection change. If we would always re-create it, there would be a small delay, depending on the size of the form. Unfortunately, we cannot simply replace the input &lt;/span&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/2017/01/23/emf-forms-1-11-0-feature-change-input-domain-object/&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;as described before&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;, because there can be different forms displayed. To solve this, the EMF Forms TreeMasterDetail renderer allows you to add a cache, the following line uses the default implementation:&lt;/span&gt;&lt;/p&gt;
-
-&lt;pre lang=&quot;&quot;&gt;treeMasterDetail.setCache(new DefaultTreeMasterDetailCache(2));
-&lt;/pre&gt;
-
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;When the selection changes, it will not dispose the previous UI, but will instead hide it. If the same element needs to be rendered again, it will restore the previously rendered UI and just replace its input. So for elements, which have been rendered before, there will no longer be a delay, when they are selected again. The default implementation allows you to specify the number of cached views.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Depending on your use case, you might even want to pre-fill the cache for for some or even all elements in the tree. This would then avoid any delay even on opening an element the first time. The interface for implementing a cache is actually pretty simple:&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image25.png&quot;&gt;&lt;img alt=&quot;image25&quot; class=&quot;alignnone size-medium wp-image-27647&quot; height=&quot;93&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image25-300x93.png&quot; width=&quot;300&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;So have fun with the new feature! If you miss any feature or ways to adapt it, please provide feedback by &lt;/span&gt;&lt;a href=&quot;https://bugs.eclipse.org/bugs/enter_bug.cgi?product=ecp&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;submitting bugs or feature requests&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; or &lt;/span&gt;&lt;a href=&quot;mailto:munich@eclipsesource.com&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;contact us&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; if you are interested in enhancements or support.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;&lt;div style=&quot;display: inline-block;&quot;&gt;&lt;a href=&quot;https://twitter.com/intent/tweet?source=webclient&amp;amp;text=EMF+Forms+1.11.0+Feature%3A+View+Cache+for+Tree+Master+Detail&amp;amp;via=eclipsesource&amp;amp;url=http://eclipsesource.com/blogs/2017/02/06/emf-forms-1-11-0-feature-view-cache-for-tree-master-detail/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot;&gt;&lt;img alt=&quot;Twitter&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/twitter.png&quot; title=&quot;Twitter&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;https://plus.google.com/share?url=http://eclipsesource.com/blogs/2017/02/06/emf-forms-1-11-0-feature-view-cache-for-tree-master-detail/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;+1&quot;&gt;&lt;img alt=&quot;Google+&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/google_plus.png&quot; title=&quot;Google+&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;http://www.linkedin.com/cws/share?url=http://eclipsesource.com/blogs/2017/02/06/emf-forms-1-11-0-feature-view-cache-for-tree-master-detail/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Share on LinkedIn&quot;&gt;&lt;img alt=&quot;LinkedIn&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/linkedin.png&quot; title=&quot;LinkedIn&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;https://www.facebook.com/sharer/sharer.php?u=http://eclipsesource.com/blogs/2017/02/06/emf-forms-1-11-0-feature-view-cache-for-tree-master-detail/&amp;amp;t=EMF+Forms+1.11.0+Feature%3A+View+Cache+for+Tree+Master+Detail&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Facebook&quot;&gt;&lt;img alt=&quot;Facebook&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/facebook.png&quot; title=&quot;Facebook&quot; /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/2017/02/06/emf-forms-1-11-0-feature-view-cache-for-tree-master-detail/#respond&quot;&gt;Leave a Comment&lt;/a&gt;. Tagged with &lt;a href=&quot;http://eclipsesource.com/blogs/tag/eclipse/&quot; title=&quot;eclipse Tag&quot;&gt;eclipse&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emf/&quot; title=&quot;emf Tag&quot;&gt;emf&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emfcp/&quot; title=&quot;emfcp Tag&quot;&gt;emfcp&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emfforms/&quot; title=&quot;emfforms Tag&quot;&gt;emfforms&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/eclipse/&quot; title=&quot;eclipse Tag&quot;&gt;eclipse&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emf/&quot; title=&quot;emf Tag&quot;&gt;emf&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emfcp/&quot; title=&quot;emfcp Tag&quot;&gt;emfcp&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/emfforms/&quot; title=&quot;emfforms Tag&quot;&gt;emfforms&lt;/a&gt;&lt;p&gt;&lt;/p&gt;</description>
-	<pubDate>Mon, 06 Feb 2017 10:00:09 +0000</pubDate>
-</item>
-<item>
 	<title>Lorenzo Bettini: JaCoCo Code Coverage and Report of multiple Eclipse plug-in projects</title>
 	<guid isPermaLink="false">http://www.lorenzobettini.it/?p=911</guid>
 	<link>http://www.lorenzobettini.it/2017/02/jacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects/</link>
@@ -1169,83 +1476,6 @@ script:
 &lt;p&gt; &lt;/p&gt;
 &lt;p&gt; &lt;/p&gt;&lt;br /&gt;  &lt;a href=&quot;http://feeds.wordpress.com/1.0/gocomments/theaaaaaa.wordpress.com/28/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/comments/theaaaaaa.wordpress.com/28/&quot; /&gt;&lt;/a&gt; &lt;img alt=&quot;&quot; border=&quot;0&quot; height=&quot;1&quot; src=&quot;https://pixel.wp.com/b.gif?host=theaaaaaa.wordpress.com&amp;amp;blog=123079642&amp;amp;post=28&amp;amp;subd=theaaaaaa&amp;amp;ref=&amp;amp;feed=1&quot; width=&quot;1&quot; /&gt;</description>
 	<pubDate>Thu, 02 Feb 2017 18:38:57 +0000</pubDate>
-</item>
-<item>
-	<title>Eclipse Announcements: Eclipse Summit India 2017 | CFP Open</title>
-	<guid isPermaLink="true">http://feedproxy.google.com/~r/eclipse/fnews/~3/q_o6jKVGgjA/</guid>
-	<link>http://feedproxy.google.com/~r/eclipse/fnews/~3/q_o6jKVGgjA/</link>
-	<description>Eclipse Summit India is scheduled for July 27-29 in Bangalore. CFP is open until February 28, 2017.&lt;img alt=&quot;&quot; height=&quot;1&quot; src=&quot;http://feeds.feedburner.com/~r/eclipse/fnews/~4/q_o6jKVGgjA&quot; width=&quot;1&quot; /&gt;</description>
-	<pubDate>Thu, 02 Feb 2017 16:00:00 +0000</pubDate>
-</item>
-<item>
-	<title>JBoss Tools Team: JBoss Tools 4.4.3.AM2 for Eclipse Neon.2</title>
-	<guid isPermaLink="true">https://tools.jboss.org/blog/am2-for-neon.2.html</guid>
-	<link>https://tools.jboss.org/blog/am2-for-neon.2.html</link>
-	<description>&lt;div&gt;&lt;div id=&quot;preamble&quot;&gt;
-      &lt;div class=&quot;sectionbody&quot;&gt;
-      &lt;div class=&quot;paragraph&quot;&gt;
-      &lt;p&gt;Happy to announce 4.4.3.AM2 (Developer Milestone 2) build for Eclipse Neon.2.&lt;/p&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;paragraph&quot;&gt;
-      &lt;p&gt;Downloads available at &lt;a href=&quot;https://tools.jboss.org/downloads/jbosstools/neon/4.4.3.AM2.html&quot;&gt;JBoss Tools 4.4.3 AM2&lt;/a&gt;.&lt;/p&gt;
-      &lt;/div&gt;
-      &lt;/div&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;sect1&quot;&gt;
-      &lt;h2 id=&quot;what-is-new&quot;&gt;&lt;a class=&quot;anchor&quot; href=&quot;http://tools.jboss.org/blog/news.atom#what-is-new&quot;&gt;&lt;/a&gt;What is New?&lt;/h2&gt;
-      &lt;div class=&quot;sectionbody&quot;&gt;
-      &lt;div class=&quot;paragraph&quot;&gt;
-      &lt;p&gt;Full info is at &lt;a href=&quot;https://tools.jboss.org/documentation/whatsnew/jbosstools/4.4.3.AM2.html&quot;&gt;this page&lt;/a&gt;. Some highlights are below.&lt;/p&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;sect2&quot;&gt;
-      &lt;h3 id=&quot;openshift-3&quot;&gt;&lt;a class=&quot;anchor&quot; href=&quot;http://tools.jboss.org/blog/news.atom#openshift-3&quot;&gt;&lt;/a&gt;OpenShift 3&lt;/h3&gt;
-      &lt;div class=&quot;paragraph&quot;&gt;
-      &lt;p&gt;Although our main focus is bug fixes, we continue to work on providing better experience for container based development in JBoss Tools and Developer Studio. Let’s go through a few interesting updates here and you can find more details on &lt;a href=&quot;https://tools.jboss.org/documentation/whatsnew/jbosstools/4.4.2.AM1.html&quot;&gt;the What’s New page&lt;/a&gt;.&lt;/p&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;sect3&quot;&gt;
-      &lt;h4 id=&quot;openshift-container-platform-3-4-support&quot;&gt;&lt;a class=&quot;anchor&quot; href=&quot;http://tools.jboss.org/blog/news.atom#openshift-container-platform-3-4-support&quot;&gt;&lt;/a&gt;OpenShift Container Platform 3.4 support&lt;/h4&gt;
-      &lt;div class=&quot;paragraph&quot;&gt;
-      &lt;p&gt;OpenShift Container Platform (OCP) 3.4 has been
-      &lt;a href=&quot;https://www.redhat.com/en/about/press-releases/red-hat-breaks-down-barriers-enterprise-container-adoption-dynamic-storage-provisioning-latest-version-red-hat-openshift-container-platform&quot; target=&quot;_blank&quot;&gt;announced&lt;/a&gt; by Red Hat.
-      JBossTools 4.4.3.AM2 has been validated against OCP 3.4.&lt;/p&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;paragraph&quot;&gt;
-      &lt;p&gt;If you are using JBossTools together with the &lt;a href=&quot;https://developers.redhat.com/products/cdk/overview/&quot; target=&quot;_blank&quot;&gt;Container Development Toolkit&lt;/a&gt; (CDK),
-      the latest version is using OCP 3.3 by default. If you are using CDK 2.3, there is a way to upgrade to OCP 3.4. Edit the &lt;strong&gt;Vagrantfile&lt;/strong&gt;,
-      locate the line with &lt;strong&gt;IMAGE_TAG=&quot;&quot;&lt;/strong&gt; and replace by &lt;strong&gt;IMAGE_TAG=&quot;v3.4.1.2-2&quot;&lt;/strong&gt;. then restart the CDK VM (vagrant halt; vagrant up).&lt;/p&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;admonitionblock warning&quot;&gt;
-      &lt;table&gt;
-      &lt;tbody&gt;&lt;tr&gt;
-      &lt;td class=&quot;icon&quot;&gt;
-      &lt;i class=&quot;fa icon-warning&quot; title=&quot;Warning&quot;&gt;&lt;/i&gt;
-      &lt;/td&gt;
-      &lt;td class=&quot;content&quot;&gt;
-      It seems there are some upgrade problems between OCP 3.3 and OCP 3.4 so you may experience deploy errors. We recommand
-      that you destroy the CDK VM (vagrant destroy) before upgrading to OCP.
-      &lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;/tbody&gt;&lt;/table&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;paragraph&quot;&gt;
-      &lt;p&gt;Enjoy!&lt;/p&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;paragraph&quot;&gt;
-      &lt;p&gt;Jeff Maury&lt;/p&gt;
-      &lt;/div&gt;
-      &lt;/div&gt;
-      &lt;/div&gt;
-      &lt;/div&gt;
-      &lt;/div&gt;&lt;/div&gt;</description>
-	<pubDate>Thu, 02 Feb 2017 14:37:42 +0000</pubDate>
-</item>
-<item>
-	<title>Lars Vogel: New Java index now used in Eclipse 4.7 for caching JAR information</title>
-	<guid isPermaLink="false">http://blog.vogella.com/?p=7524</guid>
-	<link>http://blog.vogella.com/2017/02/02/new-java-index-now-used-in-eclipse-4-7-for-caching-jar-information/</link>
-	<description>&lt;p&gt;Stefan Xenos from Google &lt;a href=&quot;https://dev.eclipse.org/mhonarc/lists/platform-ui-dev/msg07622.html&quot;&gt;reports&lt;/a&gt; that the JDT index is being used as a cache for the majority of .jar file access. This should significantly speed up the usage of the Eclipse Java tooling. &lt;/p&gt;
-&lt;p&gt;Please download the latest I-Build from &lt;a href=&quot;http://download.eclipse.org/eclipse/downloads/&quot;&gt;http://download.eclipse.org/eclipse/downloads/&lt;/a&gt; and follow &lt;a href=&quot;https://dev.eclipse.org/mhonarc/lists/platform-ui-dev/msg07622.html&quot;&gt;Stefan instructions&lt;/a&gt; to report remaining UI freezes in the Java tooling. Good test candidates are large Eclipse workspaces with ton of projects and dependencies.&lt;/p&gt;</description>
-	<pubDate>Thu, 02 Feb 2017 09:34:14 +0000</pubDate>
 </item>
 
 </channel>
