@@ -1,7 +1,7 @@
 package org.usfirst.frc.team5872.robot;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.RobotDriveIII;
+//import edu.wpi.first.wpilibj.RobotDriveIII;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Counter;
@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Robot extends SampleRobot {
 	public static final Subsystem exampleSubsystem = null;
-	RobotDriveIII myRobot;
+	//RobotDriveIII myRobot;
 	int autoLoopCounter;
 	
 	Joystick stick;
