@@ -303,7 +303,27 @@ public class Robot extends IterativeRobot {
         		intake.set(0.0);
         		j = 0;
         	}
+        	
+        	//Gyro Tests
+            if(stick.getRawButton(7)){
+            
+            gyroRight(90, 0.5);
+            
+            }
+            else if(!stick.getRawButton(7)){
+            
+            gyroRight(0, 0.0);
+            
+            }
+            if(stick.getRawAxis(3) > 0.05){
+            
+            gyroStraight(stick.getRawAxis(3));
+            
+            }
     	}
+    	
+    	 
+    	
     }
 
     /**
@@ -311,6 +331,23 @@ public class Robot extends IterativeRobot {
      */
     public void testPeriodic() {
         LiveWindow.run();
+    }
+    
+    public void gyroStraight(double speed){
+        
+        if(ahrs.getAngle() == 0) {
+        setSpeed(speed, speed);
+        }
+        else if(ahrs.getAngle() > 0) {
+        setSpeed(speed*ahrs.getAngle(), speed);
+        }
+        else if(ahrs.getAngle() < 0) {
+        setSpeed(speed, speed*ahrs.getAngle());
+        }
+        else {
+        stopMotors();
+        ahrs.reset();
+        }
     }
     
     public void gyroRight(int degrees, double speed){
