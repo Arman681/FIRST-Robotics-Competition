@@ -34,6 +34,7 @@ public class Robot extends IterativeRobot {
 	CANTalon br;
     CANTalon shooter;
     CANTalon mixer;
+    CANTalon intake;
 	
     //Essential Declarations
     RobotDrive myRobot;
@@ -46,7 +47,8 @@ public class Robot extends IterativeRobot {
     PIDController turnController;
     double rotateToAngleRate;
     double Kp = 0.03;
-    
+    int i = 0;
+    int j = 0;
 
     
     /**
@@ -67,6 +69,7 @@ public class Robot extends IterativeRobot {
         br = new CANTalon(0);
         shooter = new CANTalon(5);
         mixer = new CANTalon(4);
+        intake = new CANTalon(6);
         
         //Initialize encoders
         fl.configEncoderCodesPerRev(1000);
@@ -186,7 +189,7 @@ public class Robot extends IterativeRobot {
     		int highCnt = 0;
     	
     		//Tank Drive
-<<<<<<< HEAD
+//<<<<<<< HEAD
     		/*if (stick.getRawAxis(1) != 0) { //if left joystick is active
     			fl.set(l);
     			bl.set(l);
@@ -210,9 +213,9 @@ public class Robot extends IterativeRobot {
     		}*/
     		
     		//Arcade Drive
-<<<<<<< HEAD
-    		if (y != 0) { //if y-axis is active
-=======
+//<<<<<<< HEAD
+    		//if (y != 0) { //if y-axis is active
+//=======
     		/*if (stick.getRawAxis(1) != 0) { //if y-axis is active
 >>>>>>> 2f0f0f31302ff3296260ec86072d80952d6e4faf
     			fl.set(y);
@@ -311,6 +314,35 @@ public class Robot extends IterativeRobot {
         		mixer.set(0);
         		
         	}
+        	//intake clockwise
+        	if(stick.getRawButton(5) && !stick.getRawButton(6) && i == 0){
+        		intake.set(0.25);
+        		i = 1;
+        	}
+        	else if(!stick.getRawButton(5) && !stick.getRawButton(6) && i == 1){
+        		intake.set(0.25);
+        		i = 2;
+        	}
+        	else if (stick.getRawButton(5) && !stick.getRawButton(6) && i == 2){
+        		intake.set(0.0);
+        		i = 0;
+        	}
+        	
+        	//intake counterclockwise
+        	if(!stick.getRawButton(5) && stick.getRawButton(6) && j == 0){
+        		intake.set(-0.25);
+        		j = 1;
+        	}
+        	else if(!stick.getRawButton(5) && !stick.getRawButton(6) && j == 1){
+        		intake.set(-0.25);
+        		j = 2;
+        	}
+        	else if(!stick.getRawButton(5) && stick.getRawButton(6) && j == 2){
+        		intake.set(0.0);
+        		j = 0;
+        	}
+        		
+        	
     	}
     }
     
