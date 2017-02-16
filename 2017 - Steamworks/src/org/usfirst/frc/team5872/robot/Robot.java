@@ -32,7 +32,9 @@ public class Robot extends IterativeRobot {
 	CANTalon bl;
 	CANTalon fr;
 	CANTalon br;
-    
+    CANTalon shooter;
+    CANTalon mixer;
+	
     //Essential Declarations
     RobotDrive myRobot;
     Joystick stick;
@@ -63,6 +65,8 @@ public class Robot extends IterativeRobot {
         bl = new CANTalon(2);
         fr = new CANTalon(1);
         br = new CANTalon(0);
+        shooter = new CANTalon(5);
+        mixer = new CANTalon(4);
         
         //Initialize encoders
         fl.configEncoderCodesPerRev(1000);
@@ -172,23 +176,33 @@ public class Robot extends IterativeRobot {
     		//Tank Drive Logitech Controller Joystick Declarations and Assignments
     		double l = -stick.getRawAxis(1);
     		double r = stick.getRawAxis(5);
-        
+    		boolean oy = stick.getRawButton(1);
+    		
     		//Arcade Drive Joystick Declarations and Assignments
     		double y = -stick.getRawAxis(1);
     		double z = stick.getRawAxis(2);
+    		
+    		//Ints For Counters
+    		int highCnt = 0;
     	
     		//Tank Drive
+<<<<<<< HEAD
     		/*if (stick.getRawAxis(1) != 0) { //if left joystick is active
     			fl.set(l);
     			bl.set(l);
+=======
+    		if (stick.getRawAxis(1) != 0) { //if left joystick is active
+    			fl.set(r);
+    			bl.set(r);
+>>>>>>> 2f0f0f31302ff3296260ec86072d80952d6e4faf
     		}
     		else {
     			fl.set(0);
     			bl.set(0;
     		}
     		if (stick.getRawAxis(5) != 0) { //if right joystick is active
-    			fr.set(r);
-        		br.set(r);
+    			fr.set(l);
+        		br.set(l);
     		}
     		else {
     			fr.set(0);
@@ -196,7 +210,11 @@ public class Robot extends IterativeRobot {
     		}*/
     		
     		//Arcade Drive
+<<<<<<< HEAD
     		if (y != 0) { //if y-axis is active
+=======
+    		/*if (stick.getRawAxis(1) != 0) { //if y-axis is active
+>>>>>>> 2f0f0f31302ff3296260ec86072d80952d6e4faf
     			fl.set(y);
             	bl.set(y);
            		fr.set(y);
@@ -220,8 +238,8 @@ public class Robot extends IterativeRobot {
         		fr.set(0);
         		br.set(0);
         	}
-        	
-        	if (stick.getRawButton(1) && ahrs.getAngle() < 5){
+        	*/
+        	/*if (stick.getRawButton(1) && ahrs.getAngle() < 5){
         		gyroRight(90, 0.5);
         	}
         	else{
@@ -229,6 +247,69 @@ public class Robot extends IterativeRobot {
         		fr.set(0);
         		bl.set(0);
         		br.set(0);
+        	}*/
+        	/*if(stick.getRawButton(1) && a == 0){
+        		
+        		a = 1;
+        		
+        	}
+        	else if(!stick.getRawButton(1) && a == 1){
+        		
+        		shooter.set(0.8);
+        		a = 2;
+        		
+        	}
+        	else if(stick.getRawButton(1) && a == 2){
+        		
+        		a = 3;
+        		
+        	}
+        	else if(!stick.getRawButton(1) && a ==3){
+        		
+        		shooter.set(0);
+        		a = 0;
+        		
+        	}*/
+        	//Nick's Way
+    		/*if(highCnt == 0 && oy)
+        	{
+        		
+        		highCnt = 1;
+        	}
+        	else if(highCnt == 1 && !oy)
+        	{
+        		shooter.set(1);
+        		highCnt = 2;
+        	}
+        	else if(highCnt == 2 && oy)
+        	{
+        		highCnt = 3;
+        	}
+        	else if(highCnt == 3 && !oy)
+        	{
+        		shooter.set(0);
+        		highCnt = 0;
+        	}*/
+        	//Holding
+        	if(oy && !stick.getRawButton(2)){
+        		
+        		shooter.set(0.5);
+        		
+        	}
+        	else if(stick.getRawButton(2) && !oy){
+        		
+        		shooter.set(0.0);
+        		
+        	}
+        	if(stick.getRawButton(3) && !stick.getRawButton(4)){
+        		
+        		mixer.set(-0.25);
+        		
+        	}
+        	else if(stick.getRawButton(4) && !stick.getRawButton(3)){
+        		
+        		mixer.set(0);
+        		
         	}
     	}
     }
