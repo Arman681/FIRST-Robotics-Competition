@@ -45,8 +45,12 @@ public class Robot extends IterativeRobot {
     PIDController turnController;
     double rotateToAngleRate;
     double Kp = 0.03;
-    int i = 0;
-    int j = 0;
+    
+    //Counters
+    int ci = 0;			//Intake Counter
+    int cj = 0;			//Outtake Counter
+    int cm = 0;			//Mixer Counter
+    int cs = 0;
     
     /**
      * This function is run when the robot is first started up and should be
@@ -66,7 +70,10 @@ public class Robot extends IterativeRobot {
         br = new CANTalon(0);
         shooter = new CANTalon(5);
         mixer = new CANTalon(4);
-        intake = new CANTalon(6);
+        intake = new CANTalon(20);
+        
+        fr.setInverted(true);
+        br.setInverted(true);
         
         //Initialize encoders
         fl.configEncoderCodesPerRev(1000);
@@ -172,47 +179,50 @@ public class Robot extends IterativeRobot {
         
     		//Tank Drive Logitech Controller Joystick Declarations and Assignments
     		//Controller Axes
-    		double l = -stick.getRawAxis(1);		//Left Joystick
+    		double l = stick.getRawAxis(1);			//Left Joystick
     		double r = stick.getRawAxis(5);			//Right Joystick
     		//Controller Buttons
-    		boolean oy = stick.getRawButton(1);		//Button "oy"
+    		boolean a = stick.getRawButton(1);		//Button a
+    		boolean b = stick.getRawButton(2);		//Button b
+    		boolean x = stick.getRawButton(3);		//Button x
+    		boolean y = stick.getRawButton(4);		//Button y
+    		boolean lb = stick.getRawButton(5);		//Left Bumper
+    		boolean rb = stick.getRawButton(6);		//Right Bumper
+    		boolean back = stick.getRawButton(7);	//Button Back 
+    		
+    		double lt = stick.getRawAxis(2);		//Right Trigger
+    		double rt = stick.getRawAxis(3);		//Left Trigger
     		
     		//Arcade Drive Joystick Declarations and Assignments
     		//Controller Axes
-    		double y = -stick.getRawAxis(1);		//Y Axis
-    		double z = stick.getRawAxis(2);			//Z Axis
+    		double ay = -stick.getRawAxis(1);		//Y Axis
+    		double az = stick.getRawAxis(2);		//Z Axis
     		
     		//Ints For Counters
     		int highCnt = 0;
     	
     		//Tank Drive
     		if (stick.getRawAxis(1) != 0) { //if left joystick is active
-    			fl.set(l);
-    			bl.set(l);
-    		}
-    		if (stick.getRawAxis(1) != 0) { //if left joystick is active
     			fl.set(r);
     			bl.set(r);
     		}
     		else {
-    			fl.set(0);
-    			bl.set(0);
+    			stopMotors();
     		}
     		if (stick.getRawAxis(5) != 0) { //if right joystick is active
-    			fr.set(l);
-        		br.set(l);
+    			fr.set(-l);
+        		br.set(-l);
     		}
     		else {
-    			fr.set(0);
-    			br.set(0);
+    			stopMotors();
     		}
     		
     		//Arcade Drive
     		/*if (stick.getRawAxis(1) != 0) { //if y-axis is active
-    			fl.set(y);
-            	bl.set(y);
-           		fr.set(y);
-           		br.set(y);
+    			fl.set(ay);
+            	bl.set(ay);
+           		fr.set(ay);
+           		br.set(ay);
     		}
     		else {
     			fl.set(0);
@@ -221,10 +231,10 @@ public class Robot extends IterativeRobot {
     			br.set(0);
     		}
         	if (z != 0) { //if z-axis is active
-        		fl.set(-z);
-        		bl.set(-z);
-        		fr.set(z);
-        		br.set(z);
+        		fl.set(-az);
+        		bl.set(-az);
+        		fr.set(az);
+        		br.set(az);
         	}
         	else {
         		fl.set(0);
@@ -261,69 +271,80 @@ public class Robot extends IterativeRobot {
         	}*/
         	
         	//Shooter
-        	if(oy && !stick.getRawButton(2)) { //oy = stick.getRawButton(1);
+        	if(a && cs == 0) {
         		shooter.set(0.5);
+        		cs = 1;
         	}
-        	else if(stick.getRawButton(2) && !oy) {
+        	else if (!a && cs == 1) {
+        		cs = 2;
+        	}
+        	else if(a && cs == 2) {
         		shooter.set(0.0);
+        		cs = 3;
+        	}
+        	else if (!a && cs == 3) {
+        		cs = 0;
         	}
         	
         	//Mixer
-        	if(stick.getRawButton(3) && !stick.getRawButton(4)) {
-        		mixer.set(-0.25);
+        	if(x && cm == 0) {
+        		mixer.set(-1.00);
+        		cm = 1;
         	}
-        	else if(stick.getRawButton(4) && !stick.getRawButton(3)) {
-        		mixer.set(0);
+        	else if(!x && cm == 1) {
+        		cm = 2;
         	}
-        	
-        	//Intake Clockwise
-        	if(stick.getRawButton(5) && !stick.getRawButton(6) && i == 0) {
-        		intake.set(0.25);
-        		i = 1;
+        	else if (x && cm == 2) {
+        		mixer.set(0.0);
+        		cm = 3;
         	}
-        	else if(!stick.getRawButton(5) && !stick.getRawButton(6) && i == 1) {
-        		intake.set(0.25);
-        		i = 2;
-        	}
-        	else if (stick.getRawButton(5) && !stick.getRawButton(6) && i == 2) {
-        		intake.set(0.0);
-        		i = 0;
+        	else if (!x && cm == 3) {
+        		cm = 0;
         	}
         	
-        	//Intake Counter-clockwise
-        	if(!stick.getRawButton(5) && stick.getRawButton(6) && j == 0) {
-        		intake.set(-0.25);
-        		j = 1;
+        	//Intake Toggle (Left Bumper)
+        	if (lb && ci == 0) {
+        		intake.set(-0.5);
+        		ci = 1;
         	}
-        	else if(!stick.getRawButton(5) && !stick.getRawButton(6) && j == 1) {
-        		intake.set(-0.25);
-        		j = 2;
+        	else if (!lb && ci == 1) {
+        		ci = 2;
         	}
-        	else if(!stick.getRawButton(5) && stick.getRawButton(6) && j == 2) {
+        	else if (lb && ci == 2) {
         		intake.set(0.0);
-        		j = 0;
+        		ci = 3;
+        	}
+        	else if (!lb && ci == 3) {
+        		ci = 0;
+        	}
+        	
+        	//Outtake Toggle (Right Bumper)
+        	if (rb && cj == 0) {
+        		intake.set(0.5);
+        		cj = 1;
+        	}
+        	else if (!rb && cj == 1) {
+        		cj = 2;
+        	}
+        	else if (rb && cj == 2) {
+        		intake.set(0.0);
+        		cj = 3;
+        	}
+        	else if (!rb && cj == 3) {
+        		cj = 0;
         	}
         	
         	//Gyro Tests
-            if(stick.getRawButton(7)){
-            
-            gyroRight(90, 0.5);
-            
+            if(back) {
+            	gyroRight(90, 0.5);
             }
-            else if(!stick.getRawButton(7)){
-            
-            gyroRight(0, 0.0);
-            
+            else if(!back) {            
+            	gyroRight(0, 0.0);
             }
-            if(stick.getRawAxis(3) > 0.05){
-            
-            gyroStraight(stick.getRawAxis(3));
-            
+            if(rt > 0.05) {
+            	gyroStraight(rt*0.75);
             }
     	}
-    	
-    	 
-    	
     }
 
     /**
@@ -371,7 +392,7 @@ public class Robot extends IterativeRobot {
     	}
     }
     
-    public void setSpeed(double left,double right) {
+    public void setSpeed(double left, double right) {
     	fl.set(left);
 		fr.set(right);
 		bl.set(left);
