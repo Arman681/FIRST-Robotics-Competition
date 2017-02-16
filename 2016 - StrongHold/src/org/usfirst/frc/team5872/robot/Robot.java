@@ -115,14 +115,14 @@ public class Robot extends SampleRobot {
     	boolean enabled1 = c.enabled();
     	boolean pressureSwitch = c.getPressureSwitchValue();
     	boolean pressureSwitch1 = c.getPressureSwitchValue();
-    	float current = c.getCompressorCurrent();
-    	float current1 = c.getCompressorCurrent();
+    	//float current = c.getCompressorCurrent();		//No longer works with the 2017 wpilib plugins
+    	//float current1 = c.getCompressorCurrent();	//No longer works with the 2017 wpilib plugins
     	c.setClosedLoopControl(true);
     	c2.setClosedLoopControl(true);
     	
     	server = CameraServer.getInstance();
-        server.setQuality(50);
-        server.startAutomaticCapture("cam0");
+        //server.setQuality(50);						//No longer works with the 2017 wpilib plugins
+        //server.startAutomaticCapture("cam0");			//No longer works with the 2017 wpilib plugins
         
         //Counter counter = new Counter(limitSwitch);    	
     	

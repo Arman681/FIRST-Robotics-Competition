@@ -8,6 +8,111 @@
 	<description>Planet Eclipse - http://planeteclipse.org/planet/</description>
 
 <item>
+	<title>Antoine Thomas: Tutorial – Eclipse Marketplace &amp; Favourites List</title>
+	<guid isPermaLink="false">http://blog.ttoine.net/?p=1203</guid>
+	<link>http://blog.ttoine.net/en/2017/02/16/tutorial-eclipse-marketplace-favourites-list/</link>
+	<description>&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;A few months ago we introduced the Eclipse Marketplace Favourites List. To explain how it works &lt;a href=&quot;http://blog.ttoine.net/en/2016/09/29/video-eclipse-marketplace-favourites-list/&quot;&gt;I created a video tutorial&lt;/a&gt;. This article will be a more classic tutorial to explain what Eclipse Marketplace is and how you can use the Favourite Lists to your advantage.&lt;/span&gt;&lt;/p&gt;
+&lt;h2&gt;What is Eclipse Marketplace?&lt;/h2&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;The Eclipse Marketplace is a place to discover, share, and install relevant Eclipse plugins and solutions. Think of it like an app store for Eclipse solutions.&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;br /&gt;
+&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;br /&gt;
+&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;One of it’s main uses is to add plugins to your Eclipse installation. You will also find applications based on Eclipse Platform, tooling for IoT and other solutions and services. In this article you’ll find out how to do so – you might even learn a few new tricks along the way.&lt;/span&gt;&lt;/p&gt;
+&lt;h2&gt;Favourite list online&lt;/h2&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;One of the great features of the Eclipse Marketplace is the possibility to create and share a list of plugins. This is very helpful if you have many Eclipse installations, and want to find and install your favourites one quickly. How can you do this on the Eclipse website?&lt;/span&gt;&lt;/p&gt;
+&lt;h3&gt;How to do this on the website?&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Go to &lt;a href=&quot;https://marketplace.eclipse.org/&quot;&gt;https://marketplace.eclipse.org/&lt;/a&gt; and sign up. Or create an account if you don’t have one yet.&lt;/li&gt;
+&lt;li&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Search for your favourite solution&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Click on the white star below the logo to add a plugin to your Favourites list.&lt;/span&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;Visual Example&lt;/h3&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;In this example, &lt;/span&gt;&lt;i&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Darkest Dark Theme&lt;/span&gt;&lt;/i&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; will be added to my favourites plugins list. Once a plugin has been “starred” it is automatically added to your list.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://blog.ttoine.net/files/2017/02/marketplace-1-2.png&quot;&gt;&lt;img alt=&quot;&quot; class=&quot;aligncenter size-large wp-image-1209 colorbox-1203&quot; height=&quot;904&quot; src=&quot;http://blog.ttoine.net/files/2017/02/marketplace-1-2-1024x904.png&quot; width=&quot;1024&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;To view it, simply go to “My Marketplace”:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://blog.ttoine.net/files/2017/02/marketplace-2-1.png&quot;&gt;&lt;img alt=&quot;&quot; class=&quot;aligncenter size-large wp-image-1210 colorbox-1203&quot; height=&quot;211&quot; src=&quot;http://blog.ttoine.net/files/2017/02/marketplace-2-1-1024x211.png&quot; width=&quot;1024&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;And there it is, in your list of favorites!&lt;/span&gt;&lt;/p&gt;
+&lt;h2&gt;Marketplace Client in Eclipse&lt;/h2&gt;
+&lt;h3&gt;Manage plugins&lt;/h3&gt;
+&lt;p&gt;Did you know? You can install plugins from your Eclipse IDEs using the Marketplace Client. To launch it:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Click on the “Help” tab in the menu.&lt;/li&gt;
+&lt;li&gt;Click on “Eclipse Marketplace”.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;a href=&quot;http://blog.ttoine.net/files/2017/02/marketplace-4.png&quot;&gt;&lt;img alt=&quot;&quot; class=&quot;aligncenter size-medium wp-image-1215 colorbox-1203&quot; height=&quot;300&quot; src=&quot;http://blog.ttoine.net/files/2017/02/marketplace-4-284x300.png&quot; width=&quot;284&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;You can also launch it using the Quick Access Bar at the top right of your Eclipse workspace.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Click “Alt + 3” (Windows) or “Command + 3” (Mac) to launch the Quick Access search bar&lt;/li&gt;
+&lt;li&gt;Type “Eclipse Marketplace”&lt;/li&gt;
+&lt;li&gt;Hit “Enter” and voila – you’re there!&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;You can display and manage your favorites here too:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://blog.ttoine.net/files/2017/02/marketplace-5.png&quot;&gt;&lt;img alt=&quot;&quot; class=&quot;aligncenter size-large wp-image-1217 colorbox-1203&quot; height=&quot;1024&quot; src=&quot;http://blog.ttoine.net/files/2017/02/marketplace-5-943x1024.png&quot; width=&quot;943&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;You can off course add, remove, and install plugins. The Eclipse Marketplace Client and the website store your favorites with your &lt;a href=&quot;https://www.eclipse.org/user/&quot;&gt;eclipse.org account&lt;/a&gt;, so they are synchronised.&lt;/span&gt;&lt;/p&gt;
+&lt;h3&gt;Copying Another User’s Favourite List&lt;/h3&gt;
+&lt;p&gt;If you want to install plugins in the list of someone else, say, a colleague, or another contributor to a project, this is also possible.  You can import a favourites list from an other Community users, and then select the plugin you want.&lt;/p&gt;
+&lt;p&gt;It’s also possible to install plugins from someone else’s list , say, a colleague, or another project contributor. To import a favourites list from an other Community users in your workspace Marketplace client:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Click on “Import Favourites List”&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; Copy/paste the link to someone’s favorites lists. &lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; All plugins are automatically selected. Unselect any plugins you don’t want by unchecking the checkboxes to the left of each individual plugin.&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;Click import.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Here is an example with &lt;a href=&quot;https://accounts.eclipse.org/users/lvogel#tab-marketplace&quot;&gt;Lars Vogel&lt;/a&gt;‘s plugins.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&quot;&quot; class=&quot;aligncenter size-large wp-image-1218 colorbox-1203&quot; height=&quot;188&quot; src=&quot;http://blog.ttoine.net/files/2017/02/marketplace-6-1024x188.png&quot; width=&quot;1024&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://blog.ttoine.net/files/2017/02/marketplace-7.png&quot;&gt;&lt;img alt=&quot;&quot; class=&quot;aligncenter size-large wp-image-1219 colorbox-1203&quot; height=&quot;1024&quot; src=&quot;http://blog.ttoine.net/files/2017/02/marketplace-7-914x1024.png&quot; width=&quot;914&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2&gt;Share&lt;/h2&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Long story short, to save time or to share your favourite plugins quickly and easily with someone else, you can add plugins to your favourites list. Sharing is simple, all you need is the link to your list. You can find this link on your &lt;a href=&quot;https://www.eclipse.org/user/&quot;&gt;user profile&lt;/a&gt;:&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&quot;&quot; class=&quot;aligncenter size-large wp-image-1212 colorbox-1203&quot; height=&quot;904&quot; src=&quot;http://blog.ttoine.net/files/2017/02/marketplace-3-1024x904.png&quot; width=&quot;1024&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Here are a few Favourites Lists that I would like to share with you. You can import them directly by copying and pasting the link in Eclipse Marketplace Client:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Java – Lars Vogel&lt;br /&gt;
+&lt;a href=&quot;https://marketplace.eclipse.org/user/lvogel/favorites&quot;&gt;https://marketplace.eclipse.org/user/lvogel/favorites&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;C / C++ – Doug Schaefer&lt;br /&gt;
+&lt;a href=&quot;https://marketplace.eclipse.org/user/dschaefer/favorites&quot;&gt;https://marketplace.eclipse.org/user/dschaefer/favorites&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Modelling (Sirius) – Cédric Brun&lt;br /&gt;
+&lt;a href=&quot;https://marketplace.eclipse.org/user/cbrun/favorites&quot;&gt;https://marketplace.eclipse.org/user/cbrun/favorites&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Do not hesitate to share your favourite list on social networks. You can use #EclipseMarketplace on Twitter.&lt;/p&gt;
+&lt;h2&gt;Feedback welcome&lt;/h2&gt;
+&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;As usual, feedback is welcome and discussion is open. Do not hesitate to comment this article or to open an bug.&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;br /&gt;
+&lt;/span&gt;&lt;/p&gt;</description>
+	<pubDate>Thu, 16 Feb 2017 08:00:02 +0000</pubDate>
+</item>
+<item>
+	<title>Ctrlflow: Announcing Availability of Free Error Reporting Service for Eclipse Plugin Developers</title>
+	<guid isPermaLink="false">https://blog.ctrlflow.com/?p=194</guid>
+	<link>https://blog.ctrlflow.com/free-error-reporting-service-for-eclipse/</link>
+	<description>&lt;p&gt;What annoys software developers most? Probably when the tools they use Just Don’t Work. And it doesn’t matter what kind of software it is; or whether it’s open-source, or commercial. If it fails, it sucks. Users don’t show mercy. The same holds for the Eclipse IDE. In recent years, many users complained that Eclipse was way too buggy and moved on to the competition. To stop that trend, we started the Automated Error Reporting Initiative for Eclipse. Our main objectives were (i) to make reporting problems with Eclipse as easy as possible and (ii) to make Eclipse committers aware which parts […]&lt;/p&gt;
+&lt;p&gt;The post &lt;a href=&quot;https://blog.ctrlflow.com/free-error-reporting-service-for-eclipse/&quot; rel=&quot;nofollow&quot;&gt;Announcing Availability of Free Error Reporting Service for Eclipse Plugin Developers&lt;/a&gt; appeared first on &lt;a href=&quot;https://blog.ctrlflow.com&quot; rel=&quot;nofollow&quot;&gt;Ctrlflow Blog&lt;/a&gt;.&lt;/p&gt;</description>
+	<pubDate>Wed, 15 Feb 2017 15:26:37 +0000</pubDate>
+</item>
+<item>
+	<title>Eclipse Announcements: Eclipse IoT Announces Support for OMA LightweightM2M 1.0 Device Management Standard</title>
+	<guid isPermaLink="true">http://feedproxy.google.com/~r/eclipse/fnews/~3/GEVjbCdKB4Q/20170215_lwm2m.php</guid>
+	<link>http://feedproxy.google.com/~r/eclipse/fnews/~3/GEVjbCdKB4Q/20170215_lwm2m.php</link>
+	<description>We are pleased to announce the Eclipse Leshan project will support OMA's newly ratified LwM2M 1.0 standard.&lt;img alt=&quot;&quot; height=&quot;1&quot; src=&quot;http://feeds.feedburner.com/~r/eclipse/fnews/~4/GEVjbCdKB4Q&quot; width=&quot;1&quot; /&gt;</description>
+	<pubDate>Wed, 15 Feb 2017 14:11:00 +0000</pubDate>
+</item>
+<item>
+	<title>Roxanne Joncas: Upcoming IoT Events in March 2017</title>
+	<guid isPermaLink="false">https://medium.com/p/c6ad4877e43</guid>
+	<link>https://medium.com/@roxanne.iot/upcoming-iot-events-c6ad4877e43?source=rss-82f8afd3e513------2</link>
+	<description>&lt;div class=&quot;medium-feed-item&quot;&gt;&lt;p class=&quot;medium-feed-snippet&quot;&gt;It’s no surprise that there are many, MANY, Internet of Things (IoT) events happening all over the world every month. But, there are a few…&lt;/p&gt;&lt;p class=&quot;medium-feed-link&quot;&gt;&lt;a href=&quot;https://medium.com/@roxanne.iot/upcoming-iot-events-c6ad4877e43?source=rss-82f8afd3e513------2&quot;&gt;Continue reading on Medium »&lt;/a&gt;&lt;/p&gt;&lt;/div&gt;</description>
+	<pubDate>Wed, 15 Feb 2017 11:07:30 +0000</pubDate>
+</item>
+<item>
+	<title>PapyrusUML: Why we need industrial consortiums for open source projects!</title>
+	<guid isPermaLink="false">http://papyrusuml.wordpress.com/?p=482</guid>
+	<link>https://papyrusuml.wordpress.com/2017/02/15/why-we-need-industrial-consortiums-for-open-source-projects/</link>
+	<description>&lt;p&gt;On Friday, February 17&lt;sup&gt;th&lt;/sup&gt; at 16:00 CET , 15:00 (GMT), and 10:00 EST, the Papyrus Industry Consortium’s (a.k.a. Papyrus-IC or, as I prefer, Me-IC &lt;img alt=&quot;😉&quot; class=&quot;wp-smiley&quot; src=&quot;https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/72x72/1f609.png&quot; style=&quot;height: 1em;&quot; /&gt; Research and Academia committee will host their second &lt;a href=&quot;https://wiki.polarsys.org/Papyrus_IC/Research_Academia/Webinars#Upcoming_webinars&quot; target=&quot;_blank&quot;&gt;webinar&lt;/a&gt; of the year:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Industrial usage of open source solutions – Why do we need industrial consortiums?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Ericsson’s Francis Bordeleau, who is also the Me-IC’s chairperson will be presenting this very interesting topic.&lt;/p&gt;
+&lt;p&gt;I must say that, as an open source project myself, I have profited from the creation of the Papyrus IC and I certainly owe some of my growth to its members!&lt;/p&gt;
+&lt;p&gt;If you are curious as to how open source project can grow and become more palatable for usage in an industrial setting, then you must attend this webinar!&lt;/p&gt;
+&lt;p&gt;You can find information on how to connect from the &lt;a href=&quot;https://wiki.polarsys.org/Papyrus_IC/Research_Academia/Webinars&quot;&gt;Me-IC Research and Academia webinar page&lt;/a&gt;!&lt;/p&gt;
+&lt;p&gt;See you there!&lt;/p&gt;&lt;br /&gt;Filed under: &lt;a href=&quot;https://papyrusuml.wordpress.com/category/papyrus-ic/&quot;&gt;Papyrus IC&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/category/papyrus-ic/research-and-academia/&quot;&gt;Research and Academia&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/category/webinar/&quot;&gt;webinar&lt;/a&gt; Tagged: &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/community/&quot;&gt;community&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/industry/&quot;&gt;industry&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/industry-consortium/&quot;&gt;Industry consortium&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/open-source/&quot;&gt;open-source&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/pic/&quot;&gt;PIC&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/gocomments/papyrusuml.wordpress.com/482/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/comments/papyrusuml.wordpress.com/482/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/godelicious/papyrusuml.wordpress.com/482/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/delicious/papyrusuml.wordpress.com/482/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/gofacebook/papyrusuml.wordpress.com/482/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/facebook/papyrusuml.wordpress.com/482/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/gotwitter/papyrusuml.wordpress.com/482/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/twitter/papyrusuml.wordpress.com/482/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/gostumble/papyrusuml.wordpress.com/482/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/stumble/papyrusuml.wordpress.com/482/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/godigg/papyrusuml.wordpress.com/482/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/digg/papyrusuml.wordpress.com/482/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/goreddit/papyrusuml.wordpress.com/482/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/reddit/papyrusuml.wordpress.com/482/&quot; /&gt;&lt;/a&gt; &lt;img alt=&quot;&quot; border=&quot;0&quot; height=&quot;1&quot; src=&quot;https://pixel.wp.com/b.gif?host=papyrusuml.wordpress.com&amp;amp;blog=72365150&amp;amp;post=482&amp;amp;subd=papyrusuml&amp;amp;ref=&amp;amp;feed=1&quot; width=&quot;1&quot; /&gt;</description>
+	<pubDate>Wed, 15 Feb 2017 09:00:41 +0000</pubDate>
+</item>
+<item>
 	<title>Kichwa Coders: Getting Started With Eclipse Che on Windows 10</title>
 	<guid isPermaLink="false">http://kichwacoders.com/?p=1220</guid>
 	<link>https://kichwacoders.com/2017/02/14/getting-started-with-eclipse-che-on-windows-10/</link>
@@ -316,7 +421,7 @@
 	<title>Maximilian and Jonas: EMF Support for Che – Day 1: Run Che and Import existing EMF project</title>
 	<guid isPermaLink="false">http://eclipsesource.com/blogs/?p=27822</guid>
 	<link>http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/</link>
-	<description>&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;In this blog series, we share our experience with extending &lt;/span&gt;&lt;a href=&quot;http://eclipse.org/che&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Eclipse Che&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; and describe how we have built initial EMF support for the Eclipse Che IDE. In the last blog post (TBD Add link), we have described our overall goals and the use case.&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;br /&gt;
+	<description>&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;In this blog series, we share our experience with extending &lt;/span&gt;&lt;a href=&quot;http://eclipse.org/che&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Eclipse Che&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; and describe how we have built initial EMF support for the Eclipse Che IDE. In the &lt;a href=&quot;https://eclipsesource.com/blogs/2017/02/08/emf-support-for-che-day-0-motivation-and-getting-started/&quot;&gt;last blog post&lt;/a&gt;, we have described our overall goals and the use case.&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;br /&gt;
 &lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;In this blog post, we describe the first steps in getting started with Che. Before we start to extend Che, let’s run it and see what’s already there. To get started, let us explore the simplest way to get an existing modeling project into a Che workspace. The modeling project is not yet created by Che, but by an Eclipse Modeling Tools IDE. By importing this existing project, we can see what features are already there and what we are going to need to extend later.&lt;br /&gt;
 &lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;As a template project, we will be using the existing “Make it happen!” model (see more details &lt;/span&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/2013/06/13/emf-client-platform-make-it-happen-day-0-and-1/&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;). This example model is also shipped with every Eclipse Modeling Tools IDE (don’t confuse the desktop IDE with Eclipse Che here), you can instantiate it with New =&amp;gt; Example =&amp;gt; “Make it happen: Example Model”. The template project already contains generated code. As we will later want to do this directly in Che, we created a version of the “Make it happen!” model without the generated code (“makeinhappen_blank”), which is available here: &lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;a href=&quot;https://github.com/eclipsesource/emfforms-makeithappen-blank&quot;&gt;https://github.com/eclipsesource/emfforms-makeithappen-blank&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
@@ -343,7 +448,7 @@
 &lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;However, for the code generation, we want to use the existing code generator already provided by EMF. So is there a way to integrate existing Eclipse features into Che without much effort? Stay tuned for the next part of this series!&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;If you are interested in learning more about the prototype for EMF support, if you want to contribute or sponsor its further development, or if you want support for creating your own extension for Che, please &lt;/span&gt;&lt;a href=&quot;mailto:munich@eclipsesource.com&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;get in contact with us&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;&lt;div style=&quot;display: inline-block;&quot;&gt;&lt;a href=&quot;https://twitter.com/intent/tweet?source=webclient&amp;amp;text=EMF+Support+for+Che+%26%238211%3B+Day+1%3A+Run+Che+and+Import+existing+EMF+project&amp;amp;via=eclipsesource&amp;amp;url=http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot;&gt;&lt;img alt=&quot;Twitter&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/twitter.png&quot; title=&quot;Twitter&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;https://plus.google.com/share?url=http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;+1&quot;&gt;&lt;img alt=&quot;Google+&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/google_plus.png&quot; title=&quot;Google+&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;http://www.linkedin.com/cws/share?url=http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Share on LinkedIn&quot;&gt;&lt;img alt=&quot;LinkedIn&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/linkedin.png&quot; title=&quot;LinkedIn&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;https://www.facebook.com/sharer/sharer.php?u=http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/&amp;amp;t=EMF+Support+for+Che+%26%238211%3B+Day+1%3A+Run+Che+and+Import+existing+EMF+project&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Facebook&quot;&gt;&lt;img alt=&quot;Facebook&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/facebook.png&quot; title=&quot;Facebook&quot; /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/#respond&quot;&gt;Leave a Comment&lt;/a&gt;&lt;p&gt;&lt;/p&gt;</description>
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;&lt;div style=&quot;display: inline-block;&quot;&gt;&lt;a href=&quot;https://twitter.com/intent/tweet?source=webclient&amp;amp;text=EMF+Support+for+Che+%26%238211%3B+Day+1%3A+Run+Che+and+Import+existing+EMF+project&amp;amp;via=eclipsesource&amp;amp;url=http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot;&gt;&lt;img alt=&quot;Twitter&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/twitter.png&quot; title=&quot;Twitter&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;https://plus.google.com/share?url=http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;+1&quot;&gt;&lt;img alt=&quot;Google+&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/google_plus.png&quot; title=&quot;Google+&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;http://www.linkedin.com/cws/share?url=http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Share on LinkedIn&quot;&gt;&lt;img alt=&quot;LinkedIn&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/linkedin.png&quot; title=&quot;LinkedIn&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;https://www.facebook.com/sharer/sharer.php?u=http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/&amp;amp;t=EMF+Support+for+Che+%26%238211%3B+Day+1%3A+Run+Che+and+Import+existing+EMF+project&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Facebook&quot;&gt;&lt;img alt=&quot;Facebook&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/facebook.png&quot; title=&quot;Facebook&quot; /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/2017/02/14/emf-support-for-che-day-1-run-che-and-import-existing-emf-project/#comments&quot;&gt;2 Comments&lt;/a&gt;. Tagged with &lt;a href=&quot;http://eclipsesource.com/blogs/tag/che/&quot; title=&quot;che Tag&quot;&gt;che&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/eclipse/&quot; title=&quot;eclipse Tag&quot;&gt;eclipse&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/che/&quot; title=&quot;che Tag&quot;&gt;che&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/eclipse/&quot; title=&quot;eclipse Tag&quot;&gt;eclipse&lt;/a&gt;&lt;p&gt;&lt;/p&gt;</description>
 	<pubDate>Tue, 14 Feb 2017 08:28:55 +0000</pubDate>
 </item>
 <item>
@@ -1222,260 +1327,6 @@ server.listen(ar -&amp;gt; {
 &lt;p&gt;Will you be at that conference? If so, I would suggest you attend their briefing to learn more about one of my incarnations! Their briefing is currently &lt;a href=&quot;http://icse2017.gatech.edu/?q=technical_briefings_program&quot; target=&quot;_blank&quot;&gt;scheduled&lt;/a&gt; for May 23&lt;sup&gt;rd&lt;/sup&gt;, track 2, from 09:00 to 10:30!&lt;/p&gt;
 &lt;p&gt;I am sure they will be happy to see you in Buenos Aires and discuss ME with you!&lt;/p&gt;&lt;br /&gt;Filed under: &lt;a href=&quot;https://papyrusuml.wordpress.com/category/conference/&quot;&gt;Conference&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/category/papyrus-rt/&quot;&gt;Papyrus-RT&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/category/uncategorized/&quot;&gt;Uncategorized&lt;/a&gt; Tagged: &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/codegen/&quot;&gt;codegen&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/community/&quot;&gt;community&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/embedded/&quot;&gt;embedded&lt;/a&gt;, &lt;a href=&quot;https://papyrusuml.wordpress.com/tag/real-time/&quot;&gt;real time&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/gocomments/papyrusuml.wordpress.com/445/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/comments/papyrusuml.wordpress.com/445/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/godelicious/papyrusuml.wordpress.com/445/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/delicious/papyrusuml.wordpress.com/445/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/gofacebook/papyrusuml.wordpress.com/445/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/facebook/papyrusuml.wordpress.com/445/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/gotwitter/papyrusuml.wordpress.com/445/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/twitter/papyrusuml.wordpress.com/445/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/gostumble/papyrusuml.wordpress.com/445/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/stumble/papyrusuml.wordpress.com/445/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/godigg/papyrusuml.wordpress.com/445/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/digg/papyrusuml.wordpress.com/445/&quot; /&gt;&lt;/a&gt; &lt;a href=&quot;http://feeds.wordpress.com/1.0/goreddit/papyrusuml.wordpress.com/445/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/reddit/papyrusuml.wordpress.com/445/&quot; /&gt;&lt;/a&gt; &lt;img alt=&quot;&quot; border=&quot;0&quot; height=&quot;1&quot; src=&quot;https://pixel.wp.com/b.gif?host=papyrusuml.wordpress.com&amp;amp;blog=72365150&amp;amp;post=445&amp;amp;subd=papyrusuml&amp;amp;ref=&amp;amp;feed=1&quot; width=&quot;1&quot; /&gt;</description>
 	<pubDate>Wed, 08 Feb 2017 14:25:04 +0000</pubDate>
-</item>
-<item>
-	<title>Roxanne Joncas: Take the IoT Developer Survey!</title>
-	<guid isPermaLink="false">https://medium.com/p/318b6123cbe7</guid>
-	<link>https://medium.com/@roxanne.iot/why-the-iot-developer-survey-matters-318b6123cbe7?source=rss-82f8afd3e513------2</link>
-	<description>&lt;div class=&quot;medium-feed-item&quot;&gt;&lt;p class=&quot;medium-feed-snippet&quot;&gt;Yesterday the IoT Developer Survey opened up to respondents. Today I am going to tell you why should participate.&lt;/p&gt;&lt;p class=&quot;medium-feed-link&quot;&gt;&lt;a href=&quot;https://medium.com/@roxanne.iot/why-the-iot-developer-survey-matters-318b6123cbe7?source=rss-82f8afd3e513------2&quot;&gt;Continue reading on Medium »&lt;/a&gt;&lt;/p&gt;&lt;/div&gt;</description>
-	<pubDate>Wed, 08 Feb 2017 12:00:05 +0000</pubDate>
-</item>
-<item>
-	<title>Maximilian and Jonas: EMF Support for Che – Day 0: Motivation and getting started</title>
-	<guid isPermaLink="false">http://eclipsesource.com/blogs/?p=27777</guid>
-	<link>http://eclipsesource.com/blogs/2017/02/08/emf-support-for-che-day-0-motivation-and-getting-started/</link>
-	<description>&lt;p&gt;At EclipseCon North America 2016, the first public release of Eclipse Che was announced. Almost immediately, there was a new cloud-based IDE in the Eclipse ecosystem. At first glance, it is an IDE running in the browser:&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image02-2.png&quot;&gt;&lt;img alt=&quot;image02&quot; class=&quot;aligncenter  wp-image-27787&quot; height=&quot;421&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image02-2-1024x601.png&quot; width=&quot;718&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;However, there is one particular feature, which makes Che interesting: &lt;/span&gt;&lt;b&gt;Sharable Workspaces&lt;/b&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;. A “workspace” in Che means the source of a project PLUS the runtime to compile, debug, and execute it. Workspaces are traditionally a local concept, developers check-out the sources and then install quite some tools to work with the source code. Che uses Docker containers to power workspace runtimes, which can be hosted on a server. This makes it simple to share a workspace with other developers. This avoids complicated setups and extra effort when joining a project. If you want to learn more about Che, please &lt;/span&gt;&lt;a href=&quot;https://www.eclipse.org/che/&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;visit the project home page&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;Of course, we at EclipseSource are interested in this new technology. One part of our interest is obviously how to use it and how powerful Eclipse Che is compared to the existing Eclipse IDE. However, as a technology provider, we are even more interested in extending and adapting the new framework to provide missing features. Can we reuse technologies built in Eclipse in a cloud IDE?&lt;/p&gt;
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Therefore, we immediately gave it a try ourselves: extending Che with a new plugin. Our goal is to learn about the platform, build up experience and finally to provide feedback to the core development team about the extension use case. To achieve this, we want to work along a real use case. We selected a feature that we are particularly familiar with, but is not yet supported in Che: The &lt;/span&gt;&lt;b&gt;Eclipse Modeling Framework&lt;/b&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; (EMF tooling) including generating code. In case you do not know EMF: It is a very pragmatic modeling framework to generate entity classes in Java. In a nutshell, it is like Java Beans, but more powerful and less manual work. If you are interested in EMF, please see &lt;/span&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/tutorials/emf-tutorial/&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; for a getting started tutorial.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;We want to share our experience in building EMF Support in Che as well as technical solutions in a blog series starting with this post. The following diagram shows our overall use case:&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image06.png&quot;&gt;&lt;img alt=&quot;image06&quot; class=&quot;aligncenter size-full wp-image-27780&quot; height=&quot;180&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/image06.png&quot; width=&quot;624&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Let us separate the use case into different parts: &lt;/span&gt;&lt;/p&gt;
-&lt;ol&gt;
-&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;b&gt;Create Modeling Project&lt;/b&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;br /&gt;
-&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;As a first step we want to be able to create a “modeling project” – a project with all the typical artefacts of an Ecore bundle. That is mainly a .ecore file for the model and a .genmodel file for the code generation. Therefore, we need to extend Che to include a template to be instantiated or ideally including a new project wizard. In a very first step, we might use an existing template project, as this would already enable us to work on the following requirements.&lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;b&gt;Edit Ecore and GenModel&lt;/b&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;br /&gt;
-&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Of course, we want to modify both artefacts, so we need an editor capable of doing that. In the simplest case, we need a text-based editor. This editor must be associated with the new file types .ecore and .genmodel.&lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;b&gt;Generate Code&lt;/b&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;br /&gt;
-&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;As the goal of EMF is usually to generate code from Ecore models, we want to support the code generation in Che as well. As we do not want to re-implement the EMF code generator, we must find a way to integrate the existing generator into Che. Finally, we need an action in the Che IDE to trigger the code generation.&lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;b&gt;Form-Based Editor for Ecore and Genmodel&lt;/b&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;br /&gt;
-&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Finally, we want to provide the same comfort for editing Ecore and GenModels as the Eclipse IDE does, therefore, we need a tree/form-based editor.&lt;/span&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;The good news is that all this is possible in Che and we implemented a prototype of EMF support in Che fulfilling all the described requirements. If you are interested in looking at the code, you can find it in &lt;/span&gt;&lt;a href=&quot;https://github.com/eclipsesource/emf4che&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;this repository&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;&lt;br /&gt;
-&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;However, what is even more interesting is &lt;/span&gt;&lt;i&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;how&lt;/span&gt;&lt;/i&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; we built this prototype. We will describe all of the steps of the development in a blog series starting with this post. We will describe how we explored Che during the implementation. We will describe intermediate steps of the implementation, which were later refined. And along the way, you the reader, will also explore Che step-by-step. The next post will describe how to add a custom modeling workspace to Che, which already contains some example project to get started with.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;If you are interested in learning more about the prototype for EMF support, if you want to contribute or sponsor its further development, or if you want support for creating your own extension for Che, please &lt;/span&gt;&lt;a href=&quot;mailto:munich@eclipsesource.com&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;get in contact with us&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;
-&lt;section&gt;
-&lt;div class=&quot;row&quot; style=&quot;padding: 0em;&quot;&gt;
-&lt;div class=&quot;col2&quot;&gt;&lt;img alt=&quot;_MG_4540b2&quot; class=&quot;alignnone wp-image-23168&quot; height=&quot;86&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/uploads/2017/02/mathias.jpg&quot; width=&quot;129&quot; /&gt;&lt;/div&gt;
-&lt;div class=&quot;col10&quot;&gt;&lt;strong&gt;Co-Author&lt;/strong&gt;&lt;/div&gt;
-&lt;div class=&quot;col10&quot;&gt;Mat Hansen&lt;/div&gt;
-&lt;/div&gt;
-&lt;/section&gt;
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;&lt;div style=&quot;display: inline-block;&quot;&gt;&lt;a href=&quot;https://twitter.com/intent/tweet?source=webclient&amp;amp;text=EMF+Support+for+Che+%26%238211%3B+Day+0%3A+Motivation+and+getting+started&amp;amp;via=eclipsesource&amp;amp;url=http://eclipsesource.com/blogs/2017/02/08/emf-support-for-che-day-0-motivation-and-getting-started/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Share on Twitter&quot;&gt;&lt;img alt=&quot;Twitter&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/twitter.png&quot; title=&quot;Twitter&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;https://plus.google.com/share?url=http://eclipsesource.com/blogs/2017/02/08/emf-support-for-che-day-0-motivation-and-getting-started/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;+1&quot;&gt;&lt;img alt=&quot;Google+&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/google_plus.png&quot; title=&quot;Google+&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;http://www.linkedin.com/cws/share?url=http://eclipsesource.com/blogs/2017/02/08/emf-support-for-che-day-0-motivation-and-getting-started/&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Share on LinkedIn&quot;&gt;&lt;img alt=&quot;LinkedIn&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/linkedin.png&quot; title=&quot;LinkedIn&quot; /&gt;&lt;/a&gt;&lt;a href=&quot;https://www.facebook.com/sharer/sharer.php?u=http://eclipsesource.com/blogs/2017/02/08/emf-support-for-che-day-0-motivation-and-getting-started/&amp;amp;t=EMF+Support+for+Che+%26%238211%3B+Day+0%3A+Motivation+and+getting+started&quot; style=&quot;margin-right: 5px;&quot; target=&quot;_blank&quot; title=&quot;Facebook&quot;&gt;&lt;img alt=&quot;Facebook&quot; src=&quot;http://eclipsesource.com/blogs/wp-content/plugins/custom-about-author/images/social_media/facebook.png&quot; title=&quot;Facebook&quot; /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;&lt;a href=&quot;http://eclipsesource.com/blogs/2017/02/08/emf-support-for-che-day-0-motivation-and-getting-started/#comments&quot;&gt;3 Comments&lt;/a&gt;. Tagged with &lt;a href=&quot;http://eclipsesource.com/blogs/tag/che/&quot; title=&quot;che Tag&quot;&gt;che&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/eclipse/&quot; title=&quot;eclipse Tag&quot;&gt;eclipse&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/che/&quot; title=&quot;che Tag&quot;&gt;che&lt;/a&gt;, &lt;a href=&quot;http://eclipsesource.com/blogs/tag/eclipse/&quot; title=&quot;eclipse Tag&quot;&gt;eclipse&lt;/a&gt;&lt;p&gt;&lt;/p&gt;</description>
-	<pubDate>Wed, 08 Feb 2017 11:53:48 +0000</pubDate>
-</item>
-<item>
-	<title>Eclipse Announcements: Participate in the IoT Developer Survey 2017</title>
-	<guid isPermaLink="true">http://feedproxy.google.com/~r/eclipse/fnews/~3/jToW5oHpCb8/iotdevsurvey2017.php</guid>
-	<link>http://feedproxy.google.com/~r/eclipse/fnews/~3/jToW5oHpCb8/iotdevsurvey2017.php</link>
-	<description>We are pleased to launch the third annual IoT Developer Survey. Complete the survey now.&lt;img alt=&quot;&quot; height=&quot;1&quot; src=&quot;http://feeds.feedburner.com/~r/eclipse/fnews/~4/jToW5oHpCb8&quot; width=&quot;1&quot; /&gt;</description>
-	<pubDate>Tue, 07 Feb 2017 10:45:00 +0000</pubDate>
-</item>
-<item>
-	<title>Lorenzo Bettini: JaCoCo Code Coverage and Report of multiple Eclipse plug-in projects</title>
-	<guid isPermaLink="false">http://www.lorenzobettini.it/?p=911</guid>
-	<link>http://www.lorenzobettini.it/2017/02/jacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects/</link>
-	<description>&lt;p&gt;In this tutorial I’ll show how to use Jacoco with Maven/Tycho to create a code coverage report of multiple Eclipse plug-in projects.&lt;/p&gt;
-&lt;p&gt;The code of the example is available here: &lt;a href=&quot;https://github.com/LorenzoBettini/tycho-multiproject-jacoco-report-example&quot; target=&quot;_blank&quot;&gt;https://github.com/LorenzoBettini/tycho-multiproject-jacoco-report-example&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;This is the structure of the projects:&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;http://www.lorenzobettini.it/2017/02/jacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects/jacoco-report-projects/&quot; rel=&quot;attachment wp-att-915&quot;&gt;&lt;img alt=&quot;jacoco-report-projects&quot; class=&quot;aligncenter size-full wp-image-915&quot; height=&quot;277&quot; src=&quot;http://www.lorenzobettini.it/wp-content/uploads/2017/02/jacoco-report-projects.png&quot; width=&quot;286&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Each project’s code is tested in a specific .tests project. The code consists of simple Java classes doing nothing interesting, and tests just call that code.&lt;/p&gt;
-&lt;p&gt;The Maven parent pom file is written such that Jacoco is enabled only when the profile “jacoco” is explicitly activated:&lt;/p&gt;&lt;pre class=&quot;crayon-plain-tag&quot;&gt;&amp;lt;profile&amp;gt;
-	&amp;lt;id&amp;gt;jacoco&amp;lt;/id&amp;gt;
-	&amp;lt;activation&amp;gt;
-		&amp;lt;activeByDefault&amp;gt;false&amp;lt;/activeByDefault&amp;gt;
-	&amp;lt;/activation&amp;gt;
-	&amp;lt;build&amp;gt;
-		&amp;lt;plugins&amp;gt;
-			&amp;lt;plugin&amp;gt;
-				&amp;lt;groupId&amp;gt;org.jacoco&amp;lt;/groupId&amp;gt;
-				&amp;lt;artifactId&amp;gt;jacoco-maven-plugin&amp;lt;/artifactId&amp;gt;
-				&amp;lt;version&amp;gt;${jacoco-version}&amp;lt;/version&amp;gt;
-				&amp;lt;configuration&amp;gt;
-					&amp;lt;excludes&amp;gt;
-						&amp;lt;exclude&amp;gt;**/plugin1/Main.class&amp;lt;/exclude&amp;gt;
-					&amp;lt;/excludes&amp;gt;
-				&amp;lt;/configuration&amp;gt;
-				&amp;lt;executions&amp;gt;
-					&amp;lt;execution&amp;gt;
-						&amp;lt;goals&amp;gt;
-							&amp;lt;goal&amp;gt;prepare-agent&amp;lt;/goal&amp;gt;
-						&amp;lt;/goals&amp;gt;
-					&amp;lt;/execution&amp;gt;
-				&amp;lt;/executions&amp;gt;
-			&amp;lt;/plugin&amp;gt;
-		&amp;lt;/plugins&amp;gt;
-	&amp;lt;/build&amp;gt;
-&amp;lt;/profile&amp;gt;&lt;/pre&gt;&lt;p&gt;This is just an example of configuration; you might want to tweak it as you see fit for your own projects (in this example I also created a Main.java with a main method that I exclude from the coverage). By default, the &lt;strong&gt;jacoco-maven-plugin&lt;/strong&gt; will “prepare” the Jacoco agent in the property &lt;strong&gt;tycho.testArgLine&lt;/strong&gt; (since our test projects are Maven projects with packaging &lt;strong&gt;eclipse-plugin-test&lt;/strong&gt;); since tycho.testArgLine is automatically used by the tycho-surefire-plugin and since we have no special test configuration, the pom.xml of our test projects is just as simple as this:&lt;/p&gt;&lt;pre class=&quot;crayon-plain-tag&quot;&gt;&amp;lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&amp;gt;
-	&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
-	&amp;lt;parent&amp;gt;
-		&amp;lt;groupId&amp;gt;example&amp;lt;/groupId&amp;gt;
-		&amp;lt;artifactId&amp;gt;example.parent&amp;lt;/artifactId&amp;gt;
-		&amp;lt;version&amp;gt;0.0.1-SNAPSHOT&amp;lt;/version&amp;gt;
-	&amp;lt;/parent&amp;gt;
-	&amp;lt;artifactId&amp;gt;example.plugin1.tests&amp;lt;/artifactId&amp;gt;
-	&amp;lt;packaging&amp;gt;eclipse-test-plugin&amp;lt;/packaging&amp;gt;
-
-&amp;lt;/project&amp;gt;&lt;/pre&gt;&lt;p&gt;if you need a custom configuration, then you have to explicitly mention ${tycho.testArgLine} in the &amp;lt;argLine&amp;gt;.&lt;/p&gt;
-&lt;p&gt;Now we want to create an aggregate Jacoco report for the classes in plugin1 and plugin2 projects (tested by plugin1.tests and plugin2.tests, respectively); each test project will generate a jacoco.exec file with coverage information. Before Jacoco &lt;strong&gt;0.7.7&lt;/strong&gt;, creating an aggregate report wasn’t that easy and required to store all coverage data in a single an .exec file and then use an ant task (with a manual configuration specifying all the source file and class file paths). In 0.7.7, the &lt;strong&gt;jacoco:report-aggregate&lt;/strong&gt; has been added, which makes creating a report really easy!&lt;/p&gt;
-&lt;p&gt;Here’s an excerpt of the documentation:&lt;/p&gt;
-&lt;div&gt;
-&lt;blockquote&gt;&lt;p&gt;Creates a structured code coverage report (HTML, XML, and CSV) from multiple projects within reactor. The report is created from all modules this project depends on. From those projects class and source files as well as JaCoCo execution data files will be collected. […] This also allows to create coverage reports when tests are in separate projects than the code under test. […]&lt;/p&gt;
-&lt;p&gt;Using the dependency scope allows to distinguish projects which contribute execution data but should not become part of the report:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;compile&lt;/code&gt;: Project source and execution data is included in the report.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;test&lt;/code&gt;: Only execution data is considered for the report.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;/div&gt;
-&lt;p&gt;So it’s just a matter of creating a separate project (I called that &lt;strong&gt;example.tests.report&lt;/strong&gt;) where we:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;configure the &lt;strong&gt;report-aggregate&lt;/strong&gt; goal (in this example I bind that to the &lt;strong&gt;verify&lt;/strong&gt; phase)&lt;/li&gt;
-&lt;li&gt;add as dependencies with &lt;strong&gt;scope compile&lt;/strong&gt; the projects containing the actual code and with &lt;strong&gt;scope test&lt;/strong&gt; the projects containing the tests and .exec data&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;/p&gt;&lt;pre class=&quot;crayon-plain-tag&quot;&gt;&amp;lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&amp;gt;
-	&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
-	&amp;lt;parent&amp;gt;
-		&amp;lt;groupId&amp;gt;example&amp;lt;/groupId&amp;gt;
-		&amp;lt;artifactId&amp;gt;example.parent&amp;lt;/artifactId&amp;gt;
-		&amp;lt;version&amp;gt;0.0.1-SNAPSHOT&amp;lt;/version&amp;gt;
-	&amp;lt;/parent&amp;gt;
-	&amp;lt;artifactId&amp;gt;example.tests.report&amp;lt;/artifactId&amp;gt;
-
-	&amp;lt;packaging&amp;gt;pom&amp;lt;/packaging&amp;gt;
-
-	&amp;lt;profiles&amp;gt;
-		&amp;lt;profile&amp;gt;
-			&amp;lt;id&amp;gt;jacoco&amp;lt;/id&amp;gt;
-			&amp;lt;activation&amp;gt;
-				&amp;lt;activeByDefault&amp;gt;false&amp;lt;/activeByDefault&amp;gt;
-			&amp;lt;/activation&amp;gt;
-			&amp;lt;build&amp;gt;
-				&amp;lt;plugins&amp;gt;
-					&amp;lt;plugin&amp;gt;
-						&amp;lt;groupId&amp;gt;org.jacoco&amp;lt;/groupId&amp;gt;
-						&amp;lt;artifactId&amp;gt;jacoco-maven-plugin&amp;lt;/artifactId&amp;gt;
-						&amp;lt;version&amp;gt;${jacoco-version}&amp;lt;/version&amp;gt;
-						&amp;lt;executions&amp;gt;
-							&amp;lt;execution&amp;gt;
-								&amp;lt;phase&amp;gt;verify&amp;lt;/phase&amp;gt;
-								&amp;lt;goals&amp;gt;
-									&amp;lt;goal&amp;gt;report-aggregate&amp;lt;/goal&amp;gt;
-								&amp;lt;/goals&amp;gt;
-							&amp;lt;/execution&amp;gt;
-						&amp;lt;/executions&amp;gt;
-					&amp;lt;/plugin&amp;gt;
-				&amp;lt;/plugins&amp;gt;
-			&amp;lt;/build&amp;gt;
-		&amp;lt;/profile&amp;gt;
-	&amp;lt;/profiles&amp;gt;
-
-	&amp;lt;dependencies&amp;gt;
-		&amp;lt;dependency&amp;gt;
-			&amp;lt;groupId&amp;gt;example&amp;lt;/groupId&amp;gt;
-			&amp;lt;artifactId&amp;gt;example.plugin1&amp;lt;/artifactId&amp;gt;
-			&amp;lt;version&amp;gt;${project.version}&amp;lt;/version&amp;gt;
-			&amp;lt;scope&amp;gt;compile&amp;lt;/scope&amp;gt;
-		&amp;lt;/dependency&amp;gt;
-		&amp;lt;dependency&amp;gt;
-			&amp;lt;groupId&amp;gt;example&amp;lt;/groupId&amp;gt;
-			&amp;lt;artifactId&amp;gt;example.plugin2&amp;lt;/artifactId&amp;gt;
-			&amp;lt;version&amp;gt;${project.version}&amp;lt;/version&amp;gt;
-			&amp;lt;scope&amp;gt;compile&amp;lt;/scope&amp;gt;
-		&amp;lt;/dependency&amp;gt;
-		&amp;lt;dependency&amp;gt;
-			&amp;lt;groupId&amp;gt;example&amp;lt;/groupId&amp;gt;
-			&amp;lt;artifactId&amp;gt;example.plugin1.tests&amp;lt;/artifactId&amp;gt;
-			&amp;lt;version&amp;gt;${project.version}&amp;lt;/version&amp;gt;
-			&amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt;
-		&amp;lt;/dependency&amp;gt;
-		&amp;lt;dependency&amp;gt;
-			&amp;lt;groupId&amp;gt;example&amp;lt;/groupId&amp;gt;
-			&amp;lt;artifactId&amp;gt;example.plugin2.tests&amp;lt;/artifactId&amp;gt;
-			&amp;lt;version&amp;gt;${project.version}&amp;lt;/version&amp;gt;
-			&amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt;
-		&amp;lt;/dependency&amp;gt;
-	&amp;lt;/dependencies&amp;gt;
-&amp;lt;/project&amp;gt;&lt;/pre&gt;&lt;p&gt;That’s all!&lt;/p&gt;
-&lt;p&gt;Now run this command in the example.parent project:&lt;/p&gt;&lt;pre class=&quot;crayon-plain-tag&quot;&gt;mvn clean verify -Pjacoco&lt;/pre&gt;&lt;p&gt;and when the build terminates, you’ll find the HTML code coverage report for all your projects in the directory (again, you can configure jacoco with a different output path, that’s just the default):&lt;/p&gt;
-&lt;p&gt;/example.tests.report/target/site/jacoco-aggregate&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;http://www.lorenzobettini.it/2017/02/jacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects/jacoco-report/&quot; rel=&quot;attachment wp-att-919&quot;&gt;&lt;img alt=&quot;jacoco-report&quot; class=&quot;aligncenter size-full wp-image-919&quot; height=&quot;208&quot; src=&quot;http://www.lorenzobettini.it/wp-content/uploads/2017/02/jacoco-report.png&quot; width=&quot;1145&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Since, besides the HTML report, jacoco will create an XML report, you can use any tool that keeps track of code coverage, like the online free solution &lt;strong&gt;Coveralls&lt;/strong&gt; (&lt;a href=&quot;https://coveralls.io/&quot; target=&quot;_blank&quot;&gt;https://coveralls.io/&lt;/a&gt;). Coveralls is automatically accessible from Travis (I assume that you know how to connect your github projects to Travis and Coveralls). So we just need to configure the coveralls-maven-plugin with the path of the Jacoco xml report (I’m doing this in the parent pom, in the pluginManagement section in the jacoco profile):&lt;/p&gt;&lt;pre class=&quot;crayon-plain-tag&quot;&gt;&amp;lt;plugin&amp;gt;
-	&amp;lt;groupId&amp;gt;org.eluder.coveralls&amp;lt;/groupId&amp;gt;
-	&amp;lt;artifactId&amp;gt;coveralls-maven-plugin&amp;lt;/artifactId&amp;gt;
-	&amp;lt;version&amp;gt;4.3.0&amp;lt;/version&amp;gt;
-	&amp;lt;configuration&amp;gt;
-		&amp;lt;jacocoReports&amp;gt;
-			&amp;lt;jacocoReport&amp;gt;${project.basedir}/example.tests.report/target/site/jacoco-aggregate/jacoco.xml&amp;lt;/jacocoReport&amp;gt;
-		&amp;lt;/jacocoReports&amp;gt;
-	&amp;lt;/configuration&amp;gt;
-&amp;lt;/plugin&amp;gt;&lt;/pre&gt;&lt;p&gt;And here’s the Travis file:&lt;/p&gt;&lt;pre class=&quot;crayon-plain-tag&quot;&gt;sudo: false
-
-language: java
-
-jdk: oraclejdk8
-
-cache:
-  directories:
-  - $HOME/.m2
-
-install: true
-
-script:
- - mvn -f example.parent/pom.xml clean verify -Pjacoco coveralls:report&lt;/pre&gt;&lt;p&gt;This is the coveralls page for the example project &lt;a href=&quot;https://coveralls.io/github/LorenzoBettini/tycho-multiproject-jacoco-report-example&quot; target=&quot;_blank&quot;&gt;https://coveralls.io/github/LorenzoBettini/tycho-multiproject-jacoco-report-example&lt;/a&gt;. And an example of coverage information:&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;http://www.lorenzobettini.it/2017/02/jacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects/jacoco-coveralls/&quot; rel=&quot;attachment wp-att-921&quot;&gt;&lt;img alt=&quot;jacoco-coveralls&quot; class=&quot;aligncenter size-full wp-image-921&quot; height=&quot;539&quot; src=&quot;http://www.lorenzobettini.it/wp-content/uploads/2017/02/jacoco-coveralls.png&quot; width=&quot;765&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;That’s all!&lt;/p&gt;
-&lt;p&gt;Happy coverage! &lt;img alt=&quot;🙂&quot; class=&quot;wp-smiley&quot; src=&quot;https://s.w.org/images/core/emoji/2.2.1/72x72/1f642.png&quot; style=&quot;height: 1em;&quot; /&gt;&lt;/p&gt;
-&lt;div class=&quot;sociable&quot;&gt;&lt;div class=&quot;sociable_tagline&quot;&gt;Be Sociable, Share!&lt;/div&gt;&lt;ul class=&quot;clearfix&quot;&gt;&lt;li&gt;&lt;a class=&quot;option1_16&quot; href=&quot;http://twitter.com/intent/tweet?text=JaCoCo%20Code%20Coverage%20and%20Report%20of%20multiple%20Eclipse%20plug-in%20projects%20-%20http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F%20&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Twitter&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a class=&quot;option1_16&quot; href=&quot;http://www.facebook.com/share.php?u=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&amp;amp;t=JaCoCo%20Code%20Coverage%20and%20Report%20of%20multiple%20Eclipse%20plug-in%20projects&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Facebook&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a class=&quot;option1_16&quot; href=&quot;https://mail.google.com/mail/?view=cm&amp;amp;fs=1&amp;amp;to&amp;amp;su=JaCoCo%20Code%20Coverage%20and%20Report%20of%20multiple%20Eclipse%20plug-in%20projects&amp;amp;body=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&amp;amp;ui=2&amp;amp;tf=1&amp;amp;shva=1&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;email&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a class=&quot;option1_16&quot; rel=&quot;nofollow&quot; title=&quot;Add to favorites - doesn't work in Chrome&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a class=&quot;option1_16&quot; href=&quot;http://www.stumbleupon.com/submit?url=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&amp;amp;title=JaCoCo%20Code%20Coverage%20and%20Report%20of%20multiple%20Eclipse%20plug-in%20projects&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;StumbleUpon&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a class=&quot;option1_16&quot; href=&quot;http://delicious.com/post?url=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&amp;amp;title=JaCoCo%20Code%20Coverage%20and%20Report%20of%20multiple%20Eclipse%20plug-in%20projects&amp;amp;notes=In%20this%20tutorial%20I%27ll%20show%20how%20to%20use%20Jacoco%20with%20Maven%2FTycho%20to%20create%20a%20code%20coverage%20report%20of%20multiple%20Eclipse%20plug-in%20projects.%0D%0A%0D%0AThe%20code%20of%20the%20example%20is%20available%20here%3A%C2%A0https%3A%2F%2Fgithub.com%2FLorenzoBettini%2Ftycho-multiproject-jacoco-report-exa&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Delicious&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a class=&quot;option1_16&quot; href=&quot;http://www.google.com/reader/link?url=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&amp;amp;title=JaCoCo%20Code%20Coverage%20and%20Report%20of%20multiple%20Eclipse%20plug-in%20projects&amp;amp;srcURL=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&amp;amp;srcTitle=Lorenzo+Bettini+My+Home+Page&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Google Reader&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a class=&quot;option1_16&quot; href=&quot;http://www.linkedin.com/shareArticle?mini=true&amp;amp;url=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&amp;amp;title=JaCoCo%20Code%20Coverage%20and%20Report%20of%20multiple%20Eclipse%20plug-in%20projects&amp;amp;source=Lorenzo+Bettini+My+Home+Page&amp;amp;summary=In%20this%20tutorial%20I%27ll%20show%20how%20to%20use%20Jacoco%20with%20Maven%2FTycho%20to%20create%20a%20code%20coverage%20report%20of%20multiple%20Eclipse%20plug-in%20projects.%0D%0A%0D%0AThe%20code%20of%20the%20example%20is%20available%20here%3A%C2%A0https%3A%2F%2Fgithub.com%2FLorenzoBettini%2Ftycho-multiproject-jacoco-report-exa&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;LinkedIn&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a class=&quot;option1_16&quot; href=&quot;http://www.blinklist.com/index.php?Action=Blink/addblink.php&amp;amp;Url=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&amp;amp;Title=JaCoCo%20Code%20Coverage%20and%20Report%20of%20multiple%20Eclipse%20plug-in%20projects&quot; rel=&quot;nofollow&quot; style=&quot;background-position: 0px 0px;&quot; target=&quot;_blank&quot; title=&quot;BlinkList&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a rel=&quot;nofollow&quot; style=&quot;cursor: pointer;&quot;&gt;&lt;img src=&quot;http://www.lorenzobettini.it/wp-content/plugins/sociable/images/more.png&quot; /&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div id=&quot;sociable-post-911&quot; style=&quot;display: none;&quot;&gt;   
-
-    &lt;div id=&quot;sociable&quot; style=&quot;display: block;&quot;&gt;
-
-
-
-		&lt;div class=&quot;popup&quot;&gt;
-
-			&lt;div class=&quot;content&quot;&gt;
-
-				&lt;ul&gt;&lt;li style=&quot;width: 16px;&quot;&gt;&lt;a class=&quot;option1_16&quot; href=&quot;http://www.myspace.com/Modules/PostTo/Pages/?u=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&amp;amp;t=JaCoCo%20Code%20Coverage%20and%20Report%20of%20multiple%20Eclipse%20plug-in%20projects&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Myspace&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li style=&quot;width: 16px;&quot;&gt;&lt;a class=&quot;option1_16&quot; href=&quot;http://digg.com/submit?phase=2&amp;amp;url=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&amp;amp;title=JaCoCo%20Code%20Coverage%20and%20Report%20of%20multiple%20Eclipse%20plug-in%20projects&amp;amp;bodytext=In%20this%20tutorial%20I%27ll%20show%20how%20to%20use%20Jacoco%20with%20Maven%2FTycho%20to%20create%20a%20code%20coverage%20report%20of%20multiple%20Eclipse%20plug-in%20projects.%0D%0A%0D%0AThe%20code%20of%20the%20example%20is%20available%20here%3A%C2%A0https%3A%2F%2Fgithub.com%2FLorenzoBettini%2Ftycho-multiproject-jacoco-report-exa&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Digg&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li style=&quot;width: 16px;&quot;&gt;&lt;a class=&quot;option1_16&quot; href=&quot;http://reddit.com/submit?url=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&amp;amp;title=JaCoCo%20Code%20Coverage%20and%20Report%20of%20multiple%20Eclipse%20plug-in%20projects&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Reddit&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li style=&quot;width: 16px;&quot;&gt;&lt;a class=&quot;option1_16&quot; href=&quot;http://www.google.com/bookmarks/mark?op=edit&amp;amp;bkmk=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&amp;amp;title=JaCoCo%20Code%20Coverage%20and%20Report%20of%20multiple%20Eclipse%20plug-in%20projects&amp;amp;annotation=In%20this%20tutorial%20I%27ll%20show%20how%20to%20use%20Jacoco%20with%20Maven%2FTycho%20to%20create%20a%20code%20coverage%20report%20of%20multiple%20Eclipse%20plug-in%20projects.%0D%0A%0D%0AThe%20code%20of%20the%20example%20is%20available%20here%3A%C2%A0https%3A%2F%2Fgithub.com%2FLorenzoBettini%2Ftycho-multiproject-jacoco-report-exa&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Google Bookmarks&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li style=&quot;width: 16px;&quot;&gt;&lt;a class=&quot;option1_16&quot; href=&quot;http://news.ycombinator.com/submitlink?u=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&amp;amp;t=JaCoCo%20Code%20Coverage%20and%20Report%20of%20multiple%20Eclipse%20plug-in%20projects&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;HackerNews&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li style=&quot;width: 16px;&quot;&gt;&lt;a class=&quot;option1_16&quot; href=&quot;http://reporter.es.msn.com/?fn=contribute&amp;amp;Title=JaCoCo%20Code%20Coverage%20and%20Report%20of%20multiple%20Eclipse%20plug-in%20projects&amp;amp;URL=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&amp;amp;cat_id=6&amp;amp;tag_id=31&amp;amp;Remark=In%20this%20tutorial%20I%27ll%20show%20how%20to%20use%20Jacoco%20with%20Maven%2FTycho%20to%20create%20a%20code%20coverage%20report%20of%20multiple%20Eclipse%20plug-in%20projects.%0D%0A%0D%0AThe%20code%20of%20the%20example%20is%20available%20here%3A%C2%A0https%3A%2F%2Fgithub.com%2FLorenzoBettini%2Ftycho-multiproject-jacoco-report-exa&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;MSNReporter&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li style=&quot;width: 16px;&quot;&gt;&lt;a class=&quot;option1_16&quot; href=&quot;http://sphinn.com/index.php?c=post&amp;amp;m=submit&amp;amp;link=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Sphinn&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li style=&quot;width: 16px;&quot;&gt;&lt;a class=&quot;option1_16&quot; href=&quot;http://posterous.com/share?linkto=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&amp;amp;title=JaCoCo%20Code%20Coverage%20and%20Report%20of%20multiple%20Eclipse%20plug-in%20projects&amp;amp;selection=In%20this%20tutorial%20I%27ll%20show%20how%20to%20use%20Jacoco%20with%20Maven%2FTycho%20to%20create%20a%20code%20coverage%20report%20of%20multiple%20Eclipse%20plug-in%20projects.%0D%0A%0D%0AThe%20code%20of%20the%20example%20is%20available%20here%3A%C2%A0https%3A%2F%2Fgithub.com%2FLorenzoBettini%2Ftycho-multiproject-jacoco-report-exa&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Posterous&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;li style=&quot;width: 16px;&quot;&gt;&lt;a class=&quot;option1_16&quot; href=&quot;http://www.tumblr.com/share?v=3&amp;amp;u=http%3A%2F%2Fwww.lorenzobettini.it%2F2017%2F02%2Fjacoco-code-coverage-and-report-of-multiple-eclipse-plug-in-projects%2F&amp;amp;t=JaCoCo%20Code%20Coverage%20and%20Report%20of%20multiple%20Eclipse%20plug-in%20projects&amp;amp;s=In%20this%20tutorial%20I%27ll%20show%20how%20to%20use%20Jacoco%20with%20Maven%2FTycho%20to%20create%20a%20code%20coverage%20report%20of%20multiple%20Eclipse%20plug-in%20projects.%0D%0A%0D%0AThe%20code%20of%20the%20example%20is%20available%20here%3A%C2%A0https%3A%2F%2Fgithub.com%2FLorenzoBettini%2Ftycho-multiproject-jacoco-report-exa&quot; rel=&quot;nofollow&quot; target=&quot;_blank&quot; title=&quot;Tumblr&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;			
-
-			&lt;/div&gt;        
-
-		  &lt;a class=&quot;close&quot; style=&quot;cursor: pointer;&quot;&gt;
-
-		  &lt;img src=&quot;http://www.lorenzobettini.it/wp-content/plugins/sociable/images/closelabel.png&quot; title=&quot;close&quot; /&gt;
-
-		  &lt;/a&gt;
-
-		&lt;/div&gt;
-
-	&lt;/div&gt; 
-
-  &lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;sociable&quot; style=&quot;float: none;&quot;&gt;&lt;ul class=&quot;clearfix&quot;&gt;&lt;li id=&quot;Twitter_Counter&quot;&gt;&lt;a class=&quot;twitter-share-button&quot; href=&quot;https://twitter.com/share&quot;&gt;Tweet&lt;/a&gt;&lt;/li&gt;&lt;li id=&quot;Facebook_Counter&quot;&gt;&lt;/li&gt;&lt;li id=&quot;Google_p&quot;&gt;&lt;/li&gt;&lt;li id=&quot;LinkedIn_Counter&quot;&gt;&lt;/li&gt;&lt;li id=&quot;StumbleUpon_Counter&quot;&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;</description>
-	<pubDate>Sun, 05 Feb 2017 13:46:12 +0000</pubDate>
-</item>
-<item>
-	<title>Thea Aldrich: HIC SVNT LEONES</title>
-	<guid isPermaLink="false">http://theaaaaaa.wordpress.com/?p=28</guid>
-	<link>https://theaaaaaa.wordpress.com/2017/02/02/hic-svnt-leones/</link>
-	<description>&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;This year, LocationTech will not be hosting our annual FOSS4G-NA conference due to the return of the&lt;/span&gt; &lt;span style=&quot;font-weight: 400;&quot;&gt;international&lt;/span&gt;&lt;a href=&quot;http://2017.foss4g.org/&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; FOSS4G&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; conference to the United States. We are proud to announce that we are silver sponsors of the event in Boston on August 14-19, 2017. We will be back in 2018 – watch for news on that in the coming months.  &lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;With no FOSS4G-NA this year we had the opportunity to focus our attention on developing a new conference concept that blurs the line between an open source and a traditional GIS event. So, LocationTech is thrilled to announce &lt;/span&gt;&lt;a href=&quot;https://calgis2017.locationcon.org/cfp&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;CalGIS LocationCon&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; in Oakland, CA on May 22-25, 2017. &lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;CalGIS LocationCon 2017 is a co-hosted conference that combines the annual California GIS conference (CalGIS) with LocationCon, which is a new LocationTech event that targets Eclipse Foundation members and others who are focused on the commercial use of open source technology. The event is 4 days, including a full day of workshops at no additional cost, meals, larger audiences and incredible speakers from all over the geospatial industry.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;We are still accepting presentations and workshop proposals. Get yours in before the deadline!&lt;/span&gt;&lt;a href=&quot;https://calgis2017.locationcon.org/cfp&quot;&gt; &lt;span style=&quot;font-weight: 400;&quot;&gt;Submit yours today. &lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; Tracks include:&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;The Business of Geo&lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Data: Big, Little and Everything In-between&lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Geospatial Education&lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Tools and Technology Innovations&lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot;font-weight: 400;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;and much, much more&lt;/span&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;You can learn more about the conference by visiting our&lt;/span&gt;&lt;a href=&quot;https://calgis2017.locationcon.org/&quot;&gt; &lt;span style=&quot;font-weight: 400;&quot;&gt;website&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;.Thanks and we look forward to seeing you in Oakland in May!&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt; &lt;/p&gt;
-&lt;p&gt; &lt;/p&gt;&lt;br /&gt;  &lt;a href=&quot;http://feeds.wordpress.com/1.0/gocomments/theaaaaaa.wordpress.com/28/&quot; rel=&quot;nofollow&quot;&gt;&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;http://feeds.wordpress.com/1.0/comments/theaaaaaa.wordpress.com/28/&quot; /&gt;&lt;/a&gt; &lt;img alt=&quot;&quot; border=&quot;0&quot; height=&quot;1&quot; src=&quot;https://pixel.wp.com/b.gif?host=theaaaaaa.wordpress.com&amp;amp;blog=123079642&amp;amp;post=28&amp;amp;subd=theaaaaaa&amp;amp;ref=&amp;amp;feed=1&quot; width=&quot;1&quot; /&gt;</description>
-	<pubDate>Thu, 02 Feb 2017 18:38:57 +0000</pubDate>
 </item>
 
 </channel>
