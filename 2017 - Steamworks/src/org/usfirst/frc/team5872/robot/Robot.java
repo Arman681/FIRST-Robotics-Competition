@@ -279,6 +279,7 @@ public class Robot extends IterativeRobot {
     			fl.set(-1.0);
     			bl.set(-1.0);
     		}
+    		//Stops All Drive Train Motors
     		else if(ay < 0.05 && ay > -0.05 && az < 0.05 && az > -0.05){   			
     			stopMotors();
     		}
