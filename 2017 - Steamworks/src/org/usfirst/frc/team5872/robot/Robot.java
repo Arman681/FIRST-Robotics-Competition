@@ -265,6 +265,20 @@ public class Robot extends IterativeRobot {
     		else if(ay > 0.05 || ay < -0.05 && az < 0.5 && az > -0.5 && gyroCnt == 2){
     			gyroStraight(ay);
     		}
+    		//For Lifting Clockwise
+    		else if(a4 && !a5 && ay > 0.05 || ay < -0.05 && az < 0.5 && az > -0.5 && gyroCnt == 0){
+    			fr.set(0.0);
+    			br.set(0.0);
+    			fl.set(1.0);
+    			bl.set(1.0);
+    		}
+    		//For Lifting Counterclockwise
+    		else if(a5 && !a4 && ay > 0.05 || ay < -0.05 && az < 0.5 && az > -0.5 && gyroCnt == 0){
+    			fr.set(0.0);
+    			br.set(0.0);
+    			fl.set(-1.0);
+    			bl.set(-1.0);
+    		}
     		else if(ay < 0.05 && ay > -0.05 && az < 0.05 && az > -0.05){   			
     			stopMotors();
     		}
