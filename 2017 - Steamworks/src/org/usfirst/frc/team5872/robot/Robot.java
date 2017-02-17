@@ -2,6 +2,10 @@ package org.usfirst.frc.team5872.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import org.opencv.core.Rect;
+import org.opencv.imgproc.Imgproc;
+
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.I2C;
@@ -17,8 +21,21 @@ import org.usfirst.frc.team5872.robot.commands.ExampleCommand;
 import org.usfirst.frc.team5872.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.vision.VisionRunner;
+import edu.wpi.first.wpilibj.vision.VisionThread;
+import edu.wpi.first.wpilibj.IterativeRobot;
 
 public class Robot extends IterativeRobot {
+	
+	private static final int IMG_WIDTH = 640;
+	private static final int IMG_HEIGHT = 480;
+	
+	private VisionThread visionThread;
+	private double centerX = 0.0;
+	
+	
+	private final Object imgLock = new Object();
 
 	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 
@@ -33,10 +50,12 @@ public class Robot extends IterativeRobot {
     CANTalon shooter;
     CANTalon mixer;
     CANTalon intake;
+    CANTalon lifter;
 	
     //Essential Declarations
     RobotDrive myRobot;
     Joystick stick;
+    Joystick stick2;
     Timer timer;
     
     //Sensor Declarations and Variables
@@ -47,10 +66,11 @@ public class Robot extends IterativeRobot {
     double Kp = 0.03;
     
     //Counters
-    int ci = 0;			//Intake Counter
-    int cj = 0;			//Outtake Counter
-    int cm = 0;			//Mixer Counter
-    int cs = 0;
+    int ci = 0;			//Intake Clockwise Counter
+    int cj = 0;			//Intake Counterclockwise Counter
+    int cs = 0;			//Shooter Counter
+    int liftCnt = 0;    //Lifter Counter
+	int gyroCnt = 0;	//Gyro Counter
     
     /**
      * This function is run when the robot is first started up and should be
@@ -63,6 +83,20 @@ public class Robot extends IterativeRobot {
         //chooser.addObject("My Auto", new MyAutoCommand());
         SmartDashboard.putData("Auto mode", chooser);
         
+        //Camera Init
+        UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+        camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+        
+        /*visionThread = new VisionThread(camera, new Pipeline(), pipeline -> {
+            if (!pipeline.filterContoursOutput().isEmpty()) {
+                Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+                synchronized (imgLock) {
+                    centerX = r.x + (r.width / 2);
+                }
+            }
+        });
+        visionThread.start();*/
+        
         //Motor Controller Assignments
         fl = new CANTalon(3);
         bl = new CANTalon(2);
@@ -71,9 +105,11 @@ public class Robot extends IterativeRobot {
         shooter = new CANTalon(5);
         mixer = new CANTalon(4);
         intake = new CANTalon(20);
+        lifter = new CANTalon(7);
         
         fr.setInverted(true);
         br.setInverted(true);
+        intake.setInverted(true);
         
         //Initialize encoders
         fl.configEncoderCodesPerRev(1000);
@@ -84,6 +120,7 @@ public class Robot extends IterativeRobot {
         //Essential Assignments
         myRobot = new RobotDrive(3, 1, 2, 0);
         stick = new Joystick(0);
+        stick2 = new Joystick(1);
         timer = new Timer();
         
         //Sensor Assignments
@@ -179,97 +216,88 @@ public class Robot extends IterativeRobot {
         
     		//Tank Drive Logitech Controller Joystick Declarations and Assignments
     		//Controller Axes
-    		double l = stick.getRawAxis(1);			//Left Joystick
-    		double r = stick.getRawAxis(5);			//Right Joystick
+    		double l = stick2.getRawAxis(1);			//Left Joystick
+    		double r = stick2.getRawAxis(5);			//Right Joystick
     		//Controller Buttons
-    		boolean a = stick.getRawButton(1);		//Button a
-    		boolean b = stick.getRawButton(2);		//Button b
-    		boolean x = stick.getRawButton(3);		//Button x
-    		boolean y = stick.getRawButton(4);		//Button y
-    		boolean lb = stick.getRawButton(5);		//Left Bumper
-    		boolean rb = stick.getRawButton(6);		//Right Bumper
-    		boolean back = stick.getRawButton(7);	//Button Back 
+    		boolean a = stick2.getRawButton(1);		//Button a
+    		boolean b = stick2.getRawButton(2);		//Button b
+    		boolean x = stick2.getRawButton(3);		//Button x
+    		boolean y = stick2.getRawButton(4);		//Button y
+    		boolean lb = stick2.getRawButton(5);		//Left Bumper
+    		boolean rb = stick2.getRawButton(6);		//Right Bumper
+    		boolean back = stick2.getRawButton(7);	//Button Back 
     		
-    		double lt = stick.getRawAxis(2);		//Right Trigger
-    		double rt = stick.getRawAxis(3);		//Left Trigger
+    		double lt = stick2.getRawAxis(2);		//Right Trigger
+    		double rt = stick2.getRawAxis(3);		//Left Trigger
     		
     		//Arcade Drive Joystick Declarations and Assignments
     		//Controller Axes
     		double ay = -stick.getRawAxis(1);		//Y Axis
     		double az = stick.getRawAxis(2);		//Z Axis
-    		
-    		//Ints For Counters
-    		int highCnt = 0;
+    		//Controller Buttons
+    		boolean a1 = stick.getRawButton(1);
+    		boolean a2 = stick.getRawButton(2);
+    		boolean a3 = stick.getRawButton(3);
+    		boolean a4 = stick.getRawButton(4);
+    		boolean a5 = stick.getRawButton(5);
+    		boolean a6 = stick.getRawButton(6);
+    		boolean a7 = stick.getRawButton(7);
+    		boolean a8 = stick.getRawButton(8);
+    		boolean a9 = stick.getRawButton(9);
+    		boolean a10 = stick.getRawButton(10);
+    		boolean a11 = stick.getRawButton(11);
+    		boolean a12 = stick.getRawButton(12);
     	
-    		//Tank Drive
-    		if (stick.getRawAxis(1) != 0) { //if left joystick is active
-    			fl.set(r);
-    			bl.set(r);
-    		}
-    		else {
-    			stopMotors();
-    		}
-    		if (stick.getRawAxis(5) != 0) { //if right joystick is active
-    			fr.set(-l);
-        		br.set(-l);
-    		}
-    		else {
-    			stopMotors();
-    		}
-    		
-    		//Arcade Drive
-    		/*if (stick.getRawAxis(1) != 0) { //if y-axis is active
+    		//Drive Train
+    		if(ay > 0.05 || ay < -0.05 && az < 0.5 && az > -0.5 && gyroCnt == 0){
     			fl.set(ay);
-            	bl.set(ay);
-           		fr.set(ay);
-           		br.set(ay);
+    			bl.set(ay);
+    			fr.set(ay);
+    			br.set(ay);
     		}
-    		else {
-    			fl.set(0);
-    			bl.set(0);
-    			fr.set(0);
-    			br.set(0);
+    		else if(ay < 0.05 && ay > -0.05 && az > 0.5 || az < -0.5 && gyroCnt == 0){
+    			fl.set(az);
+    			bl.set(az);
+    			fr.set(-az);
+    			br.set(-az);
     		}
-        	if (z != 0) { //if z-axis is active
-        		fl.set(-az);
-        		bl.set(-az);
-        		fr.set(az);
-        		br.set(az);
-        	}
-        	else {
-        		fl.set(0);
-        		bl.set(0);
-        		fr.set(0);
-        		br.set(0);
-        	}*/
+    		//Gyro Stuff
+    		else if(ay > 0.05 || ay < -0.05 && az < 0.5 && az > -0.5 && gyroCnt == 2){
+    			gyroStraight(ay);
+    		}
+    		else if(ay < 0.05 && ay > -0.05 && az < 0.05 && az > -0.05){   			
+    			stopMotors();
+    		}
+    		//Gyro Toggle
+    		if(a11 && gyroCnt == 0){
+    			gyroCnt = 1;
+    		}
+    		else if(!a11 && gyroCnt == 1){
+    			gyroCnt = 2;
+    		}
+    		else if(a11 && gyroCnt == 2){
+    			gyroCnt = 3;
+    		}
+    		else if(!a11 && gyroCnt == 3){
+    			gyroCnt = 0;
+    			ahrs.reset();
+    		}
+        	//Lifter
+    		if(a1 && liftCnt == 0){
+    			liftCnt = 1;
+    		}
+    		else if(!a1 && liftCnt == 1){
+    			lifter.set(0.5);
+    			liftCnt = 2;
+    		}
+    		else if(a1 && liftCnt == 2){
+    			liftCnt = 3;
+    		}
+    		else if(!a1 && liftCnt == 3){
+    			lifter.set(0);
+    			liftCnt = 0;
+    		}
     		
-    		//Uses NavX MXP IMU
-        	/*if (stick.getRawButton(1) && ahrs.getAngle() < 5){
-        		gyroRight(90, 0.5);
-        	}
-        	else{
-        		fl.set(0);
-        		fr.set(0);
-        		bl.set(0);
-        		br.set(0);
-        	}*/
-    		
-    		//Shooter
-        	/*if(stick.getRawButton(1) && a == 0) {
-        		a = 1;
-        	}
-        	else if(!stick.getRawButton(1) && a == 1) {
-        		shooter.set(0.8);
-        		a = 2;
-        	}
-        	else if(stick.getRawButton(1) && a == 2) {
-        		a = 3;
-        	}
-        	else if(!stick.getRawButton(1) && a ==3) {
-        		shooter.set(0);
-        		a = 0;
-        	}*/
-        	
         	//Shooter
         	if(a && cs == 0) {
         		shooter.set(0.5);
@@ -287,24 +315,16 @@ public class Robot extends IterativeRobot {
         	}
         	
         	//Mixer
-        	if(x && cm == 0) {
-        		mixer.set(-1.00);
-        		cm = 1;
+        	if(l > 0.05 || l < -0.05){
+        		mixer.set(l);
         	}
-        	else if(!x && cm == 1) {
-        		cm = 2;
-        	}
-        	else if (x && cm == 2) {
-        		mixer.set(0.0);
-        		cm = 3;
-        	}
-        	else if (!x && cm == 3) {
-        		cm = 0;
+        	else if(l < 0.05 && l > -0.05){
+        		mixer.set(0);
         	}
         	
-        	//Intake Toggle (Left Bumper)
+        	//Intake Toggle Clockwise (Left Bumper)
         	if (lb && ci == 0) {
-        		intake.set(-0.5);
+        		intake.set(0.5);
         		ci = 1;
         	}
         	else if (!lb && ci == 1) {
@@ -320,7 +340,7 @@ public class Robot extends IterativeRobot {
         	
         	//Outtake Toggle (Right Bumper)
         	if (rb && cj == 0) {
-        		intake.set(0.5);
+        		intake.set(-0.5);
         		cj = 1;
         	}
         	else if (!rb && cj == 1) {
@@ -335,7 +355,7 @@ public class Robot extends IterativeRobot {
         	}
         	
         	//Gyro Tests
-            if(back) {
+            /*if(back) {
             	gyroRight(90, 0.5);
             }
             else if(!back) {            
@@ -343,7 +363,7 @@ public class Robot extends IterativeRobot {
             }
             if(rt > 0.05) {
             	gyroStraight(rt*0.75);
-            }
+            }*/
     	}
     }
 
@@ -364,10 +384,6 @@ public class Robot extends IterativeRobot {
         }
         else if(ahrs.getAngle() < 0) {
         setSpeed(speed, speed*ahrs.getAngle());
-        }
-        else {
-        stopMotors();
-        ahrs.reset();
         }
     }
     
