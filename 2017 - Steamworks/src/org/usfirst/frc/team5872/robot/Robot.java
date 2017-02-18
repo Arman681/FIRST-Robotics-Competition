@@ -70,7 +70,8 @@ public class Robot extends IterativeRobot {
     int ci = 0;			//Intake Clockwise Counter
     int cj = 0;			//Intake Counterclockwise Counter
     int cs = 0;			//Shooter Counter
-    int lockCnt = 0;    //Lifter Counter
+    int lc = 0;    		//Lifter Clockwise Counter
+    int lcc = 0;		//Lifter Counterclockwise Counter
 	int gyroCnt = 0;	//Gyro Counter
     
     /**
@@ -296,14 +297,35 @@ public class Robot extends IterativeRobot {
     			ahrs.reset();
     		}
     		
-    		//Lock
-    		if(dlb && lockCnt == 0){
-    			lockCnt = 1;
+    		//Lock Clockwise
+    		if(dlb && lc == 0){
+    			lc = 1;
     		}
-    		else if(!dlb && lockCnt == 1){
-    			
-    			
-    			
+    		else if(!dlb && lc == 1){
+    			lock.set(1.0);
+    			lc = 2;
+    		}
+    		else if(dlb && lc == 2){
+    			lc = 3;
+    		}
+    		else if(!dlb && lc == 3){
+    			lock.set(0);
+    			lc = 0;
+    		}
+    		//Lock Counterclockwise
+    		if(drb && lcc == 0){
+    			lcc = 1;
+    		}
+    		else if(!drb && lcc == 1){
+    			lock.set(-1.0);
+    			lcc = 2;
+    		}
+    		else if(drb && lcc == 2){
+    			lcc = 3;
+    		}
+    		else if(!drb && lcc == 3){
+    			lock.set(0);
+    			lcc = 0;
     		}
     		
         	//Shooter
