@@ -50,8 +50,7 @@ public class Robot extends IterativeRobot {
     CANTalon shooter;
     CANTalon mixer;
     CANTalon intake;
-    CANTalon lock;
-    
+    CANTalon lifter;
 	
     //Essential Declarations
     RobotDrive myRobot;
@@ -70,7 +69,7 @@ public class Robot extends IterativeRobot {
     int ci = 0;			//Intake Clockwise Counter
     int cj = 0;			//Intake Counterclockwise Counter
     int cs = 0;			//Shooter Counter
-    int lockCnt = 0;    //Lifter Counter
+    int liftCnt = 0;    //Lifter Counter
 	int gyroCnt = 0;	//Gyro Counter
     
     /**
@@ -106,8 +105,7 @@ public class Robot extends IterativeRobot {
         shooter = new CANTalon(5);
         mixer = new CANTalon(4);
         intake = new CANTalon(20);
-        lock = new CANTalon(7);
-        
+        lifter = new CANTalon(7);
         
         fr.setInverted(true);
         br.setInverted(true);
@@ -219,15 +217,15 @@ public class Robot extends IterativeRobot {
         
     		//Tank Drive Logitech Controller Joystick Declarations and Assignments
     		//Controller Axes
-    		double dl = stick.getRawAxis(5);			//Left Joystick
-    		double dr = stick.getRawAxis(1);			//Right Joystick
+    		double dl = stick.getRawAxis(1);			//Left Joystick
+    		double dr = stick.getRawAxis(5);			//Right Joystick
     		//Controller Buttons
     		boolean da = stick.getRawButton(1);		//Button a
     		boolean db = stick.getRawButton(2);		//Button b
     		boolean dx = stick.getRawButton(3);		//Button x
     		boolean dy = stick.getRawButton(4);		//Button y
-    		boolean dlb = stick.getRawButton(5);	//Left Bumper
-    		boolean drb = stick.getRawButton(6);	//Right Bumper
+    		boolean dlb = stick.getRawButton(5);		//Left Bumper
+    		boolean drb = stick.getRawButton(6);		//Right Bumper
     		boolean dback = stick.getRawButton(7);	//Button Back 
     		
     		double dlt = stick.getRawAxis(2);		//Right Trigger
@@ -250,32 +248,34 @@ public class Robot extends IterativeRobot {
     		double ort = stick2.getRawAxis(3);
     		
     		//Drive Train
-    		if(dl > 0.05 || dl < -0.05 || dr > 0.05 || dr < -0.05 && gyroCnt == 0){
+    		if(dl > 0.05 || dl < -0.05 && gyroCnt == 0){
     			fl.set(dl);
     			bl.set(dl);
+    		}
+    		else if(dr > 0.05 || dr < -0.05 && gyroCnt == 0){
     			fr.set(dr);
     			br.set(dr);
     		}
     		//Gyro Stuff
     		else if(dlt > 0.05 && drt < 0.05 && dl < 0.05 && dl > -0.05 && dr < 0.05 && dr > -0.05 && gyroCnt == 2){
-    			gyroStraight(-dlt);
+    			gyroStraight(dlt);
     		}
     		else if(dlt < 0.05 && drt > 0.05 && dl < 0.05 && dl > -0.05 && dr < 0.05 && dr > -0.05 && gyroCnt == 2){
     			gyroStraight(drt);
     		}
     		//For Lifting Clockwise
     		else if(dy && !db && gyroCnt == 0){
-    			fr.set(1.0);
-    			br.set(1.0);
-    			fl.set(0.0);
-    			bl.set(0.0);
+    			fr.set(0.0);
+    			br.set(0.0);
+    			fl.set(1.0);
+    			bl.set(1.0);
     		}
     		//For Lifting Counterclockwise
     		else if(db && !dy && gyroCnt == 0){
-    			fr.set(-1.0);
-    			br.set(-1.0);
-    			fl.set(0.0);
-    			bl.set(0.0);
+    			fr.set(0.0);
+    			br.set(0.0);
+    			fl.set(-1.0);
+    			bl.set(-1.0);
     		}
     		//Stops All Drive Train Motors
     		else if(!dy && !db && dlt < 0.05 && drt < 0.05 && dl < 0.05 && dl > -0.05 && dr < 0.05 && dr > -0.05){   			
@@ -294,16 +294,6 @@ public class Robot extends IterativeRobot {
     		else if(!da && gyroCnt == 3){
     			gyroCnt = 0;
     			ahrs.reset();
-    		}
-    		
-    		//Lock
-    		if(dlb && lockCnt == 0){
-    			lockCnt = 1;
-    		}
-    		else if(!dlb && lockCnt == 1){
-    			
-    			
-    			
     		}
     		
         	//Shooter
