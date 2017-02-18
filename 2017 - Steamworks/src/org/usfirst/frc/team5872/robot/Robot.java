@@ -116,6 +116,7 @@ public class Robot extends IterativeRobot {
         bl.configEncoderCodesPerRev(1000);
         fr.configEncoderCodesPerRev(1000);
         br.configEncoderCodesPerRev(1000);
+        shooter.configEncoderCodesPerRev(1000);
         
         //Essential Assignments
         myRobot = new RobotDrive(3, 1, 2, 0);
@@ -216,156 +217,136 @@ public class Robot extends IterativeRobot {
         
     		//Tank Drive Logitech Controller Joystick Declarations and Assignments
     		//Controller Axes
-    		double l = stick2.getRawAxis(1);			//Left Joystick
-    		double r = stick2.getRawAxis(5);			//Right Joystick
+    		double dl = stick.getRawAxis(5);			//Left Joystick
+    		double dr = stick.getRawAxis(1);			//Right Joystick
     		//Controller Buttons
-    		boolean a = stick2.getRawButton(1);		//Button a
-    		boolean b = stick2.getRawButton(2);		//Button b
-    		boolean x = stick2.getRawButton(3);		//Button x
-    		boolean y = stick2.getRawButton(4);		//Button y
-    		boolean lb = stick2.getRawButton(5);		//Left Bumper
-    		boolean rb = stick2.getRawButton(6);		//Right Bumper
-    		boolean back = stick2.getRawButton(7);	//Button Back 
+    		boolean da = stick.getRawButton(1);		//Button a
+    		boolean db = stick.getRawButton(2);		//Button b
+    		boolean dx = stick.getRawButton(3);		//Button x
+    		boolean dy = stick.getRawButton(4);		//Button y
+    		boolean dlb = stick.getRawButton(5);		//Left Bumper
+    		boolean drb = stick.getRawButton(6);		//Right Bumper
+    		boolean dback = stick.getRawButton(7);	//Button Back 
     		
-    		double lt = stick2.getRawAxis(2);		//Right Trigger
-    		double rt = stick2.getRawAxis(3);		//Left Trigger
+    		double dlt = stick.getRawAxis(2);		//Right Trigger
+    		double drt = stick.getRawAxis(3);		//Left Trigger
     		
     		//Arcade Drive Joystick Declarations and Assignments
     		//Controller Axes
-    		double ay = -stick.getRawAxis(1);		//Y Axis
-    		double az = stick.getRawAxis(2);		//Z Axis
+    		double ol = -stick2.getRawAxis(1);		//Y Axis
+    		double or = stick2.getRawAxis(5);		//Z Axis
     		//Controller Buttons
-    		boolean a1 = stick.getRawButton(1);
-    		boolean a2 = stick.getRawButton(2);
-    		boolean a3 = stick.getRawButton(3);
-    		boolean a4 = stick.getRawButton(4);
-    		boolean a5 = stick.getRawButton(5);
-    		boolean a6 = stick.getRawButton(6);
-    		boolean a7 = stick.getRawButton(7);
-    		boolean a8 = stick.getRawButton(8);
-    		boolean a9 = stick.getRawButton(9);
-    		boolean a10 = stick.getRawButton(10);
-    		boolean a11 = stick.getRawButton(11);
-    		boolean a12 = stick.getRawButton(12);
-    	
+    		boolean oa = stick2.getRawButton(1);
+    		boolean ob = stick2.getRawButton(2);
+    		boolean ox = stick2.getRawButton(3);
+    		boolean oy = stick2.getRawButton(4);
+    		boolean olb = stick2.getRawButton(5);
+    		boolean orb = stick2.getRawButton(6);
+    		boolean oback = stick2.getRawButton(7);
+    		
+    		double olt = stick2.getRawAxis(2);
+    		double ort = stick2.getRawAxis(3);
+    		
     		//Drive Train
-    		if(ay > 0.05 || ay < -0.05 && az < 0.5 && az > -0.5 && gyroCnt == 0){
-    			fl.set(ay);
-    			bl.set(ay);
-    			fr.set(ay);
-    			br.set(ay);
-    		}
-    		else if(ay < 0.05 && ay > -0.05 && az > 0.5 || az < -0.5 && gyroCnt == 0){
-    			fl.set(az);
-    			bl.set(az);
-    			fr.set(-az);
-    			br.set(-az);
+    		if(dl > 0.05 || dl < -0.05 || dr > 0.05 || dr < -0.05 && gyroCnt == 0){
+    			fl.set(dl);
+    			bl.set(dl);
+    			fr.set(dr);
+    			br.set(dr);
     		}
     		//Gyro Stuff
-    		else if(ay > 0.05 || ay < -0.05 && az < 0.5 && az > -0.5 && gyroCnt == 2){
-    			gyroStraight(ay);
+    		else if(dlt > 0.05 && drt < 0.05 && dl < 0.05 && dl > -0.05 && dr < 0.05 && dr > -0.05 && gyroCnt == 2){
+    			gyroStraight(dlt);
+    		}
+    		else if(dlt < 0.05 && drt > 0.05 && dl < 0.05 && dl > -0.05 && dr < 0.05 && dr > -0.05 && gyroCnt == 2){
+    			gyroStraight(drt);
     		}
     		//For Lifting Clockwise
-    		else if(a4 && !a5 && ay > 0.05 || ay < -0.05 && az < 0.5 && az > -0.5 && gyroCnt == 0){
-    			fr.set(0.0);
-    			br.set(0.0);
-    			fl.set(1.0);
-    			bl.set(1.0);
+    		else if(dy && !db && gyroCnt == 0){
+    			fr.set(1.0);
+    			br.set(1.0);
+    			fl.set(0.0);
+    			bl.set(0.0);
     		}
     		//For Lifting Counterclockwise
-    		else if(a5 && !a4 && ay > 0.05 || ay < -0.05 && az < 0.5 && az > -0.5 && gyroCnt == 0){
-    			fr.set(0.0);
-    			br.set(0.0);
-    			fl.set(-1.0);
-    			bl.set(-1.0);
+    		else if(db && !dy && gyroCnt == 0){
+    			fr.set(-1.0);
+    			br.set(-1.0);
+    			fl.set(0.0);
+    			bl.set(0.0);
     		}
     		//Stops All Drive Train Motors
-    		else if(ay < 0.05 && ay > -0.05 && az < 0.05 && az > -0.05){   			
+    		else if(!dy && !db && dlt < 0.05 && drt < 0.05 && dl < 0.05 && dl > -0.05 && dr < 0.05 && dr > -0.05){   			
     			stopMotors();
     		}
     		//Gyro Toggle
-    		if(a11 && gyroCnt == 0){
+    		if(da && gyroCnt == 0){
     			gyroCnt = 1;
     		}
-    		else if(!a11 && gyroCnt == 1){
+    		else if(!da && gyroCnt == 1){
     			gyroCnt = 2;
     		}
-    		else if(a11 && gyroCnt == 2){
+    		else if(da && gyroCnt == 2){
     			gyroCnt = 3;
     		}
-    		else if(!a11 && gyroCnt == 3){
+    		else if(!da && gyroCnt == 3){
     			gyroCnt = 0;
     			ahrs.reset();
     		}
-        	//Lifter
-    		if(a1 && liftCnt == 0){
-    			liftCnt = 1;
-    		}
-    		else if(!a1 && liftCnt == 1){
-    			lifter.set(0.5);
-    			liftCnt = 2;
-    		}
-    		else if(a1 && liftCnt == 2){
-    			liftCnt = 3;
-    		}
-    		else if(!a1 && liftCnt == 3){
-    			lifter.set(0);
-    			liftCnt = 0;
-    		}
     		
         	//Shooter
-        	if(a && cs == 0) {
+        	if(oa && cs == 0) {
         		shooter.set(0.5);
         		cs = 1;
         	}
-        	else if (!a && cs == 1) {
+        	else if (!oa && cs == 1) {
         		cs = 2;
         	}
-        	else if(a && cs == 2) {
+        	else if(oa && cs == 2) {
         		shooter.set(0.0);
         		cs = 3;
         	}
-        	else if (!a && cs == 3) {
+        	else if (!oa && cs == 3) {
         		cs = 0;
         	}
         	
         	//Mixer
-        	if(l > 0.05 || l < -0.05){
-        		mixer.set(l);
+        	if(ol > 0.05 || ol < -0.05){
+        		mixer.set(ol);
         	}
-        	else if(l < 0.05 && l > -0.05){
+        	else if(ol < 0.05 && ol > -0.05){
         		mixer.set(0);
         	}
         	
         	//Intake Toggle Clockwise (Left Bumper)
-        	if (lb && ci == 0) {
+        	if (olb && ci == 0) {
         		intake.set(0.5);
         		ci = 1;
         	}
-        	else if (!lb && ci == 1) {
+        	else if (!olb && ci == 1) {
         		ci = 2;
         	}
-        	else if (lb && ci == 2) {
+        	else if (olb && ci == 2) {
         		intake.set(0.0);
         		ci = 3;
         	}
-        	else if (!lb && ci == 3) {
+        	else if (!olb && ci == 3) {
         		ci = 0;
         	}
         	
         	//Outtake Toggle (Right Bumper)
-        	if (rb && cj == 0) {
+        	if (orb && cj == 0) {
         		intake.set(-0.5);
         		cj = 1;
         	}
-        	else if (!rb && cj == 1) {
+        	else if (!orb && cj == 1) {
         		cj = 2;
         	}
-        	else if (rb && cj == 2) {
+        	else if (orb && cj == 2) {
         		intake.set(0.0);
         		cj = 3;
         	}
-        	else if (!rb && cj == 3) {
+        	else if (!orb && cj == 3) {
         		cj = 0;
         	}
         	
