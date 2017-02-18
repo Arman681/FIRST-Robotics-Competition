@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="edu.wpi.first.wpilibj.RobotDrive"/>
-<fullyQualifiedTypeName name="edu.wpi.first.wpilibj.Joystick"/>
-<fullyQualifiedTypeName name="edu.wpi.first.wpilibj.Timer"/>
-<fullyQualifiedTypeName name="edu.wpi.first.wpilibj.interfaces.Gyro"/>
-<fullyQualifiedTypeName name="edu.wpi.first.wpilibj.AnalogGyro"/>
-<fullyQualifiedTypeName name="edu.wpi.first.wpilibj.PIDController"/>
-</qualifiedTypeNameHistroy>
