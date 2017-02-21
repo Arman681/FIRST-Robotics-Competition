@@ -50,6 +50,7 @@ public class Robot extends IterativeRobot {
     CANTalon shooter;
     CANTalon mixer;
     CANTalon intake;
+    CANTalon outtake;
     CANTalon lock;
     
 	
@@ -60,7 +61,7 @@ public class Robot extends IterativeRobot {
     Timer timer;
     
     //Sensor Declarations and Variables
-    AnalogGyro gyro;
+    
     AHRS ahrs;
     PIDController turnController;
     double rotateToAngleRate;
@@ -73,6 +74,11 @@ public class Robot extends IterativeRobot {
     int lc = 0;    		//Lifter Clockwise Counter
     int lcc = 0;		//Lifter Counterclockwise Counter
 	int gyroCnt = 0;	//Gyro Counter
+	
+	static final double kP = 0.3;
+	//static final double kI = 0.0;
+	
+
     
     /**
      * This function is run when the robot is first started up and should be
@@ -86,8 +92,10 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putData("Auto mode", chooser);
         
         //Camera Init
-        UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-        camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+        UsbCamera cameragear = CameraServer.getInstance().startAutomaticCapture();
+        UsbCamera camerashooter = CameraServer.getInstance().startAutomaticCapture();
+        cameragear.setResolution(IMG_WIDTH, IMG_HEIGHT);
+        camerashooter.setResolution(IMG_WIDTH, IMG_HEIGHT);
         
         /*visionThread = new VisionThread(camera, new Pipeline(), pipeline -> {
             if (!pipeline.filterContoursOutput().isEmpty()) {
@@ -108,11 +116,13 @@ public class Robot extends IterativeRobot {
         mixer = new CANTalon(4);
         intake = new CANTalon(20);
         lock = new CANTalon(7);
+        outtake = new CANTalon(8);
         
         
         fr.setInverted(true);
         br.setInverted(true);
         intake.setInverted(true);
+        outtake.setInverted(true);
         
         //Initialize encoders
         fl.configEncoderCodesPerRev(1000);
@@ -127,8 +137,7 @@ public class Robot extends IterativeRobot {
         stick2 = new Joystick(1);
         timer = new Timer();
         
-        //Sensor Assignments
-        gyro = new AnalogGyro(1);
+        //Sensor Assignment
         ahrs = new AHRS(I2C.Port.kMXP);
     }
 	
@@ -172,25 +181,23 @@ public class Robot extends IterativeRobot {
         	autonomousCommand.start();
         
         timer.reset(); //Resets the timer to 0
+        ahrs.reset();
         timer.start(); //Start counting
     }
 
     /**
      * This function is called periodically during autonomous
+     * @throws InterruptedException 
      */
-    public void autonomous() {
+    public void autonomous() throws InterruptedException {
     	
         Scheduler.getInstance().run();
-        gyro.reset();
         
-        while (isAutonomous()) {
-        	
-        	double angle = gyro.getAngle(); //get current heading
-        	myRobot.drive(-1.0, -angle*Kp); //drive towards heading 0
-        	Timer.delay(0.004);        	
-        }
-        
-        myRobot.drive(0.0, 0.0); 
+        	fl.set(0.5*.945);
+        	bl.set(0.5*.945);
+        	fr.set(0.5);
+        	br.set(0.5);
+        	System.nanoTime(); 
         
         /*Drive for 2 seconds
         if (timer.get() < 2.0)
@@ -207,6 +214,7 @@ public class Robot extends IterativeRobot {
         //this line or comment it out.
         if (autonomousCommand != null) 
         	autonomousCommand.cancel();
+        ahrs.reset();
     }
 
     /**
@@ -220,8 +228,8 @@ public class Robot extends IterativeRobot {
         
     		//Tank Drive Logitech Controller Joystick Declarations and Assignments
     		//Controller Axes
-    		double dl = stick.getRawAxis(5);			//Left Joystick
-    		double dr = stick.getRawAxis(1);			//Right Joystick
+    		double dl = stick.getRawAxis(1);			//Left Joystick
+    		double dr = -stick.getRawAxis(4);			//Right Joystick
     		//Controller Buttons
     		boolean da = stick.getRawButton(1);		//Button a
     		boolean db = stick.getRawButton(2);		//Button b
@@ -252,17 +260,10 @@ public class Robot extends IterativeRobot {
     		
     		//Drive Train
     		if(dl > 0.05 || dl < -0.05 || dr > 0.05 || dr < -0.05 && gyroCnt == 0){
-    			fl.set(dl);
-    			bl.set(dl);
-    			fr.set(dr);
-    			br.set(dr);
-    		}
-    		//Gyro Stuff
-    		else if(dlt > 0.05 && drt < 0.05 && dl < 0.05 && dl > -0.05 && dr < 0.05 && dr > -0.05 && gyroCnt == 2){
-    			gyroStraight(-dlt);
-    		}
-    		else if(dlt < 0.05 && drt > 0.05 && dl < 0.05 && dl > -0.05 && dr < 0.05 && dr > -0.05 && gyroCnt == 2){
-    			gyroStraight(drt);
+    			fl.set(dl*.945 + -dr);
+    			bl.set(dl*.945 + -dr);
+    			fr.set(dl + dr);
+    			br.set(dl + dr);
     		}
     		//For Lifting Clockwise
     		else if(dy && !db && gyroCnt == 0){
@@ -298,46 +299,27 @@ public class Robot extends IterativeRobot {
     		}
     		
     		//Lock Clockwise
-    		if(dlb && lc == 0){
-    			lc = 1;
-    		}
-    		else if(!dlb && lc == 1){
+    		if(dlb && !drb){
     			lock.set(1.0);
-    			lc = 2;
     		}
-    		else if(dlb && lc == 2){
-    			lc = 3;
-    		}
-    		else if(!dlb && lc == 3){
-    			lock.set(0);
-    			lc = 0;
-    		}
-    		//Lock Counterclockwise
-    		if(drb && lcc == 0){
-    			lcc = 1;
-    		}
-    		else if(!drb && lcc == 1){
+    		else if(!dlb && drb){
     			lock.set(-1.0);
-    			lcc = 2;
     		}
-    		else if(drb && lcc == 2){
-    			lcc = 3;
-    		}
-    		else if(!drb && lcc == 3){
+    		else if(!dlb && !drb){
     			lock.set(0);
-    			lcc = 0;
     		}
-    		
         	//Shooter
         	if(oa && cs == 0) {
-        		shooter.set(0.5);
+        		bangBang(0.4136);
+        		outtake.set(1.0);
         		cs = 1;
         	}
         	else if (!oa && cs == 1) {
         		cs = 2;
         	}
-        	else if(oa && cs == 2) {
+         	else if(oa && cs == 2) {
         		shooter.set(0.0);
+        		outtake.set(0);
         		cs = 3;
         	}
         	else if (!oa && cs == 3) {
@@ -379,23 +361,20 @@ public class Robot extends IterativeRobot {
         	else if (orb && cj == 2) {
         		intake.set(0.0);
         		cj = 3;
-        	}
+        	} 
         	else if (!orb && cj == 3) {
         		cj = 0;
         	}
         	
         	//Gyro Tests
-            /*if(back) {
-            	gyroRight(90, 0.5);
+            if(dback) {
+            	gyroRight(15, 0.5);
             }
-            else if(!back) {            
+            else if(!dback && ahrs.getAngle() >= 90 ) {            
             	gyroRight(0, 0.0);
             }
-            if(rt > 0.05) {
-            	gyroStraight(rt*0.75);
-            }*/
     	}
-    }
+    } 
 
     /**
      * This function is called periodically during test mode
@@ -406,22 +385,21 @@ public class Robot extends IterativeRobot {
     
     public void gyroStraight(double speed){
         
-        if(ahrs.getAngle() == 0) {
-        setSpeed(speed, speed);
+        double target = ahrs.getAngle();
+        
+        while(gyroCnt == 2){
+        	
+        	setSpeed((speed + target)/100 , (speed + target)/100);
+        	
         }
-        else if(ahrs.getAngle() > 0) {
-        setSpeed(speed*ahrs.getAngle(), speed);
-        }
-        else if(ahrs.getAngle() < 0) {
-        setSpeed(speed, speed*ahrs.getAngle());
-        }
+    	
     }
     
     public void gyroRight(int degrees, double speed){
     	if(ahrs.getAngle() < degrees && ahrs.getAngle() == 0){
     		setSpeed(speed,-speed);	
     	}
-    	else {
+    	else if(ahrs.getAngle() >= degrees){
     		stopMotors();
     		ahrs.reset();
     	}
@@ -458,7 +436,60 @@ public class Robot extends IterativeRobot {
     	fr.setEncPosition(0);
     	br.setEncPosition(0);
     }
-    
+    public void bangBang(double fTarget){
+    	double fVelocityTime = System.nanoTime();
+    	double fEncoder = shooter.getEncPosition();
+    	double fLastEncoder = 0;
+		double fLastVelocityTime = 0;
+		double fVelocity = (double)(fEncoder - fLastEncoder)/(fVelocityTime - fLastVelocityTime);
+    	
+    	if(fVelocity >= fTarget){
+    		shooter.set(0.4136);
+    	}
+    	else if(fVelocity < fTarget){
+    		shooter.set(0.4236);
+    	}
+    	fLastEncoder = fEncoder;
+    	fLastVelocityTime = fVelocityTime;
+    	
+    }
+    public void turnByGyro(double power, int degrees) throws InterruptedException {
+
+        double constantOfDegrees = (2/3);
+
+        int s = -1;
+        boolean turnComplete = false;
+        double initialPosition = ahrs.getAngle();
+        ahrs.reset();
+
+        while (!turnComplete) {
+
+
+            double currentPosition = ahrs.getAngle();
+            double target = initialPosition + (degrees);
+
+            if ((Math.abs(target)) > currentPosition){
+                
+            	fl.set(0.3);
+            	bl.set(0.3);
+            	fr.set(-0.3);
+            	br.set(-0.3);
+            	
+                }
+            
+            else{
+            	
+                turnComplete = true;
+            
+        }
+
+            fl.set(0);
+        	bl.set(0);
+        	fr.set(0);
+        	br.set(0);
+            
+        }
+    }
     public void encoderDrive(int rightTicks, int leftTicks, double leftPower, double rightPower, double timeout) {
     	resetEncoders();
     	int targetFrontRight = fr.getEncPosition()+rightTicks;
