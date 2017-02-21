@@ -96,7 +96,7 @@ public class Robot extends IterativeRobot {
         UsbCamera camerashooter = CameraServer.getInstance().startAutomaticCapture();
         cameragear.setResolution(IMG_WIDTH, IMG_HEIGHT);
         camerashooter.setResolution(IMG_WIDTH, IMG_HEIGHT);
-        
+        //
         /*visionThread = new VisionThread(camera, new Pipeline(), pipeline -> {
             if (!pipeline.filterContoursOutput().isEmpty()) {
                 Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
