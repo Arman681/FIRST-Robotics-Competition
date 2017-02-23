@@ -68,12 +68,12 @@ public class Robot extends IterativeRobot {
     double Kp = 0.03;
     
     //Counters
-    int ci = 0;			//Intake Clockwise Counter
-    int cj = 0;			//Intake Counterclockwise Counter
+    int ci = 0;			//Intake (Clockwise) Counter
+    int cj = 0;			//Outtake (Counterclockwise) Counter
     int cs = 0;			//Shooter Counter
     int lc = 0;    		//Lifter Clockwise Counter
     int lcc = 0;		//Lifter Counterclockwise Counter
-	int gyroCnt = 0;	//Gyro Counter
+	int gyroCnt = 0;	//Gyroscope Counter
 	
 	static final double kP = 0.3;
 	//static final double kI = 0.0;
@@ -91,12 +91,12 @@ public class Robot extends IterativeRobot {
         //chooser.addObject("My Auto", new MyAutoCommand());
         SmartDashboard.putData("Auto mode", chooser);
         
-        //Camera Init
+        //Camera Initialization
         UsbCamera cameragear = CameraServer.getInstance().startAutomaticCapture();
         UsbCamera camerashooter = CameraServer.getInstance().startAutomaticCapture();
         cameragear.setResolution(IMG_WIDTH, IMG_HEIGHT);
         camerashooter.setResolution(IMG_WIDTH, IMG_HEIGHT);
-        //
+        
         /*visionThread = new VisionThread(camera, new Pipeline(), pipeline -> {
             if (!pipeline.filterContoursOutput().isEmpty()) {
                 Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
@@ -163,9 +163,9 @@ public class Robot extends IterativeRobot {
 	 * or additional comparisons to the switch structure below with additional strings & commands.
 	 */
     public void autonomousInit() {
-        autonomousCommand = (Command) chooser.getSelected();
+        /*autonomousCommand = (Command) chooser.getSelected();
         
-		/*String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
+		String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
 		switch(autoSelected) {
 		case "My Auto":
 			autonomousCommand = new MyAutoCommand();
@@ -174,7 +174,7 @@ public class Robot extends IterativeRobot {
 		default:
 			autonomousCommand = new ExampleCommand();
 			break;
-		}*/
+		}
     	
     	//schedule the autonomous command (example)
         if (autonomousCommand != null) 
@@ -183,29 +183,44 @@ public class Robot extends IterativeRobot {
         timer.reset(); //Resets the timer to 0
         ahrs.reset();
         timer.start(); //Start counting
-    }
+*/    }
 
     /**
      * This function is called periodically during autonomous
      * @throws InterruptedException 
      */
-    public void autonomous() throws InterruptedException {
+    public void autonomous(){
     	
         Scheduler.getInstance().run();
         
-        	fl.set(0.5*.945);
-        	bl.set(0.5*.945);
-        	fr.set(0.5);
-        	br.set(0.5);
-        	System.nanoTime(); 
         
+        	runMotor(0.5);
+        	delay(3000);
+        	runMotor(0);
+        	delay(3000);
+       // }
         /*Drive for 2 seconds
         if (timer.get() < 2.0)
              myRobot.drive(-0.5,  0); //drive forwards half speed
         else 
              myRobot.drive(0.0, 0.0); //stop robot*/
     }
-
+    
+    public void delay(int milliseconds){
+    	try{
+    		Thread.sleep(milliseconds);
+    	}
+    	catch(Exception e1){
+    		e1.printStackTrace();
+    	}
+    }
+    public void runMotor(double speed)
+    {
+    	fl.set(speed*.945);
+    	fr.set(speed);
+    	bl.set(speed*.945);
+    	br.set(speed);
+    }
     public void teleopInit() {
     	
 		//This makes sure that the autonomous stops running when
@@ -231,32 +246,32 @@ public class Robot extends IterativeRobot {
     		double dl = stick.getRawAxis(1);			//Left Joystick
     		double dr = -stick.getRawAxis(4);			//Right Joystick
     		//Controller Buttons
-    		boolean da = stick.getRawButton(1);		//Button a
-    		boolean db = stick.getRawButton(2);		//Button b
-    		boolean dx = stick.getRawButton(3);		//Button x
-    		boolean dy = stick.getRawButton(4);		//Button y
-    		boolean dlb = stick.getRawButton(5);	//Left Bumper
-    		boolean drb = stick.getRawButton(6);	//Right Bumper
-    		boolean dback = stick.getRawButton(7);	//Button Back 
+    		boolean da = stick.getRawButton(1);		//Driver Button a
+    		boolean db = stick.getRawButton(2);		//Driver Button b
+    		boolean dx = stick.getRawButton(3);		//Driver Button x
+    		boolean dy = stick.getRawButton(4);		//Driver Button y
+    		boolean dlb = stick.getRawButton(5);	//Driver Left Bumper
+    		boolean drb = stick.getRawButton(6);	//Driver Right Bumper
+    		boolean dback = stick.getRawButton(7);	//Driver Button Back 
     		
-    		double dlt = stick.getRawAxis(2);		//Right Trigger
-    		double drt = stick.getRawAxis(3);		//Left Trigger
+    		double dlt = stick.getRawAxis(2);		//Driver Left Trigger
+    		double drt = stick.getRawAxis(3);		//Driver Right Trigger
     		
     		//Arcade Drive Joystick Declarations and Assignments
     		//Controller Axes
     		double ol = -stick2.getRawAxis(1);		//Y Axis
     		double or = stick2.getRawAxis(5);		//Z Axis
     		//Controller Buttons
-    		boolean oa = stick2.getRawButton(1);
-    		boolean ob = stick2.getRawButton(2);
-    		boolean ox = stick2.getRawButton(3);
-    		boolean oy = stick2.getRawButton(4);
-    		boolean olb = stick2.getRawButton(5);
-    		boolean orb = stick2.getRawButton(6);
-    		boolean oback = stick2.getRawButton(7);
+    		boolean oa = stick2.getRawButton(1);	//Operator a
+    		boolean ob = stick2.getRawButton(2);	//Operator b
+    		boolean ox = stick2.getRawButton(3);	//Operator x
+    		boolean oy = stick2.getRawButton(4);	//Operator y
+    		boolean olb = stick2.getRawButton(5);	//Operator Left Bumper
+    		boolean orb = stick2.getRawButton(6);	//Operator Right Bumper
+    		boolean oback = stick2.getRawButton(7);	//Operator Button Back
     		
-    		double olt = stick2.getRawAxis(2);
-    		double ort = stick2.getRawAxis(3);
+    		double olt = stick2.getRawAxis(2);		//Operator Left Trigger
+    		double ort = stick2.getRawAxis(3);		//Operator Right Trigger
     		
     		//Drive Train
     		if(dl > 0.05 || dl < -0.05 || dr > 0.05 || dr < -0.05 && gyroCnt == 0){
@@ -283,7 +298,7 @@ public class Robot extends IterativeRobot {
     		else if(!dy && !db && dlt < 0.05 && drt < 0.05 && dl < 0.05 && dl > -0.05 && dr < 0.05 && dr > -0.05){   			
     			stopMotors();
     		}
-    		//Gyro Toggle
+    		//Gyroscope Toggle
     		if(da && gyroCnt == 0){
     			gyroCnt = 1;
     		}
@@ -297,7 +312,6 @@ public class Robot extends IterativeRobot {
     			gyroCnt = 0;
     			ahrs.reset();
     		}
-    		
     		//Lock Clockwise
     		if(dlb && !drb){
     			lock.set(1.0);
@@ -308,24 +322,28 @@ public class Robot extends IterativeRobot {
     		else if(!dlb && !drb){
     			lock.set(0);
     		}
-        	//Shooter
-        	if(oa && cs == 0) {
+        	//Shooter Toggle
+        	if(oa && cs == 0){
         		bangBang(0.4136);
-        		outtake.set(1.0);
         		cs = 1;
         	}
-        	else if (!oa && cs == 1) {
+        	else if (!oa && cs == 1){
         		cs = 2;
         	}
-         	else if(oa && cs == 2) {
+         	else if(oa && cs == 2){
         		shooter.set(0.0);
-        		outtake.set(0);
         		cs = 3;
         	}
-        	else if (!oa && cs == 3) {
+        	else if (!oa && cs == 3){
         		cs = 0;
         	}
-        	
+        	//Door Lock
+        	if(or > 0.05 || or < -0.05){
+        		outtake.set(or);	
+        	}
+        	else{
+        		outtake.set(0.0);
+        	}
         	//Mixer
         	if(ol > 0.05 || ol < -0.05){
         		mixer.set(ol);
@@ -333,9 +351,8 @@ public class Robot extends IterativeRobot {
         	else if(ol < 0.05 && ol > -0.05){
         		mixer.set(0);
         	}
-        	
-        	//Intake Toggle Clockwise (Left Bumper)
-        	if (olb && ci == 0) {
+        	//Intake Toggle (Operator Left Bumper)
+        	if (olb && ci == 0){
         		intake.set(0.5);
         		ci = 1;
         	}
@@ -349,8 +366,7 @@ public class Robot extends IterativeRobot {
         	else if (!olb && ci == 3) {
         		ci = 0;
         	}
-        	
-        	//Outtake Toggle (Right Bumper)
+        	//Outtake Toggle (Operator Right Bumper)
         	if (orb && cj == 0) {
         		intake.set(-0.5);
         		cj = 1;
@@ -365,7 +381,6 @@ public class Robot extends IterativeRobot {
         	else if (!orb && cj == 3) {
         		cj = 0;
         	}
-        	
         	//Gyro Tests
             if(dback) {
             	gyroRight(15, 0.5);
@@ -375,26 +390,20 @@ public class Robot extends IterativeRobot {
             }
     	}
     } 
-
     /**
      * This function is called periodically during test mode
      */
     public void testPeriodic() {
         LiveWindow.run();
     }
-    
     public void gyroStraight(double speed){
         
         double target = ahrs.getAngle();
         
-        while(gyroCnt == 2){
-        	
+        while(gyroCnt == 2){   	
         	setSpeed((speed + target)/100 , (speed + target)/100);
-        	
         }
-    	
     }
-    
     public void gyroRight(int degrees, double speed){
     	if(ahrs.getAngle() < degrees && ahrs.getAngle() == 0){
     		setSpeed(speed,-speed);	
@@ -404,9 +413,7 @@ public class Robot extends IterativeRobot {
     		ahrs.reset();
     	}
     }
-    
-    public void gyrotLeft(int degrees, double speed){
-    	
+    public void gyrotLeft(int degrees, double speed){	
     	if(ahrs.getAngle() < degrees && ahrs.getAngle() == 0){
     		setSpeed(-speed,speed);
     	}
@@ -415,22 +422,19 @@ public class Robot extends IterativeRobot {
     		ahrs.reset();
     	}
     }
-    
-    public void setSpeed(double left, double right) {
+    public void setSpeed(double left, double right){
     	fl.set(left);
 		fr.set(right);
 		bl.set(left);
 		br.set(right);
     }
-    
-    public void stopMotors() {
+    public void stopMotors(){
     	fl.set(0);
 		fr.set(0);
 		bl.set(0);
 		br.set(0);
     }
-    
-    public void resetEncoders() {
+    public void resetEncoders(){
     	fl.setEncPosition(0);
     	bl.setEncPosition(0);
     	fr.setEncPosition(0);
@@ -451,7 +455,6 @@ public class Robot extends IterativeRobot {
     	}
     	fLastEncoder = fEncoder;
     	fLastVelocityTime = fVelocityTime;
-    	
     }
     public void turnByGyro(double power, int degrees) throws InterruptedException {
 
@@ -463,31 +466,23 @@ public class Robot extends IterativeRobot {
         ahrs.reset();
 
         while (!turnComplete) {
-
-
+        	
             double currentPosition = ahrs.getAngle();
             double target = initialPosition + (degrees);
 
             if ((Math.abs(target)) > currentPosition){
-                
             	fl.set(0.3);
             	bl.set(0.3);
             	fr.set(-0.3);
             	br.set(-0.3);
-            	
                 }
-            
-            else{
-            	
+            else
                 turnComplete = true;
             
-        }
-
             fl.set(0);
         	bl.set(0);
         	fr.set(0);
         	br.set(0);
-            
         }
     }
     public void encoderDrive(int rightTicks, int leftTicks, double leftPower, double rightPower, double timeout) {
