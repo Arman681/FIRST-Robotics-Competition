@@ -40,40 +40,40 @@ public class Robot extends IterativeRobot {
 	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 
     Command autonomousCommand;
-    SendableChooser chooser;
+    SendableChooser chooser = new SendableChooser();
     
     //Motor Controller Declarations
-    CANTalon fl;
-	CANTalon bl;
-	CANTalon fr;
-	CANTalon br;
-    CANTalon shooter;
-    CANTalon mixer;
-    CANTalon intake;
-    CANTalon outtake;
-    CANTalon lock;
+    static CANTalon fl;
+	static CANTalon bl;
+	static CANTalon fr;
+	static CANTalon br;
+	static CANTalon shooter;
+	static CANTalon mixer;
+	static CANTalon intake;
+	static CANTalon outtake;
+	static CANTalon lock;
     
 	
     //Essential Declarations
-    RobotDrive myRobot;
-    Joystick stick;
-    Joystick stick2;
-    Timer timer;
+    static RobotDrive myRobot;
+    static Joystick stick;
+    static Joystick stick2;
+    static Timer timer;
     
     //Sensor Declarations and Variables
     
-    AHRS ahrs;
-    PIDController turnController;
-    double rotateToAngleRate;
-    double Kp = 0.03;
+    static AHRS ahrs;
+    static PIDController turnController;
+    static double rotateToAngleRate;
+    static double Kp = 0.03;
     
     //Counters
-    int ci = 0;			//Intake (Clockwise) Counter
-    int cj = 0;			//Outtake (Counterclockwise) Counter
-    int cs = 0;			//Shooter Counter
-    int lc = 0;    		//Lifter Clockwise Counter
-    int lcc = 0;		//Lifter Counterclockwise Counter
-	int gyroCnt = 0;	//Gyroscope Counter
+    static int ci = 0;			//Intake (Clockwise) Counter
+    static int cj = 0;			//Outtake (Counterclockwise) Counter
+    static int cs = 0;			//Shooter Counter
+    static int lc = 0;    		//Lifter Clockwise Counter
+    static int lcc = 0;		//Lifter Counterclockwise Counter
+	static int gyroCnt = 0;	//Gyroscope Counter
 	
 	static final double kP = 0.3;
 	//static final double kI = 0.0;
@@ -84,11 +84,11 @@ public class Robot extends IterativeRobot {
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
+	@Override
     public void robotInit() {
     	
-        chooser = new SendableChooser();
-        chooser.addDefault("Default Auto", new ExampleCommand());
-        //chooser.addObject("My Auto", new MyAutoCommand());
+        chooser.addDefault("Default Auto", new AutoDoNothing());
+        chooser.addObject("My Auto", new Auto1());
         SmartDashboard.putData("Auto mode", chooser);
         
         //Camera Initialization
@@ -146,9 +146,10 @@ public class Robot extends IterativeRobot {
      * You can use it to reset any subsystem information you want to clear when
 	 * the robot is disabled.
      */
+    @Override
     public void disabledInit(){
     }
-	
+	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
 	}
@@ -162,43 +163,42 @@ public class Robot extends IterativeRobot {
 	 * You can add additional auto modes by adding additional commands to the chooser code above (like the commented example)
 	 * or additional comparisons to the switch structure below with additional strings & commands.
 	 */
+	@Override
     public void autonomousInit() {
-        /*autonomousCommand = (Command) chooser.getSelected();
+        autonomousCommand = (Command) chooser.getSelected();
         
 		String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
-		switch(autoSelected) {
-		case "My Auto":
-			autonomousCommand = new MyAutoCommand();
-			break;
-		case "Default Auto":
-		default:
-			autonomousCommand = new ExampleCommand();
-			break;
-		}
+		
+		/*switch(autoSelected) {
+			case "My Auto":
+				autonomousCommand = new Command();
+				break;
+			case "Default Auto":
+				default:
+					autonomousCommand = new ExampleCommand();
+				break;
+		}*/
     	
     	//schedule the autonomous command (example)
-        if (autonomousCommand != null) 
-        	autonomousCommand.start();
+        /*if (autonomousCommand != null) 
+        	autmonomousCommand.start();*/
         
         timer.reset(); //Resets the timer to 0
         ahrs.reset();
         timer.start(); //Start counting
-*/    }
+    }
 
     /**
      * This function is called periodically during autonomous
      * @throws InterruptedException 
      */
-    public void autonomous(){
+    @Override
+    public void autonomousPeriodic(){
     	
         Scheduler.getInstance().run();
         
-        
-        	runMotor(0.5);
-        	delay(3000);
-        	runMotor(0);
-        	delay(3000);
-       // }
+        	
+        	
         /*Drive for 2 seconds
         if (timer.get() < 2.0)
              myRobot.drive(-0.5,  0); //drive forwards half speed
@@ -206,21 +206,8 @@ public class Robot extends IterativeRobot {
              myRobot.drive(0.0, 0.0); //stop robot*/
     }
     
-    public void delay(int milliseconds){
-    	try{
-    		Thread.sleep(milliseconds);
-    	}
-    	catch(Exception e1){
-    		e1.printStackTrace();
-    	}
-    }
-    public void runMotor(double speed)
-    {
-    	fl.set(speed*.945);
-    	fr.set(speed);
-    	bl.set(speed*.945);
-    	br.set(speed);
-    }
+    
+    @Override
     public void teleopInit() {
     	
 		//This makes sure that the autonomous stops running when
@@ -235,6 +222,7 @@ public class Robot extends IterativeRobot {
     /**
      * This function is called periodically during operator control
      */
+    @Override
     public void teleopPeriodic() {
     	while(true) {
     		
@@ -396,7 +384,7 @@ public class Robot extends IterativeRobot {
     public void testPeriodic() {
         LiveWindow.run();
     }
-    public void gyroStraight(double speed){
+    public static void gyroStraight(double speed){
         
         double target = ahrs.getAngle();
         
@@ -404,7 +392,7 @@ public class Robot extends IterativeRobot {
         	setSpeed((speed + target)/100 , (speed + target)/100);
         }
     }
-    public void gyroRight(int degrees, double speed){
+    public static void gyroRight(int degrees, double speed){
     	if(ahrs.getAngle() < degrees && ahrs.getAngle() == 0){
     		setSpeed(speed,-speed);	
     	}
@@ -413,7 +401,7 @@ public class Robot extends IterativeRobot {
     		ahrs.reset();
     	}
     }
-    public void gyrotLeft(int degrees, double speed){	
+    public static void gyrotLeft(int degrees, double speed){	
     	if(ahrs.getAngle() < degrees && ahrs.getAngle() == 0){
     		setSpeed(-speed,speed);
     	}
@@ -422,25 +410,25 @@ public class Robot extends IterativeRobot {
     		ahrs.reset();
     	}
     }
-    public void setSpeed(double left, double right){
+    public static void setSpeed(double left, double right){
     	fl.set(left);
 		fr.set(right);
 		bl.set(left);
 		br.set(right);
     }
-    public void stopMotors(){
+    public static void stopMotors(){
     	fl.set(0);
 		fr.set(0);
 		bl.set(0);
 		br.set(0);
     }
-    public void resetEncoders(){
+    public static void resetEncoders(){
     	fl.setEncPosition(0);
     	bl.setEncPosition(0);
     	fr.setEncPosition(0);
     	br.setEncPosition(0);
     }
-    public void bangBang(double fTarget){
+    public static void bangBang(double fTarget){
     	double fVelocityTime = System.nanoTime();
     	double fEncoder = shooter.getEncPosition();
     	double fLastEncoder = 0;
@@ -456,7 +444,7 @@ public class Robot extends IterativeRobot {
     	fLastEncoder = fEncoder;
     	fLastVelocityTime = fVelocityTime;
     }
-    public void turnByGyro(double power, int degrees) throws InterruptedException {
+    public static void turnByGyro(double power, int degrees) throws InterruptedException {
 
         double constantOfDegrees = (2/3);
 
@@ -485,7 +473,7 @@ public class Robot extends IterativeRobot {
         	br.set(0);
         }
     }
-    public void encoderDrive(int rightTicks, int leftTicks, double leftPower, double rightPower, double timeout) {
+    public static void encoderDrive(int rightTicks, int leftTicks, double leftPower, double rightPower, double timeout) {
     	resetEncoders();
     	int targetFrontRight = fr.getEncPosition()+rightTicks;
     	int targetBackRight = br.getEncPosition()+rightTicks;
@@ -497,7 +485,7 @@ public class Robot extends IterativeRobot {
     	int curBackLeft = bl.getEncPosition();
     	boolean done = (Math.abs(targetFrontRight - curFrontRight) < 5 || Math.abs(targetBackRight - curBackRight) < 5 || Math.abs(targetFrontLeft - curFrontLeft) < 5 || Math.abs(targetBackLeft - curBackLeft) < 5);
     	setSpeed(leftPower,rightPower);
-    	while(isAutonomous() && !done) {
+    	while(!done) {
     		curFrontRight = fr.getEncPosition();
         	curBackRight = br.getEncPosition();
         	curFrontLeft = fl.getEncPosition();
@@ -505,6 +493,29 @@ public class Robot extends IterativeRobot {
         	done = (Math.abs(targetFrontRight - curFrontRight) < 5 || Math.abs(targetBackRight - curBackRight) < 5 || Math.abs(targetFrontLeft - curFrontLeft) < 5 || Math.abs(targetBackLeft - curBackLeft) < 5);
     	}
     	stopMotors();
+    }
+    public static void delay(int milliseconds){
+    	try{
+    		Thread.sleep(milliseconds);
+    	}
+    	catch(Exception e1){
+    		e1.printStackTrace();
+    	}
+    }
+    public static void turn(double left,double right)
+    {
+    	fl.set(left);
+    	fr.set(right);
+    	bl.set(left);
+    	br.set(right);
+    }	
+    
+    public static void runMotor(double speed)
+    {
+    	fl.set(speed*.945);
+    	fr.set(speed);
+    	bl.set(speed*.945);
+    	br.set(speed);
     }
 }
 
