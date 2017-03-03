@@ -28,8 +28,8 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 
 public class Robot extends IterativeRobot {
 	
-	private static final int IMG_WIDTH = 640;
-	private static final int IMG_HEIGHT = 480;
+	private static final int IMG_WIDTH = 360;
+	private static final int IMG_HEIGHT = 240;
 	
 	private VisionThread visionThread;
 	private double centerX = 0.0;
@@ -87,8 +87,10 @@ public class Robot extends IterativeRobot {
 	@Override
     public void robotInit() {
     	
-        chooser.addDefault("Default Auto", new AutoDoNothing());
-        chooser.addObject("My Auto", new Auto1());
+        chooser.addDefault("Auto Gear With Shot", new Auto1());
+        chooser.addObject("Do Nothing", new AutoDoNothing());
+        chooser.addObject("Middle Gear No Shot", new AutoMiddleGear());
+        chooser.addObject("Drive to White Line", new AutoWhiteLine());
         SmartDashboard.putData("Auto mode", chooser);
         
         //Camera Initialization
@@ -125,10 +127,10 @@ public class Robot extends IterativeRobot {
         outtake.setInverted(true);
         
         //Initialize encoders
-        fl.configEncoderCodesPerRev(1000);
+        /*fl.configEncoderCodesPerRev(1000);
         bl.configEncoderCodesPerRev(1000);
         fr.configEncoderCodesPerRev(1000);
-        br.configEncoderCodesPerRev(1000);
+        br.configEncoderCodesPerRev(1000);*/
         shooter.configEncoderCodesPerRev(1000);
         
         //Essential Assignments
@@ -172,6 +174,7 @@ public class Robot extends IterativeRobot {
         timer.reset(); //Resets the timer to 0
         ahrs.reset();
         timer.start(); //Start counting
+        autonomousCommand.start();
     }
 
     /**
@@ -408,12 +411,12 @@ public class Robot extends IterativeRobot {
 		bl.set(0);
 		br.set(0);
     }
-    public static void resetEncoders(){
+    /*public static void resetEncoders(){
     	fl.setEncPosition(0);
     	bl.setEncPosition(0);
     	fr.setEncPosition(0);
     	br.setEncPosition(0);
-    }
+    }*/
     public static void bangBang(double fTarget){
     	double fVelocityTime = System.nanoTime();
     	double fEncoder = shooter.getEncPosition();
@@ -459,7 +462,7 @@ public class Robot extends IterativeRobot {
         	br.set(0);
         }
     }
-    public static void encoderDrive(int rightTicks, int leftTicks, double leftPower, double rightPower, double timeout) {
+    /*public static void encoderDrive(int rightTicks, int leftTicks, double leftPower, double rightPower, double timeout) {
     	resetEncoders();
     	int targetFrontRight = fr.getEncPosition()+rightTicks;
     	int targetBackRight = br.getEncPosition()+rightTicks;
@@ -479,7 +482,7 @@ public class Robot extends IterativeRobot {
         	done = (Math.abs(targetFrontRight - curFrontRight) < 5 || Math.abs(targetBackRight - curBackRight) < 5 || Math.abs(targetFrontLeft - curFrontLeft) < 5 || Math.abs(targetBackLeft - curBackLeft) < 5);
     	}
     	stopMotors();
-    }
+    }*/
     public static void delay(int milliseconds){
     	try{
     		Thread.sleep(milliseconds);
