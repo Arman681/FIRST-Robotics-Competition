@@ -52,7 +52,6 @@ public class Robot extends IterativeRobot {
 	static CANTalon intake;
 	static CANTalon outtake;
 	static CANTalon lock;
-    
 	
     //Essential Declarations
     static RobotDrive myRobot;
@@ -77,8 +76,6 @@ public class Robot extends IterativeRobot {
 	
 	static final double kP = 0.3;
 	//static final double kI = 0.0;
-	
-
     
     /**
      * This function is run when the robot is first started up and should be
@@ -119,7 +116,6 @@ public class Robot extends IterativeRobot {
         intake = new CANTalon(20);
         lock = new CANTalon(7);
         outtake = new CANTalon(8);
-        
         
         fr.setInverted(true);
         br.setInverted(true);
@@ -186,8 +182,6 @@ public class Robot extends IterativeRobot {
     	
         Scheduler.getInstance().run();
         
-        	
-        	
         /*Drive for 2 seconds
         if (timer.get() < 2.0)
              myRobot.drive(-0.5,  0); //drive forwards half speed
@@ -433,7 +427,7 @@ public class Robot extends IterativeRobot {
     	fLastEncoder = fEncoder;
     	fLastVelocityTime = fVelocityTime;
     }
-    public static void turnByGyro(double power, int degrees) throws InterruptedException {
+    public static void turnByGyro(double power, int degrees) throws InterruptedException{
 
         double constantOfDegrees = (2/3);
 
@@ -442,7 +436,7 @@ public class Robot extends IterativeRobot {
         double initialPosition = ahrs.getAngle();
         ahrs.reset();
 
-        while (!turnComplete) {
+        while (!turnComplete){
         	
             double currentPosition = ahrs.getAngle();
             double target = initialPosition + (degrees);
@@ -452,7 +446,7 @@ public class Robot extends IterativeRobot {
             	bl.set(0.3);
             	fr.set(-0.3);
             	br.set(-0.3);
-                }
+            }
             else
                 turnComplete = true;
             
@@ -491,16 +485,14 @@ public class Robot extends IterativeRobot {
     		e1.printStackTrace();
     	}
     }
-    public static void turn(double left,double right)
-    {
+    public static void turn(double left,double right){
     	fl.set(left);
     	fr.set(right);
     	bl.set(left);
     	br.set(right);
     }	
     
-    public static void runMotor(double speed)
-    {
+    public static void runMotor(double speed){
     	fl.set(speed*.945);
     	fr.set(speed);
     	bl.set(speed*.945);
