@@ -3,5 +3,8 @@
 
 .recommenders
 
-#build
+#build and dist
 build/
+
+dist/
+/target/
