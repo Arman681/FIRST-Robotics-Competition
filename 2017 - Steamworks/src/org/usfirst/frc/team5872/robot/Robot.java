@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 
 public class Robot extends IterativeRobot {
 	
-	private static final int IMG_WIDTH = 360;
+	private static final int IMG_WIDTH = 320;
 	private static final int IMG_HEIGHT = 240;
 	
 	private VisionThread visionThread;
