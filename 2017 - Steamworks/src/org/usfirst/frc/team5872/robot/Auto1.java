@@ -7,30 +7,23 @@ public class Auto1 extends CommandGroup {
 	
 	public void execute() {
 		
-		Robot.runMotor(0.5);
-    	Robot.delay(1250);
+		Robot.runMotor(0.5, 1.25);
     	
-    	Robot.runMotor(0.25);
-    	Robot.delay(1250);
+    	Robot.runMotor(0.25, 1.25);
     	
-    	Robot.runMotor(0);
-    	Robot.delay(3000);
+    	Robot.runMotor(0, 3);
     	
-    	Robot.runMotor(-0.5);
-    	Robot.delay(75);
+    	Robot.runMotor(-0.5, 0.075);
     	
-    	Robot.runMotor(0);
-    	Robot.delay(50);
-    	
+    	Robot.stopDriveTrain();
     	Robot.turn(0.3, -0.3);
     	Robot.delay(1250);
     	
-    	Robot.runMotor(0);
+    	Robot.stopDriveTrain();
     	Robot.bangBang(0.4136);
-    	
     	Robot.delay(1500);
-    	Robot.runMotor(0.0);
     	
+    	Robot.stopDriveTrain();
     	Robot.bangBang(0.4136);
     	Robot.outtake.set(0.5);
     	Robot.delay(250);
@@ -40,13 +33,13 @@ public class Auto1 extends CommandGroup {
     	Robot.mixer.set(1.0);
     	Robot.delay(5000);
     	
-    	Robot.runMotor(0);
+    	Robot.stopDriveTrain();
     	Robot.outtake.set(-0.5);
     	Robot.shooter.set(0);
     	Robot.mixer.set(0);
     	Robot.delay(250);
     	
-    	Robot.runMotor(0);
+    	Robot.stopDriveTrain();
     	Robot.outtake.set(0);
     	Robot.shooter.set(0);
     	Robot.mixer.set(0);

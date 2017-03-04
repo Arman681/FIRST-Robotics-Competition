@@ -7,10 +7,8 @@ public class AutoWhiteLine extends CommandGroup {
 
 	public void execute() {
 		
-		Robot.runMotor(0.5);
-		Robot.delay(4000);
-		Robot.runMotor(0);
-		Robot.delay(11000);
+		Robot.runMotor(0.5, 4);
+		Robot.runMotor(0, 11);
 		
 	}
 
