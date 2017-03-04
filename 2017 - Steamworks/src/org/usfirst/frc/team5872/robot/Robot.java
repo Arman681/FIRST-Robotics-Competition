@@ -31,6 +31,8 @@ public class Robot extends IterativeRobot {
 	private static final int IMG_WIDTH = 320;
 	private static final int IMG_HEIGHT = 240;
 	
+	private static final int SECONDS_TO_MILLISECONDS = 1000;
+	
 	private VisionThread visionThread;
 	private double centerX = 0.0;
 	
@@ -477,9 +479,9 @@ public class Robot extends IterativeRobot {
     	}
     	stopMotors();
     }*/
-    public static void delay(int milliseconds){
+    public static void delay(double seconds){
     	try{
-    		Thread.sleep(milliseconds);
+    		Thread.sleep((long) (seconds*SECONDS_TO_MILLISECONDS)); //Thread.sleep() input is in milliseconds
     	}
     	catch(Exception e1){
     		e1.printStackTrace();
@@ -491,12 +493,18 @@ public class Robot extends IterativeRobot {
     	bl.set(left);
     	br.set(right);
     }	
-    
-    public static void runMotor(double speed){
+    public static void runMotor(double speed, double seconds){
     	fl.set(speed*.945);
     	fr.set(speed);
     	bl.set(speed*.945);
     	br.set(speed);
+    	delay(seconds);
+    }
+    public static void stopDriveTrain(){
+    	fl.set(0);
+    	fr.set(0);
+    	bl.set(0);
+    	br.set(0);
     }
 }
 
