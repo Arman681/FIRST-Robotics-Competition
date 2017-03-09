@@ -90,6 +90,8 @@ public class Robot extends IterativeRobot {
         chooser.addDefault("Auto Gear With Shot", new Auto1());
         chooser.addObject("Do Nothing", new AutoDoNothing());
         chooser.addObject("Middle Gear No Shot", new AutoMiddleGear());
+        chooser.addObject("Drive Do Left Gear", new AutoLeftGear());
+        chooser.addObject("Drive Do Right Gear", new AutoRightGear());
         chooser.addObject("Drive to White Line", new AutoWhiteLine());
         SmartDashboard.putData("Auto mode", chooser);
         
@@ -550,6 +552,13 @@ public class Robot extends IterativeRobot {
     	fr.set(speed);
     	bl.set(speed*.945);
     	br.set(speed);
+    	delay(seconds);
+    }
+    public static void runMotor(double speedLeft,double speedRight, double seconds){
+    	fl.set(speedLeft*.945);
+    	fr.set(speedRight);
+    	bl.set(speedLeft*.945);
+    	br.set(speedRight);
     	delay(seconds);
     }
     public static void stopDriveTrain(){
