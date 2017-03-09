@@ -2,11 +2,7 @@ package org.usfirst.frc.team5872.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import org.opencv.core.Rect;
-import org.opencv.imgproc.Imgproc;
-
 import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
@@ -17,7 +13,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import org.usfirst.frc.team5872.robot.commands.ExampleCommand;
+import edu.wpi.first.wpilibj.DigitalInput;
 import org.usfirst.frc.team5872.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -62,11 +58,16 @@ public class Robot extends IterativeRobot {
     static Timer timer;
     
     //Sensor Declarations and Variables
-    
     static AHRS ahrs;
     static PIDController turnController;
     static double rotateToAngleRate;
     static double Kp = 0.03;
+    
+    //Limit Switch Declarations and Variables
+    static DigitalInput limitswitch_down;
+    static DigitalInput limitswitch_up;
+    static int limitcounter_down = 0;
+    static int limitcounter_up = 0;
     
     //Counters
     static int ci = 0;			//Intake (Clockwise) Counter
@@ -139,6 +140,10 @@ public class Robot extends IterativeRobot {
         
         //Sensor Assignment
         ahrs = new AHRS(I2C.Port.kMXP);
+        
+        //Limit Switches Assignment(s)
+        limitswitch_down = new DigitalInput(1);
+        limitswitch_up = new DigitalInput(2);
     }
 	
 	/**
@@ -232,8 +237,8 @@ public class Robot extends IterativeRobot {
     		
     		//Arcade Drive Joystick Declarations and Assignments
     		//Controller Axes
-    		double ol = -stick2.getRawAxis(1);		//Y Axis
-    		double or = stick2.getRawAxis(5);		//Z Axis
+    		double ol = -stick2.getRawAxis(1);		//Left Axis
+    		double or = stick2.getRawAxis(5);		//Right Axis
     		//Controller Buttons
     		boolean oa = stick2.getRawButton(1);	//Operator a
     		boolean ob = stick2.getRawButton(2);	//Operator b
@@ -310,13 +315,13 @@ public class Robot extends IterativeRobot {
         	else if (!oa && cs == 3){
         		cs = 0;
         	}
-        	//Door Lock
+        	/*//Door Lock
         	if(or > 0.05 || or < -0.05){
-        		outtake.set(or);	
+        		outtake.set(-or);	
         	}
         	else{
         		outtake.set(0.0);
-        	}
+        	}*/
         	//Mixer
         	if(ol > 0.05 || ol < -0.05){
         		mixer.set(ol);
@@ -340,27 +345,74 @@ public class Robot extends IterativeRobot {
         		ci = 0;
         	}
         	//Outtake Toggle (Operator Right Bumper)
-        	if (orb && cj == 0) {
+        	if (orb && cj == 0){
         		intake.set(-0.5);
         		cj = 1;
         	}
-        	else if (!orb && cj == 1) {
+        	else if (!orb && cj == 1){
         		cj = 2;
         	}
-        	else if (orb && cj == 2) {
+        	else if (orb && cj == 2){
         		intake.set(0.0);
         		cj = 3;
         	} 
-        	else if (!orb && cj == 3) {
+        	else if (!orb && cj == 3){
         		cj = 0;
         	}
         	//Gyro Tests
             if(dback) {
             	gyroRight(15, 0.5);
             }
-            else if(!dback && ahrs.getAngle() >= 90 ) {            
+            else if(!dback && ahrs.getAngle() >= 90 ){            
             	gyroRight(0, 0.0);
             }
+            //Limit Switch Conditions for going down
+            if (!limitswitch_down.get() && limitcounter_down == 0 && oy == true){
+            	limitcounter_down = 1;
+            }
+            else if (!limitswitch_down.get() && limitcounter_down == 1 && !oy){
+            	outtake.set(1.0);
+            	limitcounter_down = 2;
+            }
+            else if (limitswitch_down.get() == true && limitcounter_down == 2){ //Instantaneously
+            	outtake.set(0);
+            	limitcounter_down = 3;
+            }
+            else if (!limitswitch_down.get() && limitcounter_down == 2 && oy == true){ //Manually
+            	outtake.set(0);
+            	limitcounter_down = 3;
+            }
+            else if (!limitswitch_down.get() && limitcounter_down == 3 && !oy){
+            	outtake.set(0);
+            	limitcounter_down = 0;
+            }
+            else if (limitswitch_down.get() == true && limitcounter_down == 3){
+            	limitcounter_down = 0;
+            }
+          //Limit Switch Conditions for going up
+            if (!limitswitch_up.get() && limitcounter_up == 0 && ox == true){
+            	limitcounter_up = 1;
+            }
+            else if (!limitswitch_up.get() && limitcounter_up == 1 && !ox){
+            	outtake.set(-1.0);
+            	limitcounter_up = 2;
+            }
+            else if (limitswitch_up.get() == true && limitcounter_up == 2){ //Instantaneously
+            	outtake.set(0);
+            	limitcounter_up = 3;
+            }
+            else if (!limitswitch_up.get() && limitcounter_up == 2 && ox == true){ //Manually
+            	outtake.set(0);
+            	limitcounter_up = 3;
+            }
+            else if (!limitswitch_up.get() && limitcounter_up == 3 && !ox){
+            	outtake.set(0);
+            	limitcounter_up = 0;
+            }
+            else if (limitswitch_up.get() == true && limitcounter_up == 3){
+            	limitcounter_up = 0;
+            }
+            
     	}
     } 
     /**
