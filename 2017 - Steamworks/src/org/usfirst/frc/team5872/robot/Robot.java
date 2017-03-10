@@ -90,9 +90,8 @@ public class Robot extends IterativeRobot {
         chooser.addDefault("Auto Gear With Shot", new Auto1());
         chooser.addObject("Do Nothing", new AutoDoNothing());
         chooser.addObject("Middle Gear No Shot", new AutoMiddleGear());
-        chooser.addObject("Drive Do Left Gear", new AutoLeftGear());
-        chooser.addObject("Drive Do Right Gear", new AutoRightGear());
         chooser.addObject("Drive to White Line", new AutoWhiteLine());
+        chooser.addObject("Side Gear Auto", new AutoSideGear());
         SmartDashboard.putData("Auto mode", chooser);
         
         //Camera Initialization
