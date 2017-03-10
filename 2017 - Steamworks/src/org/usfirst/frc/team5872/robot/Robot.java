@@ -56,6 +56,7 @@ public class Robot extends IterativeRobot {
     static Joystick stick;
     static Joystick stick2;
     static Timer timer;
+    static boolean intakeDown = true;
     
     //Sensor Declarations and Variables
     static AHRS ahrs;
@@ -118,9 +119,9 @@ public class Robot extends IterativeRobot {
         br = new CANTalon(0);
         shooter = new CANTalon(5);
         mixer = new CANTalon(4);
-        intake = new CANTalon(20);
+        intake = new CANTalon(8);
         lock = new CANTalon(7);
-        outtake = new CANTalon(8);
+        outtake = new CANTalon(20);
         
         fr.setInverted(true);
         br.setInverted(true);
@@ -317,13 +318,13 @@ public class Robot extends IterativeRobot {
         	else if (!oa && cs == 3){
         		cs = 0;
         	}
-        	/*//Door Lock
+        	//Door Lock
         	if(or > 0.05 || or < -0.05){
-        		outtake.set(-or);	
+        		outtake.set(or*1/3);	
         	}
         	else{
-        		outtake.set(0.0);
-        	}*/
+        		outtake.set(0.01);
+        	}
         	//Mixer
         	if(ol > 0.05 || ol < -0.05){
         		mixer.set(ol);
@@ -331,7 +332,7 @@ public class Robot extends IterativeRobot {
         	else if(ol < 0.05 && ol > -0.05){
         		mixer.set(0);
         	}
-        	//Intake Toggle (Operator Left Bumper)
+        	/*//Intake Toggle (Operator Left Bumper)
         	if (olb && ci == 0){
         		intake.set(0.5);
         		ci = 1;
@@ -360,6 +361,25 @@ public class Robot extends IterativeRobot {
         	} 
         	else if (!orb && cj == 3){
         		cj = 0;
+        	}*/
+        	if(ox && !intakeDown) {
+        		outtake.set(-.1);
+        		delay(1);
+        		outtake.set(0);
+        		intakeDown = true;
+        	}
+        	if(ob && intakeDown) {
+        		outtake.set(.1);
+        		delay(1);
+        		outtake.set(0);
+        		intakeDown = false;
+        	}
+        	if(oy && !intakeDown) {
+        		intake.set(-1);
+        		outtake.set(-.1);
+        		delay(1);
+        		outtake.set(0);
+        		intakeDown = true;
         	}
         	//Gyro Tests
             if(dback) {
@@ -368,7 +388,7 @@ public class Robot extends IterativeRobot {
             else if(!dback && ahrs.getAngle() >= 90 ){            
             	gyroRight(0, 0.0);
             }
-            //Limit Switch Conditions for going down
+            /*//Limit Switch Conditions for going down
             if (!limitswitch_down.get() && limitcounter_down == 0 && oy == true){
             	limitcounter_down = 1;
             }
@@ -413,7 +433,7 @@ public class Robot extends IterativeRobot {
             }
             else if (limitswitch_up.get() == true && limitcounter_up == 3){
             	limitcounter_up = 0;
-            }
+            }*/
             
     	}
     } 
