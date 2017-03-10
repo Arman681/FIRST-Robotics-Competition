@@ -1,7 +1,5 @@
 package org.usfirst.frc.team5872.robot;
-
 import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.I2C;
@@ -47,8 +45,8 @@ public class Robot extends IterativeRobot {
 	static CANTalon br;
 	static CANTalon shooter;
 	static CANTalon mixer;
-	static CANTalon intake;
-	static CANTalon outtake;
+	static CANTalon intake; 	//pool-noodle
+	static CANTalon gear_pivot;	//gear picker-upper pivot
 	static CANTalon lock;
 	
     //Essential Declarations
@@ -56,7 +54,7 @@ public class Robot extends IterativeRobot {
     static Joystick stick;
     static Joystick stick2;
     static Timer timer;
-    static boolean intakeDown = true;
+    static boolean intakeDown = false;
     
     //Sensor Declarations and Variables
     static AHRS ahrs;
@@ -72,7 +70,8 @@ public class Robot extends IterativeRobot {
     
     //Counters
     static int ci = 0;			//Intake (Clockwise) Counter
-    static int cj = 0;			//Outtake (Counterclockwise) Counter
+    static int cir = 0;			//Intake (Counter-Clokwise) Counter
+    static int cj = 0;			//gear_pivot (Counterclockwise) Counter
     static int cs = 0;			//Shooter Counter
     static int lc = 0;    		//Lifter Clockwise Counter
     static int lcc = 0;		//Lifter Counterclockwise Counter
@@ -121,12 +120,12 @@ public class Robot extends IterativeRobot {
         mixer = new CANTalon(4);
         intake = new CANTalon(8);
         lock = new CANTalon(7);
-        outtake = new CANTalon(20);
+        gear_pivot = new CANTalon(20);
         
         fr.setInverted(true);
         br.setInverted(true);
         intake.setInverted(true);
-        outtake.setInverted(true);
+        gear_pivot.setInverted(true);
         
         //Initialize encoders
         /*fl.configEncoderCodesPerRev(1000);
@@ -155,7 +154,7 @@ public class Robot extends IterativeRobot {
 	 * the robot is disabled.
      */
     @Override
-    public void disabledInit(){
+    public void disabledInit() {
     }
 	@Override
 	public void disabledPeriodic() {
@@ -188,7 +187,7 @@ public class Robot extends IterativeRobot {
      * @throws InterruptedException 
      */
     @Override
-    public void autonomousPeriodic(){
+    public void autonomousPeriodic() {
     	
         Scheduler.getInstance().run();
         
@@ -223,10 +222,11 @@ public class Robot extends IterativeRobot {
     		myRobot.arcadeDrive(stick); //This line drives the robot using the values of the joystick and the motor controllers selected above
         
     		//Tank Drive Logitech Controller Joystick Declarations and Assignments
-    		//Controller Axes
+    		//Controller 1 Axes
     		double dl = stick.getRawAxis(1);			//Left Joystick
     		double dr = -stick.getRawAxis(4);			//Right Joystick
-    		//Controller Buttons
+    		
+    		//Controller 1 Buttons
     		boolean da = stick.getRawButton(1);		//Driver Button a
     		boolean db = stick.getRawButton(2);		//Driver Button b
     		boolean dx = stick.getRawButton(3);		//Driver Button x
@@ -239,10 +239,11 @@ public class Robot extends IterativeRobot {
     		double drt = stick.getRawAxis(3);		//Driver Right Trigger
     		
     		//Arcade Drive Joystick Declarations and Assignments
-    		//Controller Axes
+    		//Controller 2 Axes
     		double ol = -stick2.getRawAxis(1);		//Left Axis
     		double or = stick2.getRawAxis(5);		//Right Axis
-    		//Controller Buttons
+    		
+    		//Controller 2 Buttons
     		boolean oa = stick2.getRawButton(1);	//Operator a
     		boolean ob = stick2.getRawButton(2);	//Operator b
     		boolean ox = stick2.getRawButton(3);	//Operator x
@@ -255,157 +256,144 @@ public class Robot extends IterativeRobot {
     		double ort = stick2.getRawAxis(3);		//Operator Right Trigger
     		
     		//Drive Train
-    		if(dl > 0.05 || dl < -0.05 || dr > 0.05 || dr < -0.05 && gyroCnt == 0){
+    		if(dl > 0.05 || dl < -0.05 || dr > 0.05 || dr < -0.05 && gyroCnt == 0) {
     			fl.set(dl*.945 + -dr);
     			bl.set(dl*.945 + -dr);
     			fr.set(dl + dr);
     			br.set(dl + dr);
     		}
     		//For Lifting Clockwise
-    		else if(dy && !db && gyroCnt == 0){
+    		else if(dy && !db && gyroCnt == 0) {
     			fr.set(1.0);
     			br.set(1.0);
     			fl.set(0.0);
     			bl.set(0.0);
     		}
     		//For Lifting Counterclockwise
-    		else if(db && !dy && gyroCnt == 0){
+    		else if(db && !dy && gyroCnt == 0) {
     			fr.set(-1.0);
     			br.set(-1.0);
     			fl.set(0.0);
     			bl.set(0.0);
     		}
     		//Stops All Drive Train Motors
-    		else if(!dy && !db && dlt < 0.05 && drt < 0.05 && dl < 0.05 && dl > -0.05 && dr < 0.05 && dr > -0.05){   			
+    		else if(!dy && !db && dlt < 0.05 && drt < 0.05 && dl < 0.05 && dl > -0.05 && dr < 0.05 && dr > -0.05) {   			
     			stopMotors();
     		}
     		//Gyroscope Toggle
-    		if(da && gyroCnt == 0){
+    		if(da && gyroCnt == 0) {
     			gyroCnt = 1;
     		}
-    		else if(!da && gyroCnt == 1){
+    		else if(!da && gyroCnt == 1) {
     			gyroCnt = 2;
     		}
-    		else if(da && gyroCnt == 2){
+    		else if(da && gyroCnt == 2) {
     			gyroCnt = 3;
     		}
-    		else if(!da && gyroCnt == 3){
+    		else if(!da && gyroCnt == 3) {
     			gyroCnt = 0;
     			ahrs.reset();
     		}
     		//Lock Clockwise
-    		if(dlb && !drb){
+    		if(dlb && !drb)
     			lock.set(1.0);
-    		}
-    		else if(!dlb && drb){
+    		else if(!dlb && drb)
     			lock.set(-1.0);
-    		}
-    		else if(!dlb && !drb){
+    		else if(!dlb && !drb)
     			lock.set(0);
-    		}
         	//Shooter Toggle
-        	if(oa && cs == 0){
+        	if(oa && cs == 0) {
         		bangBang(0.4136);
         		cs = 1;
         	}
-        	else if (!oa && cs == 1){
+        	else if (!oa && cs == 1)
         		cs = 2;
-        	}
-         	else if(oa && cs == 2){
+         	else if(oa && cs == 2) {
         		shooter.set(0.0);
         		cs = 3;
         	}
-        	else if (!oa && cs == 3){
+        	else if (!oa && cs == 3)
         		cs = 0;
+        	//Gear Pivot (Operator Right Analog Stick)
+        	if(or > 0.05 || or < -0.05) {
+        		gear_pivot.set(or*1/3);	
         	}
-        	//Door Lock
-        	if(or > 0.05 || or < -0.05){
-        		outtake.set(or*1/3);	
-        	}
-        	else{
-        		outtake.set(0.01);
-        	}
-        	//Mixer
-        	if(ol > 0.05 || ol < -0.05){
+        	else
+        		gear_pivot.set(0.01);
+        	//Mixer (Operator Left Analog Stick)
+        	if(ol > 0.05 || ol < -0.05)
         		mixer.set(ol);
-        	}
-        	else if(ol < 0.05 && ol > -0.05){
+        	else if(ol < 0.05 && ol > -0.05)
         		mixer.set(0);
-        	}
-        	/*//Intake Toggle (Operator Left Bumper)
-        	if (olb && ci == 0){
+        	//Intake Toggle (Operator Left Bumper)
+        	if (olb && ci == 0) {
         		intake.set(0.5);
         		ci = 1;
         	}
-        	else if (!olb && ci == 1) {
+        	else if (!olb && ci == 1)
         		ci = 2;
-        	}
         	else if (olb && ci == 2) {
         		intake.set(0.0);
         		ci = 3;
         	}
-        	else if (!olb && ci == 3) {
+        	else if (!olb && ci == 3)
         		ci = 0;
-        	}
-        	//Outtake Toggle (Operator Right Bumper)
-        	if (orb && cj == 0){
+        	//Intake Toggle (Operator Right Bumper)
+        	if (orb && cir == 0) {
         		intake.set(-0.5);
-        		cj = 1;
+        		cir = 1;
         	}
-        	else if (!orb && cj == 1){
-        		cj = 2;
-        	}
-        	else if (orb && cj == 2){
+        	else if (!orb && cir == 1)
+        		cir = 2;
+        	else if (orb && cir == 2) {
         		intake.set(0.0);
-        		cj = 3;
-        	} 
-        	else if (!orb && cj == 3){
-        		cj = 0;
-        	}*/
+        		cir = 3;
+        	}
+        	else if (!orb && cir == 3)
+        		cir = 0;
+        	/*//Closed Loop for Gear Picker Upper
         	if(ox && !intakeDown) {
-        		outtake.set(-.1);
+        		gear_pivot.set(-.1);
         		delay(1);
-        		outtake.set(0);
+        		gear_pivot.set(0);
         		intakeDown = true;
         	}
         	if(ob && intakeDown) {
-        		outtake.set(.1);
+        		gear_pivot.set(.1);
         		delay(1);
-        		outtake.set(0);
+        		gear_pivot.set(0);
         		intakeDown = false;
         	}
         	if(oy && !intakeDown) {
         		intake.set(-1);
-        		outtake.set(-.1);
+        		gear_pivot.set(-.1);
         		delay(1);
-        		outtake.set(0);
+        		gear_pivot.set(0);
         		intakeDown = true;
-        	}
+        	}*/
         	//Gyro Tests
-            if(dback) {
+            if(dback)
             	gyroRight(15, 0.5);
-            }
-            else if(!dback && ahrs.getAngle() >= 90 ){            
+            else if(!dback && ahrs.getAngle() >= 90)
             	gyroRight(0, 0.0);
-            }
             /*//Limit Switch Conditions for going down
             if (!limitswitch_down.get() && limitcounter_down == 0 && oy == true){
             	limitcounter_down = 1;
             }
             else if (!limitswitch_down.get() && limitcounter_down == 1 && !oy){
-            	outtake.set(1.0);
+            	gear_pivot.set(1.0);
             	limitcounter_down = 2;
             }
             else if (limitswitch_down.get() == true && limitcounter_down == 2){ //Instantaneously
-            	outtake.set(0);
+            	gear_pivot.set(0);
             	limitcounter_down = 3;
             }
             else if (!limitswitch_down.get() && limitcounter_down == 2 && oy == true){ //Manually
-            	outtake.set(0);
+            	gear_pivot.set(0);
             	limitcounter_down = 3;
             }
             else if (!limitswitch_down.get() && limitcounter_down == 3 && !oy){
-            	outtake.set(0);
+            	gear_pivot.set(0);
             	limitcounter_down = 0;
             }
             else if (limitswitch_down.get() == true && limitcounter_down == 3){
@@ -416,19 +404,19 @@ public class Robot extends IterativeRobot {
             	limitcounter_up = 1;
             }
             else if (!limitswitch_up.get() && limitcounter_up == 1 && !ox){
-            	outtake.set(-1.0);
+            	gear_pivot.set(-1.0);
             	limitcounter_up = 2;
             }
             else if (limitswitch_up.get() == true && limitcounter_up == 2){ //Instantaneously
-            	outtake.set(0);
+            	gear_pivot.set(0);
             	limitcounter_up = 3;
             }
             else if (!limitswitch_up.get() && limitcounter_up == 2 && ox == true){ //Manually
-            	outtake.set(0);
+            	gear_pivot.set(0);
             	limitcounter_up = 3;
             }
             else if (!limitswitch_up.get() && limitcounter_up == 3 && !ox){
-            	outtake.set(0);
+            	gear_pivot.set(0);
             	limitcounter_up = 0;
             }
             else if (limitswitch_up.get() == true && limitcounter_up == 3){
@@ -443,81 +431,73 @@ public class Robot extends IterativeRobot {
     public void testPeriodic() {
         LiveWindow.run();
     }
-    public static void gyroStraight(double speed){
-        
+    public static void gyroStraight(double speed) {
         double target = ahrs.getAngle();
-        
-        while(gyroCnt == 2){   	
+        while(gyroCnt == 2)
         	setSpeed((speed + target)/100 , (speed + target)/100);
-        }
     }
-    public static void gyroRight(int degrees, double speed){
-    	if(ahrs.getAngle() < degrees && ahrs.getAngle() == 0){
-    		setSpeed(speed,-speed);	
-    	}
-    	else if(ahrs.getAngle() >= degrees){
+    public static void gyroRight(int degrees, double speed) {
+    	if(ahrs.getAngle() < degrees && ahrs.getAngle() == 0)
+    		setSpeed(speed,-speed);
+    	else if(ahrs.getAngle() >= degrees) {
     		stopMotors();
     		ahrs.reset();
     	}
     }
-    public static void gyrotLeft(int degrees, double speed){	
-    	if(ahrs.getAngle() < degrees && ahrs.getAngle() == 0){
+    public static void gyrotLeft(int degrees, double speed) {	
+    	if(ahrs.getAngle() < degrees && ahrs.getAngle() == 0)
     		setSpeed(-speed,speed);
-    	}
-    	else{
+    	else {
     		stopMotors();
     		ahrs.reset();
     	}
     }
-    public static void setSpeed(double left, double right){
+    public static void setSpeed(double left, double right) {
     	fl.set(left);
 		fr.set(right);
 		bl.set(left);
 		br.set(right);
     }
-    public static void stopMotors(){
+    public static void stopMotors() {
     	fl.set(0);
 		fr.set(0);
 		bl.set(0);
 		br.set(0);
     }
-    /*public static void resetEncoders(){
+    public static void resetEncoders() {
     	fl.setEncPosition(0);
     	bl.setEncPosition(0);
     	fr.setEncPosition(0);
     	br.setEncPosition(0);
-    }*/
-    public static void bangBang(double fTarget){
+    }
+    public static void bangBang(double fTarget) {
     	double fVelocityTime = System.nanoTime();
     	double fEncoder = shooter.getEncPosition();
     	double fLastEncoder = 0;
 		double fLastVelocityTime = 0;
 		double fVelocity = (double)(fEncoder - fLastEncoder)/(fVelocityTime - fLastVelocityTime);
     	
-    	if(fVelocity >= fTarget){
+    	if(fVelocity >= fTarget)
     		shooter.set(0.4136);
-    	}
-    	else if(fVelocity < fTarget){
+    	else if(fVelocity < fTarget)
     		shooter.set(0.4236);
-    	}
+    	
     	fLastEncoder = fEncoder;
     	fLastVelocityTime = fVelocityTime;
     }
-    public static void turnByGyro(double power, int degrees) throws InterruptedException{
+    public static void turnByGyro(double power, int degrees) throws InterruptedException {
 
         double constantOfDegrees = (2/3);
-
         int s = -1;
         boolean turnComplete = false;
         double initialPosition = ahrs.getAngle();
         ahrs.reset();
 
-        while (!turnComplete){
-        	
+        while (!turnComplete) {
             double currentPosition = ahrs.getAngle();
             double target = initialPosition + (degrees);
 
-            if ((Math.abs(target)) > currentPosition){
+            if ((Math.abs(target)) > currentPosition) {
             	fl.set(0.3);
             	bl.set(0.3);
             	fr.set(-0.3);
@@ -532,7 +512,7 @@ public class Robot extends IterativeRobot {
         	br.set(0);
         }
     }
-    /*public static void encoderDrive(int rightTicks, int leftTicks, double leftPower, double rightPower, double timeout) {
+    public static void encoderDrive(int rightTicks, int leftTicks, double leftPower, double rightPower, double timeout) {
     	resetEncoders();
     	int targetFrontRight = fr.getEncPosition()+rightTicks;
     	int targetBackRight = br.getEncPosition()+rightTicks;
@@ -552,36 +532,36 @@ public class Robot extends IterativeRobot {
         	done = (Math.abs(targetFrontRight - curFrontRight) < 5 || Math.abs(targetBackRight - curBackRight) < 5 || Math.abs(targetFrontLeft - curFrontLeft) < 5 || Math.abs(targetBackLeft - curBackLeft) < 5);
     	}
     	stopMotors();
-    }*/
-    public static void delay(double seconds){
-    	try{
+    }
+    public static void delay(double seconds) {
+    	try {
     		Thread.sleep((long) (seconds*SECONDS_TO_MILLISECONDS)); //Thread.sleep() input is in milliseconds
     	}
-    	catch(Exception e1){
+    	catch(Exception e1) {
     		e1.printStackTrace();
     	}
     }
-    public static void turn(double left,double right){
+    public static void turn(double left,double right) {
     	fl.set(left);
     	fr.set(right);
     	bl.set(left);
     	br.set(right);
     }	
-    public static void runMotor(double speed, double seconds){
+    public static void runMotor(double speed, double seconds) {
     	fl.set(speed*.945);
     	fr.set(speed);
     	bl.set(speed*.945);
     	br.set(speed);
     	delay(seconds);
     }
-    public static void runMotor(double speedLeft,double speedRight, double seconds){
+    public static void runMotor(double speedLeft,double speedRight, double seconds) {
     	fl.set(speedLeft*.945);
     	fr.set(speedRight);
     	bl.set(speedLeft*.945);
     	br.set(speedRight);
     	delay(seconds);
     }
-    public static void stopDriveTrain(){
+    public static void stopDriveTrain() {
     	fl.set(0);
     	fr.set(0);
     	bl.set(0);
