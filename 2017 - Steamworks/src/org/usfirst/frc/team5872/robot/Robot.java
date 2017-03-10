@@ -63,10 +63,10 @@ public class Robot extends IterativeRobot {
     static double Kp = 0.03;
     
     //Limit Switch Declarations and Variables
-    static DigitalInput limitswitch_down;
     static DigitalInput limitswitch_up;
-    static int limitcounter_down = 0;
+    static DigitalInput limitswitch_down;
     static int limitcounter_up = 0;
+    static int limitcounter_down = 0;
     
     //Counters
     static int ci = 0;			//Intake (Clockwise) Counter
@@ -143,8 +143,8 @@ public class Robot extends IterativeRobot {
         ahrs = new AHRS(I2C.Port.kMXP);
         
         //Limit Switches Assignment(s)
+        limitswitch_up = new DigitalInput(0);
         limitswitch_down = new DigitalInput(1);
-        limitswitch_up = new DigitalInput(2);
     }
 	
 	/**
@@ -180,24 +180,14 @@ public class Robot extends IterativeRobot {
         timer.start(); //Start counting
         autonomousCommand.start();
     }
-
     /**
      * This function is called periodically during autonomous
      * @throws InterruptedException 
      */
     @Override
     public void autonomousPeriodic() {
-    	
         Scheduler.getInstance().run();
-        
-        /*Drive for 2 seconds
-        if (timer.get() < 2.0)
-             myRobot.drive(-0.5,  0); //drive forwards half speed
-        else 
-             myRobot.drive(0.0, 0.0); //stop robot*/
     }
-    
-    
     @Override
     public void teleopInit() {
     	
@@ -209,7 +199,6 @@ public class Robot extends IterativeRobot {
         	autonomousCommand.cancel();
         ahrs.reset();
     }
-
     /**
      * This function is called periodically during operator control
      */
@@ -279,6 +268,7 @@ public class Robot extends IterativeRobot {
     		else if(!dy && !db && dlt < 0.05 && drt < 0.05 && dl < 0.05 && dl > -0.05 && dr < 0.05 && dr > -0.05) {   			
     			stopMotors();
     		}
+    		
     		//Gyroscope Toggle
     		if(da && gyroCnt == 0) {
     			gyroCnt = 1;
@@ -293,6 +283,7 @@ public class Robot extends IterativeRobot {
     			gyroCnt = 0;
     			ahrs.reset();
     		}
+    		
     		//Lock Clockwise
     		if(dlb && !drb)
     			lock.set(1.0);
@@ -300,6 +291,7 @@ public class Robot extends IterativeRobot {
     			lock.set(-1.0);
     		else if(!dlb && !drb)
     			lock.set(0);
+    		
         	//Shooter Toggle
         	if(oa && cs == 0) {
         		bangBang(0.4136);
@@ -313,17 +305,22 @@ public class Robot extends IterativeRobot {
         	}
         	else if (!oa && cs == 3)
         		cs = 0;
+        	
         	//Gear Pivot (Operator Right Analog Stick)
-        	if(or > 0.05 || or < -0.05) {
-        		gear_pivot.set(or*1/3);	
+        	if((or > 0.05 || or < -0.05) && limitswitch_up.get() == false) {
+        		gear_pivot.set(or*1/3);
         	}
+        	else if ((or > 0.05 || or < -0.05) && limitswitch_up.get() == true)
+        		gear_pivot.set(0.01);
         	else
         		gear_pivot.set(0.01);
+        	
         	//Mixer (Operator Left Analog Stick)
         	if(ol > 0.05 || ol < -0.05)
         		mixer.set(ol);
         	else if(ol < 0.05 && ol > -0.05)
         		mixer.set(0);
+        	
         	//Intake Toggle (Operator Left Bumper)
         	if (olb && ci == 0) {
         		intake.set(0.5);
@@ -337,6 +334,7 @@ public class Robot extends IterativeRobot {
         	}
         	else if (!olb && ci == 3)
         		ci = 0;
+        	
         	//Intake Toggle (Operator Right Bumper)
         	if (orb && cir == 0) {
         		intake.set(-0.5);
@@ -348,8 +346,16 @@ public class Robot extends IterativeRobot {
         		intake.set(0.0);
         		cir = 3;
         	}
-        	else if (!orb && cir == 3)
+        	else if (!orb && cir == 3){
         		cir = 0;
+        	}
+        	
+        	/*while(limitswitch_up.get()){
+        		
+        		Timer.delay(10);
+        		
+        	}*/
+        	
         	/*//Closed Loop for Gear Picker Upper
         	if(ox && !intakeDown) {
         		gear_pivot.set(-.1);
@@ -370,11 +376,37 @@ public class Robot extends IterativeRobot {
         		gear_pivot.set(0);
         		intakeDown = true;
         	}*/
+        	
         	//Gyro Tests
             if(dback)
             	gyroRight(15, 0.5);
             else if(!dback && ahrs.getAngle() >= 90)
             	gyroRight(0, 0.0);
+            
+            //Limit Switch Conditions for going up
+            /*if (!limitswitch_up.get() && limitcounter_up == 0 && ox == true){
+            	limitcounter_up = 1;
+            }
+            else if (!limitswitch_up.get() && limitcounter_up == 1 && !ox){
+            	gear_pivot.set(-1.0);
+            	limitcounter_up = 2;
+            }
+            else if (limitswitch_up.get() == true && limitcounter_up == 2){			//Instantaneously
+            	gear_pivot.set(0);
+            	limitcounter_up = 3;
+            }
+            else if (!limitswitch_up.get() && limitcounter_up == 2 && ox == true){	//Manually
+            	gear_pivot.set(0);
+            	limitcounter_up = 3;
+            }
+            else if (!limitswitch_up.get() && limitcounter_up == 3 && !ox){
+            	gear_pivot.set(0);
+            	limitcounter_up = 0;
+            }
+            else if (limitswitch_up.get() == true && limitcounter_up == 3){
+            	limitcounter_up = 0;
+            }*/
+            
             /*//Limit Switch Conditions for going down
             if (!limitswitch_down.get() && limitcounter_down == 0 && oy == true){
             	limitcounter_down = 1;
@@ -397,31 +429,7 @@ public class Robot extends IterativeRobot {
             }
             else if (limitswitch_down.get() == true && limitcounter_down == 3){
             	limitcounter_down = 0;
-            }
-          //Limit Switch Conditions for going up
-            if (!limitswitch_up.get() && limitcounter_up == 0 && ox == true){
-            	limitcounter_up = 1;
-            }
-            else if (!limitswitch_up.get() && limitcounter_up == 1 && !ox){
-            	gear_pivot.set(-1.0);
-            	limitcounter_up = 2;
-            }
-            else if (limitswitch_up.get() == true && limitcounter_up == 2){ //Instantaneously
-            	gear_pivot.set(0);
-            	limitcounter_up = 3;
-            }
-            else if (!limitswitch_up.get() && limitcounter_up == 2 && ox == true){ //Manually
-            	gear_pivot.set(0);
-            	limitcounter_up = 3;
-            }
-            else if (!limitswitch_up.get() && limitcounter_up == 3 && !ox){
-            	gear_pivot.set(0);
-            	limitcounter_up = 0;
-            }
-            else if (limitswitch_up.get() == true && limitcounter_up == 3){
-            	limitcounter_up = 0;
-            }*/
-            
+            }   */         
     	}
     } 
     /**
