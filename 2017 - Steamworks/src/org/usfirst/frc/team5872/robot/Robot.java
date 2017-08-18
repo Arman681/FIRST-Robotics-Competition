@@ -1,578 +1,402 @@
-package org.usfirst.frc.team5872.robot;
-import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.RobotDrive;
-import com.ctre.CANTalon;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.DigitalInput;
-import org.usfirst.frc.team5872.robot.subsystems.ExampleSubsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.vision.VisionRunner;
-import edu.wpi.first.wpilibj.vision.VisionThread;
-import edu.wpi.first.wpilibj.IterativeRobot;
+<?xml version="1.0" encoding="UTF-8"?>
 
-public class Robot extends IterativeRobot {
-	
-	private static final int IMG_WIDTH = 320;
-	private static final int IMG_HEIGHT = 240;
-	
-	private static final int SECONDS_TO_MILLISECONDS = 1000;
-	
-	private VisionThread visionThread;
-	private double centerX = 0.0;
-	
-	
-	private final Object imgLock = new Object();
+<project name="athena-project-build" default="deploy">
+  <property file="${user.home}/wpilib/java/${version}/ant/ni_image.properties"/>
 
-	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
+  <!-- Load Tasks -->
+  <taskdef resource="net/sf/antcontrib/antlib.xml">
+    <classpath>
+      <pathelement location="${wpilib.ant.dir}/ant-contrib.jar"/>
+    </classpath>
+  </taskdef>
+  <taskdef resource="net/jtools/classloadertask/antlib.xml" classpath="${classloadertask.jar}"/>
+  <classloader loader="system" classpath="${jsch.jar}"/>
 
-    Command autonomousCommand;
-    SendableChooser chooser = new SendableChooser();
-    
-    //Motor Controller Declarations
-    static CANTalon fl;
-	static CANTalon bl;
-	static CANTalon fr;
-	static CANTalon br;
-	static CANTalon shooter;
-	static CANTalon mixer;
-	static CANTalon intake; 	//pool-noodle
-	static CANTalon gear_pivot;	//gear picker-upper pivot
-	static CANTalon lock;
-	
-    //Essential Declarations
-    static RobotDrive myRobot;
-    static Joystick stick;
-    static Joystick stick2;
-    static Timer timer;
-    static boolean intakeDown = false;
-    
-    //Sensor Declarations and Variables
-    static AHRS ahrs;
-    static PIDController turnController;
-    static double rotateToAngleRate;
-    static double Kp = 0.03;
-    
-    //Limit Switch Declarations and Variables
-    static DigitalInput limitswitch_up;
-    static DigitalInput limitswitch_down;
-    static int limitcounter_up = 0;
-    static int limitcounter_down = 0;
-    
-    //Counters
-    static int ci = 0;			//Intake (Clockwise) Counter
-    static int cir = 0;			//Intake (Counter-Clokwise) Counter
-    static int cj = 0;			//gear_pivot (Counterclockwise) Counter
-    static int cs = 0;			//Shooter Counter
-    static int lc = 0;    		//Lifter Clockwise Counter
-    static int lcc = 0;		//Lifter Counterclockwise Counter
-	static int gyroCnt = 0;	//Gyroscope Counter
-	
-	static final double kP = 0.3;
-	//static final double kI = 0.0;
-    
-    /**
-     * This function is run when the robot is first started up and should be
-     * used for any initialization code.
-     */
-	@Override
-    public void robotInit() {
-    	
-        chooser.addDefault("Auto Gear With Shot", new Auto1());
-        chooser.addObject("Do Nothing", new AutoDoNothing());
-        chooser.addObject("Middle Gear No Shot", new AutoMiddleGear());
-        chooser.addObject("Drive to White Line", new AutoWhiteLine());
-        chooser.addObject("Side Gear Auto", new AutoSideGear());
-        SmartDashboard.putData("Auto mode", chooser);
-        
-        //Camera Initialization
-        UsbCamera cameragear = CameraServer.getInstance().startAutomaticCapture();
-        UsbCamera camerashooter = CameraServer.getInstance().startAutomaticCapture();
-        cameragear.setResolution(IMG_WIDTH, IMG_HEIGHT);
-        camerashooter.setResolution(IMG_WIDTH, IMG_HEIGHT);
-        
-        /*visionThread = new VisionThread(camera, new Pipeline(), pipeline -> {
-            if (!pipeline.filterContoursOutput().isEmpty()) {
-                Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-                synchronized (imgLock) {
-                    centerX = r.x + (r.width / 2);
-                }
-            }
-        });
-        visionThread.start();*/
-        
-        //Motor Controller Assignments
-        fl = new CANTalon(3);
-        bl = new CANTalon(2);
-        fr = new CANTalon(1);
-        br = new CANTalon(0);
-        shooter = new CANTalon(5);
-        mixer = new CANTalon(4);
-        intake = new CANTalon(8);
-        lock = new CANTalon(7);
-        gear_pivot = new CANTalon(20);
-        
-        fr.setInverted(true);
-        br.setInverted(true);
-        intake.setInverted(true);
-        gear_pivot.setInverted(true);
-        
-        //Initialize encoders
-        /*fl.configEncoderCodesPerRev(1000);
-        bl.configEncoderCodesPerRev(1000);
-        fr.configEncoderCodesPerRev(1000);
-        br.configEncoderCodesPerRev(1000);*/
-        shooter.configEncoderCodesPerRev(1000);
-        
-        //Essential Assignments
-        myRobot = new RobotDrive(3, 1, 2, 0);
-        stick = new Joystick(0);
-        stick2 = new Joystick(1);
-        timer = new Timer();
-        
-        //Sensor Assignment
-        ahrs = new AHRS(I2C.Port.kMXP);
-        
-        //Limit Switches Assignment(s)
-        limitswitch_up = new DigitalInput(0);
-        limitswitch_down = new DigitalInput(1);
-    }
-	
-	/**
-     * This function is called once each time the robot enters Disabled mode.
-     * You can use it to reset any subsystem information you want to clear when
-	 * the robot is disabled.
-     */
-    @Override
-    public void disabledInit() {
-    }
-	@Override
-	public void disabledPeriodic() {
-		Scheduler.getInstance().run();
-	}
+  <target name="clean" description="Clean up all build and distribution artifacts.">
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}"/>
+  </target>
 
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select between different autonomous modes
-	 * using the dashboard. The sendable chooser code works with the Java SmartDashboard. If you prefer the LabVIEW
-	 * Dashboard, remove all of the chooser code and uncomment the getString code to get the auto name from the text box
-	 * below the Gyro
-	 *
-	 * You can add additional auto modes by adding additional commands to the chooser code above (like the commented example)
-	 * or additional comparisons to the switch structure below with additional strings & commands.
-	 */
-	@Override
-    public void autonomousInit() {
-        autonomousCommand = (Command) chooser.getSelected();
-        
-		String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
-        
-        timer.reset(); //Resets the timer to 0
-        ahrs.reset();
-        timer.start(); //Start counting
-        autonomousCommand.start();
-    }
-    /**
-     * This function is called periodically during autonomous
-     * @throws InterruptedException 
-     */
-    @Override
-    public void autonomousPeriodic() {
-        Scheduler.getInstance().run();
-    }
-    @Override
-    public void teleopInit() {
-    	
-		//This makes sure that the autonomous stops running when
-        //teleop starts running. If you want the autonomous to 
-        //continue until interrupted by another command, remove
-        //this line or comment it out.
-        if (autonomousCommand != null) 
-        	autonomousCommand.cancel();
-        ahrs.reset();
-    }
-    /**
-     * This function is called periodically during operator control
-     */
-    @Override
-    public void teleopPeriodic() {
-    	while(true) {
-    		
-    		Scheduler.getInstance().run();
-    		myRobot.arcadeDrive(stick); //This line drives the robot using the values of the joystick and the motor controllers selected above
-        
-    		//Tank Drive Logitech Controller Joystick Declarations and Assignments
-    		//Controller 1 Axes
-    		double dl = stick.getRawAxis(1);			//Left Joystick
-    		double dr = -stick.getRawAxis(4);			//Right Joystick
-    		
-    		//Controller 1 Buttons
-    		boolean da = stick.getRawButton(1);		//Driver Button a
-    		boolean db = stick.getRawButton(2);		//Driver Button b
-    		boolean dx = stick.getRawButton(3);		//Driver Button x
-    		boolean dy = stick.getRawButton(4);		//Driver Button y
-    		boolean dlb = stick.getRawButton(5);	//Driver Left Bumper
-    		boolean drb = stick.getRawButton(6);	//Driver Right Bumper
-    		boolean dback = stick.getRawButton(7);	//Driver Button Back 
-    		
-    		double dlt = stick.getRawAxis(2);		//Driver Left Trigger
-    		double drt = stick.getRawAxis(3);		//Driver Right Trigger
-    		
-    		//Arcade Drive Joystick Declarations and Assignments
-    		//Controller 2 Axes
-    		double ol = -stick2.getRawAxis(1);		//Left Axis
-    		double or = stick2.getRawAxis(5);		//Right Axis
-    		
-    		//Controller 2 Buttons
-    		boolean oa = stick2.getRawButton(1);	//Operator a
-    		boolean ob = stick2.getRawButton(2);	//Operator b
-    		boolean ox = stick2.getRawButton(3);	//Operator x
-    		boolean oy = stick2.getRawButton(4);	//Operator y
-    		boolean olb = stick2.getRawButton(5);	//Operator Left Bumper
-    		boolean orb = stick2.getRawButton(6);	//Operator Right Bumper
-    		boolean oback = stick2.getRawButton(7);	//Operator Button Back
-    		
-    		double olt = stick2.getRawAxis(2);		//Operator Left Trigger
-    		double ort = stick2.getRawAxis(3);		//Operator Right Trigger
-    		
-    		//Drive Train
-    		if(dl > 0.05 || dl < -0.05 || dr > 0.05 || dr < -0.05 && gyroCnt == 0) {
-    			fl.set(dl*.945 + -dr);
-    			bl.set(dl*.945 + -dr);
-    			fr.set(dl + dr);
-    			br.set(dl + dr);
-    		}
-    		//For Lifting Clockwise
-    		else if(dy && !db && gyroCnt == 0) {
-    			fr.set(1.0);
-    			br.set(1.0);
-    			fl.set(0.0);
-    			bl.set(0.0);
-    		}
-    		//For Lifting Counterclockwise
-    		else if(db && !dy && gyroCnt == 0) {
-    			fr.set(-1.0);
-    			br.set(-1.0);
-    			fl.set(0.0);
-    			bl.set(0.0);
-    		}
-    		//Stops All Drive Train Motors
-    		else if(!dy && !db && dlt < 0.05 && drt < 0.05 && dl < 0.05 && dl > -0.05 && dr < 0.05 && dr > -0.05) {   			
-    			stopMotors();
-    		}
-    		
-    		//Gyroscope Toggle
-    		if(da && gyroCnt == 0) {
-    			gyroCnt = 1;
-    		}
-    		else if(!da && gyroCnt == 1) {
-    			gyroCnt = 2;
-    		}
-    		else if(da && gyroCnt == 2) {
-    			gyroCnt = 3;
-    		}
-    		else if(!da && gyroCnt == 3) {
-    			gyroCnt = 0;
-    			ahrs.reset();
-    		}
-    		
-    		//Lock Clockwise
-    		if(dlb && !drb)
-    			lock.set(1.0);
-    		else if(!dlb && drb)
-    			lock.set(-1.0);
-    		else if(!dlb && !drb)
-    			lock.set(0);
-    		
-        	//Shooter Toggle
-        	if(oa && cs == 0) {
-        		bangBang(0.4136);
-        		cs = 1;
-        	}
-        	else if (!oa && cs == 1)
-        		cs = 2;
-         	else if(oa && cs == 2) {
-        		shooter.set(0.0);
-        		cs = 3;
-        	}
-        	else if (!oa && cs == 3)
-        		cs = 0;
-        	
-        	//Gear Pivot (Operator Right Analog Stick)
-        	if((or > 0.05 || or < -0.05) && limitswitch_up.get() == false) {
-        		gear_pivot.set(or*1/3);
-        	}
-        	else if ((or > 0.05 || or < -0.05) && limitswitch_up.get() == true)
-        		gear_pivot.set(0.01);
-        	else
-        		gear_pivot.set(0.01);
-        	
-        	//Mixer (Operator Left Analog Stick)
-        	if(ol > 0.05 || ol < -0.05)
-        		mixer.set(ol);
-        	else if(ol < 0.05 && ol > -0.05)
-        		mixer.set(0);
-        	
-        	//Intake Toggle (Operator Left Bumper)
-        	if (olb && ci == 0) {
-        		intake.set(0.5);
-        		ci = 1;
-        	}
-        	else if (!olb && ci == 1)
-        		ci = 2;
-        	else if (olb && ci == 2) {
-        		intake.set(0.0);
-        		ci = 3;
-        	}
-        	else if (!olb && ci == 3)
-        		ci = 0;
-        	
-        	//Intake Toggle (Operator Right Bumper)
-        	if (orb && cir == 0) {
-        		intake.set(-0.5);
-        		cir = 1;
-        	}
-        	else if (!orb && cir == 1)
-        		cir = 2;
-        	else if (orb && cir == 2) {
-        		intake.set(0.0);
-        		cir = 3;
-        	}
-        	else if (!orb && cir == 3){
-        		cir = 0;
-        	}
-        	
-        	/*while(limitswitch_up.get()){
-        		
-        		Timer.delay(10);
-        		
-        	}*/
-        	
-        	/*//Closed Loop for Gear Picker Upper
-        	if(ox && !intakeDown) {
-        		gear_pivot.set(-.1);
-        		delay(1);
-        		gear_pivot.set(0);
-        		intakeDown = true;
-        	}
-        	if(ob && intakeDown) {
-        		gear_pivot.set(.1);
-        		delay(1);
-        		gear_pivot.set(0);
-        		intakeDown = false;
-        	}
-        	if(oy && !intakeDown) {
-        		intake.set(-1);
-        		gear_pivot.set(-.1);
-        		delay(1);
-        		gear_pivot.set(0);
-        		intakeDown = true;
-        	}*/
-        	
-        	//Gyro Tests
-            if(dback)
-            	gyroRight(15, 0.5);
-            else if(!dback && ahrs.getAngle() >= 90)
-            	gyroRight(0, 0.0);
-            
-            //Limit Switch Conditions for going up
-            /*if (!limitswitch_up.get() && limitcounter_up == 0 && ox == true){
-            	limitcounter_up = 1;
-            }
-            else if (!limitswitch_up.get() && limitcounter_up == 1 && !ox){
-            	gear_pivot.set(-1.0);
-            	limitcounter_up = 2;
-            }
-            else if (limitswitch_up.get() == true && limitcounter_up == 2){			//Instantaneously
-            	gear_pivot.set(0);
-            	limitcounter_up = 3;
-            }
-            else if (!limitswitch_up.get() && limitcounter_up == 2 && ox == true){	//Manually
-            	gear_pivot.set(0);
-            	limitcounter_up = 3;
-            }
-            else if (!limitswitch_up.get() && limitcounter_up == 3 && !ox){
-            	gear_pivot.set(0);
-            	limitcounter_up = 0;
-            }
-            else if (limitswitch_up.get() == true && limitcounter_up == 3){
-            	limitcounter_up = 0;
-            }*/
-            
-            /*//Limit Switch Conditions for going down
-            if (!limitswitch_down.get() && limitcounter_down == 0 && oy == true){
-            	limitcounter_down = 1;
-            }
-            else if (!limitswitch_down.get() && limitcounter_down == 1 && !oy){
-            	gear_pivot.set(1.0);
-            	limitcounter_down = 2;
-            }
-            else if (limitswitch_down.get() == true && limitcounter_down == 2){ //Instantaneously
-            	gear_pivot.set(0);
-            	limitcounter_down = 3;
-            }
-            else if (!limitswitch_down.get() && limitcounter_down == 2 && oy == true){ //Manually
-            	gear_pivot.set(0);
-            	limitcounter_down = 3;
-            }
-            else if (!limitswitch_down.get() && limitcounter_down == 3 && !oy){
-            	gear_pivot.set(0);
-            	limitcounter_down = 0;
-            }
-            else if (limitswitch_down.get() == true && limitcounter_down == 3){
-            	limitcounter_down = 0;
-            }   */         
-    	}
-    } 
-    /**
-     * This function is called periodically during test mode
-     */
-    public void testPeriodic() {
-        LiveWindow.run();
-    }
-    public static void gyroStraight(double speed) {
-        double target = ahrs.getAngle();
-        while(gyroCnt == 2)
-        	setSpeed((speed + target)/100 , (speed + target)/100);
-    }
-    public static void gyroRight(int degrees, double speed) {
-    	if(ahrs.getAngle() < degrees && ahrs.getAngle() == 0)
-    		setSpeed(speed,-speed);
-    	else if(ahrs.getAngle() >= degrees) {
-    		stopMotors();
-    		ahrs.reset();
-    	}
-    }
-    public static void gyrotLeft(int degrees, double speed) {	
-    	if(ahrs.getAngle() < degrees && ahrs.getAngle() == 0)
-    		setSpeed(-speed,speed);
-    	else {
-    		stopMotors();
-    		ahrs.reset();
-    	}
-    }
-    public static void setSpeed(double left, double right) {
-    	fl.set(left);
-		fr.set(right);
-		bl.set(left);
-		br.set(right);
-    }
-    public static void stopMotors() {
-    	fl.set(0);
-		fr.set(0);
-		bl.set(0);
-		br.set(0);
-    }
-    public static void resetEncoders() {
-    	fl.setEncPosition(0);
-    	bl.setEncPosition(0);
-    	fr.setEncPosition(0);
-    	br.setEncPosition(0);
-    }
-    public static void bangBang(double fTarget) {
-    	double fVelocityTime = System.nanoTime();
-    	double fEncoder = shooter.getEncPosition();
-    	double fLastEncoder = 0;
-		double fLastVelocityTime = 0;
-		double fVelocity = (double)(fEncoder - fLastEncoder)/(fVelocityTime - fLastVelocityTime);
-    	
-    	if(fVelocity >= fTarget)
-    		shooter.set(0.4136);
-    	else if(fVelocity < fTarget)
-    		shooter.set(0.4236);
-    	
-    	fLastEncoder = fEncoder;
-    	fLastVelocityTime = fVelocityTime;
-    }
-    public static void turnByGyro(double power, int degrees) throws InterruptedException {
+  <!-- Targets -->
 
-        double constantOfDegrees = (2/3);
-        int s = -1;
-        boolean turnComplete = false;
-        double initialPosition = ahrs.getAngle();
-        ahrs.reset();
+  <target name="get-target-ip">
+    <property name="ant.enable.asserts" value="true"/>
+    <assert name="team-number" exists="true" message="Team number not set. Go to Window->Preferences->WPILib Preferences to set it."/>
 
-        while (!turnComplete) {
-            double currentPosition = ahrs.getAngle();
-            double target = initialPosition + (degrees);
+    <echo>Finding roboRIO, please ignore any [hostinfo] error messages</echo>
+    <var name="target" unset="true"/>
+    <trycatch>
+      <try>
+        <parallel failonany="true">
+          <sequential>
+            <echo>Trying mDNS: roboRIO-${team-number}-FRC.local</echo>
+            <hostinfo prefix="targethost_local" host="roboRIO-${team-number}-FRC.local" />
+            <if>
+              <not>
+                <equals arg1="${targethost_local.ADDR4}" arg2="0.0.0.0"/>
+              </not>
+              <then>
+                <echo>Resolved mDNS to ${targethost_local.ADDR4}</echo>
+                <if>
+                  <socket server="${targethost_local.ADDR4}" port="80"/>
+                  <then>
+                    <property name="target" value="${targethost_local.ADDR4}"/>
+                    <fail>${targethost_local.ADDR4}</fail>
+                  </then>
+                </if>
+              </then>
+            </if>
+          </sequential>
+          <sequential>
+            <echo>Trying DNS: roboRIO-${team-number}-FRC.lan</echo>
+            <hostinfo prefix="targethost_lan" host="roboRIO-${team-number}-FRC.lan" />
+            <if>
+              <not>
+                <equals arg1="${targethost_lan.ADDR4}" arg2="0.0.0.0"/>
+              </not>
+              <then>
+                <echo>Resolved DNS to ${targethost_lan.ADDR4}</echo>
+                <if>
+                  <socket server="${targethost_lan.ADDR4}" port="80"/>
+                  <then>
+                    <property name="target" value="${targethost_lan.ADDR4}"/>
+                    <fail>${targethost_lan.ADDR4}</fail>
+                  </then>
+                </if>
+              </then>
+            </if>
+          </sequential>
+          <sequential>
+            <echo>Trying USB: 172.22.11.2</echo>
+            <if>
+              <socket server="172.22.11.2" port="80"/>
+              <then>
+                <property name="target" value="172.22.11.2"/>
+                <fail>172.22.11.2</fail>
+              </then>
+            </if>
+          </sequential>
+          <sequential>
+            <math result="ip.upper" operand1="${team-number}" operation="/" operand2="100" datatype="int"/>
+            <math result="ip.lower" operand1="${team-number}" operation="%" operand2="100" datatype="int"/>
+            <property name="targethost_ip" value="10.${ip.upper}.${ip.lower}.2"/>
+            <echo>Trying Static Ethernet: ${targethost_ip}</echo>
+            <if>
+              <socket server="${targethost_ip}" port="80"/>
+              <then>
+                <property name="target" value="${targethost_ip}"/>
+                <fail>${targethost_ip}</fail>
+              </then>
+            </if>
+          </sequential>
+          <sequential>
+            <sleep seconds="20"/>
+            <fail></fail>
+          </sequential>
+        </parallel>
+      </try>
+      <catch>
+      </catch>
+    </trycatch>
 
-            if ((Math.abs(target)) > currentPosition) {
-            	fl.set(0.3);
-            	bl.set(0.3);
-            	fr.set(-0.3);
-            	br.set(-0.3);
-            }
-            else
-                turnComplete = true;
-            
-            fl.set(0);
-        	bl.set(0);
-        	fr.set(0);
-        	br.set(0);
-        }
-    }
-    public static void encoderDrive(int rightTicks, int leftTicks, double leftPower, double rightPower, double timeout) {
-    	resetEncoders();
-    	int targetFrontRight = fr.getEncPosition()+rightTicks;
-    	int targetBackRight = br.getEncPosition()+rightTicks;
-    	int targetFrontLeft = fl.getEncPosition()+leftTicks;
-    	int targetBackLeft = bl.getEncPosition()+leftTicks;
-    	int curFrontRight = fr.getEncPosition();
-    	int curBackRight = br.getEncPosition();
-    	int curFrontLeft = fl.getEncPosition();
-    	int curBackLeft = bl.getEncPosition();
-    	boolean done = (Math.abs(targetFrontRight - curFrontRight) < 5 || Math.abs(targetBackRight - curBackRight) < 5 || Math.abs(targetFrontLeft - curFrontLeft) < 5 || Math.abs(targetBackLeft - curBackLeft) < 5);
-    	setSpeed(leftPower,rightPower);
-    	while(!done) {
-    		curFrontRight = fr.getEncPosition();
-        	curBackRight = br.getEncPosition();
-        	curFrontLeft = fl.getEncPosition();
-        	curBackLeft = bl.getEncPosition();
-        	done = (Math.abs(targetFrontRight - curFrontRight) < 5 || Math.abs(targetBackRight - curBackRight) < 5 || Math.abs(targetFrontLeft - curFrontLeft) < 5 || Math.abs(targetBackLeft - curBackLeft) < 5);
-    	}
-    	stopMotors();
-    }
-    public static void delay(double seconds) {
-    	try {
-    		Thread.sleep((long) (seconds*SECONDS_TO_MILLISECONDS)); //Thread.sleep() input is in milliseconds
-    	}
-    	catch(Exception e1) {
-    		e1.printStackTrace();
-    	}
-    }
-    public static void turn(double left,double right) {
-    	fl.set(left);
-    	fr.set(right);
-    	bl.set(left);
-    	br.set(right);
-    }	
-    public static void runMotor(double speed, double seconds) {
-    	fl.set(speed*.945);
-    	fr.set(speed);
-    	bl.set(speed*.945);
-    	br.set(speed);
-    	delay(seconds);
-    }
-    public static void runMotor(double speedLeft,double speedRight, double seconds) {
-    	fl.set(speedLeft*.945);
-    	fr.set(speedRight);
-    	bl.set(speedLeft*.945);
-    	br.set(speedRight);
-    	delay(seconds);
-    }
-    public static void stopDriveTrain() {
-    	fl.set(0);
-    	fr.set(0);
-    	bl.set(0);
-    	br.set(0);
-    }
-}
+    <if>
+      <isset property="target"/>
+      <then>
+        <echo>roboRIO found at ${target}</echo>
+      </then>
+      <else>
+        <assert name="roboRIOFound" message="roboRIO not found, please check that the roboRIO is connected, imaged and that the team number is set properly in Eclipse"/>
+      </else>
+    </if>
+  </target>
 
+  <target name="compile" description="Compile the source code.">
+    <mkdir dir="${build.dir}"/>
+	<path id="classpath.path">
+		<fileset dir="${userLibs.dir}" includes="*.jar" excludes="*-sources.jar,*-javadoc.jar" />
+		<fileset file="${wpilib.jar}"/>
+		<fileset file="${networktables.jar}"/>
+		<fileset file="${opencv.jar}"/>
+		<fileset file="${cscore.jar}"/>
+		<fileset dir="${userLibs}" erroronmissingdir="false"/>
+	</path>
+
+    <pathconvert property="classpathProp" refid="classpath.path"/>
+    <echo>[athena-compile] Compiling ${src.dir} with classpath=${classpathProp} to ${build.dir}</echo>
+
+    <javac srcdir="${src.dir}"
+     destdir="${build.dir}"
+     includeAntRuntime="no"
+     includeJavaRuntime="no"
+     classpathref="classpath.path"
+     target="${ant.java.version}"
+     source="${ant.java.version}"
+     compiler="javac${ant.java.version}"
+     debug="true">
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile">
+    <echo>[athena-jar] Making jar ${dist.jar}.</echo>
+    <mkdir dir="${dist.dir}" />
+    <mkdir dir="${build.jars}" />
+
+  <echo>[athena-jar] Copying jars to ${build.jars}.</echo>
+  <copy todir="${build.jars}" flatten="true">
+    <path refid="classpath.path"/>
+  </copy>
+
+    <jar destfile="${dist.jar}" update="false">
+      <manifest>
+    	<attribute name="Main-Class" value="edu.wpi.first.wpilibj.RobotBase"/>
+    	<attribute name="Robot-Class" value="${robot.class}"/>
+    	<attribute name="Class-Path" value="."/>
+      </manifest>
+
+      <fileset dir="${build.dir}" includes="**/*.class"/>
+
+    <zipgroupfileset dir="${build.jars}"/>
+    </jar>
+  </target>
+
+    <!-- We're running a clean here to get around a known ant issue where it does not detected changed constant variables.
+     To get around this, we're recompiling the entire project, which is not an issue for most teams. If this is an issue
+     for you, you can remove the clean here, just be sure to do a full rebuild after you've changed any constants.
+     Reference: http://stackoverflow.com/questions/6430001/ant-doesnt-recompile-constants -->
+  <target name="deploy" depends="clean,jar,get-target-ip,dependencies" description="Deploy the jar and start the program running.">
+
+    <deploy-libs libs.name="WPI_Native_Libraries" libs.basedir="${wpilib.native.lib}" libs.deployDir="${libDeploy.dir}">
+      <libs.local>
+        <fileset id="wpiNativeLibs.local" dir="${wpilib.native.lib}">
+          <include name="libHALAthena.so"/>
+          <include name="libntcore.so"/>
+          <include name="libwpiutil.so"/>
+          <include name="libopencv*.so.3.1"/>
+          <include name="libcscore.so"/>
+          <include name="libopencv_java310.so"/>
+          <include name="libwpilibJavaJNI.so"/>
+        </fileset>
+      </libs.local>
+    </deploy-libs>
+
+    <deploy-libs libs.name="User_Libraries" libs.basedir="${userLibs.dir}" libs.deployDir="${libDeploy.dir}">
+      <libs.local>
+        <fileset dir="${userLibs.dir}">
+          <include name="**/*.so"/>
+        </fileset>
+      </libs.local>
+    </deploy-libs>
+
+    <echo>[athena-deploy] Copying code over.</echo>
+    <scp file="${dist.jar}" todir="admin@${target}:${deploy.dir}" password="" trust="true"/>
+
+    <sshexec host="${target}"
+         username="${adminUsername}"
+         password="${adminPassword}"
+         trust="true"
+         command="ldconfig" />
+
+     <!-- Suppress the exit status so that if no netconsole was running then
+          it doesn't show up red on the output. -->
+      <sshexec host="${target}"
+               username="${adminUsername}"
+               password="${adminPassword}"
+               trust="true"
+               failonerror="false"
+               command="killall -q netconsole-host || :"/>
+
+    <deploy-libs libs.name="netconsole-host" libs.basedir="${wpilib.ant.dir}" libs.deployDir="/usr/local/frc/bin">
+      <libs.local>
+        <fileset id="netconsole.local" dir="${wpilib.ant.dir}">
+          <include name="netconsole-host"/>
+        </fileset>
+      </libs.local>
+    </deploy-libs>
+
+      <scp file="${wpilib.ant.dir}/robotCommand" todir="admin@${target}:${command.dir}" password="" trust="true"/>
+
+    <echo>[athena-deploy] Starting program.</echo>
+    <sshexec host="${target}"
+       username="admin"
+       password=""
+       trust="true"
+	   failonerror="false"
+       command="${deploy.kill.command};"/>
+
+    <sshexec host="${target}"
+         username="admin"
+         password=""
+         trust="true"
+         command="sync" />
+
+  </target>
+
+  <target name="debug-deploy" depends="clean,jar,get-target-ip,dependencies" description="Deploy the jar and start the program running.">
+    <deploy-libs libs.name="WPI_Native_Libraries" libs.basedir="${wpilib.native.lib}" libs.deployDir="${libDeploy.dir}">
+      <libs.local>
+        <fileset id="wpiNativeLibs.local" dir="${wpilib.native.lib}">
+          <include name="libHALAthena.so"/>
+          <include name="libntcore.so"/>
+          <include name="libwpiutil.so"/>
+          <include name="libopencv*.so.3.1"/>
+          <include name="libcscore.so"/>
+          <include name="libopencv_java310.so"/>
+          <include name="libwpilibJavaJNI.so"/>
+        </fileset>
+      </libs.local>
+    </deploy-libs>
+
+    <deploy-libs libs.name="User_Libraries" libs.basedir="${userLibs.dir}"  libs.deployDir="${libDeploy.dir}">
+      <libs.local>
+        <fileset dir="${userLibs.dir}">
+          <include name="**/*.so"/>
+        </fileset>
+      </libs.local>
+    </deploy-libs>
+    <echo>[athena-deploy] Copying code over.</echo>
+    <scp file="${dist.jar}" todir="admin@${target}:${deploy.dir}" password="" trust="true"/>
+  	<!-- The remoteDebugCommand file is used by /usr/local/frc/bin/frcRunRobot.sh on the roboRIO  -->
+    <scp file="${wpilib.ant.dir}/robotDebugCommand" todir="admin@${target}:${command.dir}" password="" trust="true"/>
+  	<!-- The frcdebug file is used as a flag for /usr/local/frc/bin/frcRunRobot.sh to run the robot program in debug mode -->
+  	<scp file="${wpilib.ant.dir}/frcdebug" todir="admin@${target}:${debug.flag.dir}" password="" trust="true"/>
+	<sshexec host="${target}"
+        username="admin"
+        password=""
+        trust="true"
+        command="${debug.flag.command}"/>
+
+    <echo>[athena-deploy] Starting Debug program.</echo>
+    <sshexec host="${target}"
+        username="admin"
+        password=""
+        trust="true"
+		failonerror="false"
+        command="${deploy.kill.command}"/>
+
+  </target>
+
+  <!-- Simulate -->
+  <target name="jar-for-simulation" depends="compile">
+	<echo>[jar-for-simulation] Building jar.</echo>
+
+	<jar destfile="${simulation.dist.jar}">
+	  <manifest>
+		<attribute name="Built-By" value="${user.name}"/>
+		<attribute name="Robot-Class" value="${robot.class}"/>
+		<attribute name="Main-Class" value="edu.wpi.first.wpilibj.RobotBase"/>
+	  </manifest>
+	  <fileset dir="${build.dir}" />
+	  <zipgroupfileset dir="${wpilib.sim.lib}">
+	  	<include name="**/*.jar" />
+	  </zipgroupfileset>
+	</jar>
+  </target>
+
+  <target name="simulate" depends="jar-for-simulation">
+    <sequential>
+      <echo>[simulate] You may now run Gazebo and your DriverStation</echo>
+	    <echo>[simulate] Running Code.</echo>
+	    <java jar="${simulation.dist.jar}" fork="true">
+          <jvmarg value="-Djava.library.path=${wpilib.sim.lib}" />
+      </java>
+    </sequential>
+  </target>
+
+  <target name="debug-simulate" depends="jar-for-simulation">
+    <sequential>
+      <echo>[simulate] You may now run Gazebo and your DriverStation</echo>
+	    <echo>[simulate] Running Code In Debug Mode.</echo>
+	    <java jar="${simulation.dist.jar}" fork="true">
+          <jvmarg value="-Xdebug" />
+          <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8348" />
+          <jvmarg value="-Djava.library.path=${wpilib.sim.lib}" />
+        </java>
+    </sequential>
+  </target>
+
+  <target name="dependencies" depends="get-target-ip">
+    <property name="ant.enable.asserts" value="true"/>
+	<post to="http://${target}/nisysapi/server" property="roboRIOSysValuesUTF16" verbose="false" encoding="UTF-16LE" append="false">
+		<prop name="Function" value="GetPropertiesOfItem"/>
+		<prop name="Plugins" value="nisyscfg"/>
+		<prop name="Items" value="system"/>
+	</post>
+	<!-- post erroneously turns UTF-16LE 0x0A00 (LF) into non-UTF16
+	0x0D0A00 (CRLF), so do a poor man's conversion from UTF-16 by just
+	removing all the nul characters. -->
+	<propertyregex property="roboRIOSysValues" input="${roboRIOSysValuesUTF16}" regexp="\x00" replace="" global="true" defaultValue="${roboRIOSysValuesUTF16}"/>
+	<propertyregex property="roboRIOImage" input="${roboRIOSysValues}" regexp="FRC_roboRIO_[0-9]+_v([0-9]+)" select="\1" defaultValue="ImageRegExFail"/>
+	<propertyregex property="roboRIOImageYear" input="${roboRIOSysValues}" regexp="FRC_roboRIO_([0-9]+)_v" select="\1" defaultValue="ImageRegExFail"/>
+	<assert message="Image of roboRIO does not match plugin. ${line.separator}Allowed image year: ${roboRIOAllowedYear} version: ${roboRIOAllowedImages}. ${line.separator}Actual image year: ${roboRIOImageYear} version ${roboRIOImage}. ${line.separator}RoboRIO needs to be re-imaged or plugins updated.">
+		<bool>
+			<and>
+				<contains string="${roboRIOAllowedImages}" substring="${roboRIOImage}"/>
+				<contains string="${roboRIOAllowedYear}" substring="${roboRIOImageYear}"/>
+			</and>
+		</bool>
+	</assert>
+	<echo>roboRIO image version validated</echo>
+	<echo>Checking for JRE. If this fails install the JRE using these instructions: https://wpilib.screenstepslive.com/s/4485/m/13503/l/288822-installing-java-8-on-the-roborio-using-the-frc-roborio-java-installer-java-only</echo>
+	<sshexec host="${target}"
+        username="admin"
+        password=""
+        trust="true"
+		failonerror="true"
+        command="test -d ${roboRIOJRE.dir}"/>
+  </target>
+
+  <!-- libs.name should not contain spaces as it is used to name a file -->
+  <macrodef name="deploy-libs">
+    <attribute name="libs.name"/>
+    <attribute name="libs.basedir"/>
+    <attribute name="libs.deployDir"/>
+    <element name="libs.local"/>
+    <sequential>
+      <local name="libs.local.notEmpty"/>
+      <local name="libs.local.checksum"/>
+      <local name="libs.deployed.checksum"/>
+      <local name="libs.local.modified.property"/>
+
+      <delete file="@{libs.basedir}/@{libs.name}.properties"/>
+      <scp file="${adminUsername}@${target}:@{libs.deployDir}/@{libs.name}.properties"
+           todir="@{libs.basedir}"
+           password="${adminPassword}"
+           trust="true"
+           failonerror="false"/>
+      <restrict id="libs.local.modified">
+        <libs.local/>
+        <modified update="true"
+                  seldirs="true"
+                  cache="propertyfile"
+                  algorithm="digest"
+                  comparator="equal">
+          <param name="cache.cachefile" value="@{libs.basedir}/@{libs.name}.properties"/>
+          <param name="algorithm.algorithm" value="MD5"/>
+        </modified>
+      </restrict>
+
+      <pathconvert refid="libs.local.modified" property="libs.local.modified.property" pathsep="," setonempty="false">
+        <globmapper from="@{libs.basedir}/*" to="*" handledirsep="true" />
+      </pathconvert>
+
+      <if>
+        <isset property="libs.local.modified.property"/>
+        <then>
+          <echo message="Deploying libraries ${line.separator} ${libs.local.modified.property}"/>
+          <scp todir="${adminUsername}@${target}:@{libs.deployDir}"
+               password="${adminPassword}"
+               trust="true">
+            <fileset dir="@{libs.basedir}" includes="${libs.local.modified.property}"/>
+            <fileset file="@{libs.basedir}/@{libs.name}.properties"/>
+          </scp>
+          <sshexec host="${target}"
+                   username="${adminUsername}"
+                   password="${adminPassword}"
+                   trust="true"
+                   command="chmod -R +x @{libs.deployDir}"
+          />
+        </then>
+      </if>
+    </sequential>
+  </macrodef>
+</project>
